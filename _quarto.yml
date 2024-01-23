@@ -1,25 +1,42 @@
 project:
   type: book
-  output-dir: _book
+  output-dir: docs
 
 engine: knitr
 
+bibliography: references.bib
+
 book:
-  title: "ggplot2: Elegant Graphics for Data Analysis (3e)"
+  title: "ggplot2: Gráficos elegantes para análisis de datos (3e)"
   reader-mode: true
 
   page-footer:
     left: |
-      ggplot2: Elegant Graphics for Data Analysis (3e) was written by
-      Hadley Wickham, Danielle Navarro, and Thomas Lin Pedersen.
+      ggplot2: Gráficos elegantes para análisis de datos (3e) fue escrito por
+      Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen.
     right: |
-      This book was built with <a href="https://quarto.org/">Quarto</a>.
+      Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.
   cover-image: cover.jpg
   favicon: cover.jpg
-  site-url: https://ggplot2-book.org/
-  repo-url: https://github.com/hadley/ggplot2-book/
-  repo-branch: main
-  repo-actions: [edit, issue]
+
+  author:
+    - name: HADLEY WICKHAM
+    - name: DANIELLE NAVARRO
+    - name: "&"
+    - name: THOMAS LIN PEDERSEN
+
+  search: true
+  sidebar:
+    pinned: true
+    tools:
+      - icon: github
+        menu:
+          - text: Original
+            url: https://github.com/hadley/ggplot2-book/
+          - text: Traducción
+            url: https://github.com/davidrsch/ggplot2-bookes
+  page-navigation: true
+
   chapters:
     - index.qmd
 
@@ -62,17 +79,15 @@ book:
         - extensions.qmd
         - ext-springs.qmd
 
-bibliography: references.bib
-
 format:
   html:
     theme:
       - cosmo
     code-link: true
-
-    author-meta: "Hadley Wickham, Danielle Navarro, and Thomas Lin Pedersen"
+    author-meta: "Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen"
     include-in-header: "ga_script.html"
     callout-appearance: simple
+    lang: es
 
 editor: visual
 
