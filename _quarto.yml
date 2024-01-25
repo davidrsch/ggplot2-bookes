@@ -39,7 +39,6 @@ book:
 
   chapters:
     - index.qmd
-
     - preface-3e.qmd
     - preface-2e.qmd
 

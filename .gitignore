@@ -7,7 +7,7 @@ temp.Rmd
 rsconnect
 www
 _figures
-_book/
+docs/
 _bookdown_files/
 _main.rds
 _main.adx
