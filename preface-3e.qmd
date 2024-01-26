@@ -1,12 +1,12 @@
-# Preface to the third edition {#sec-preface-3e .unnumbered}
+# Prefacio a la tercera edición {#sec-preface-3e .unnumbered}
 
-Welcome to the third edition of "ggplot2: elegant graphics for data analysis".
-I'm so excited to have a new edition of the book updated for all the changes that have happened to ggplot2 in the last five years.
-I'm also excited to finally have an online version of the book, [\<https://ggplot2-book.org/\>](https://ggplot2-book.org/){.uri}, thanks to a renegotiated contract with Springer.
+Bienvenidos a la tercera edición de "ggplot2: gráficos elegantes para análisis de datos".
+Estoy muy emocionado de tener una nueva edición del libro actualizada con todos los cambios que le han ocurrido a ggplot2 en los últimos cinco años.
+También estoy emocionado de tener finalmente una versión en línea del libro, [\<https://ggplot2-book.org/\>](https://ggplot2-book.org/){.uri}, gracias a un contrato renegociado con Springer.
 
-Since the last version of the book, the major change to ggplot2 itself is the growth in the contributor community.
-While I still lead the project and continue to care deeply about visualisation, I'm no longer involved in the day-to-day development of the package.
-At the time of writing, the core developers of ggplot2 are:
+Desde la última versión del libro, el cambio más importante en ggplot2 es el crecimiento de la comunidad de contribuyentes.
+Si bien sigo liderando el proyecto y sigo preocupándome profundamente por la visualización, ya no estoy involucrado en el desarrollo diario del paquete.
+Al momento de escribir este artículo, los desarrolladores principales de ggplot2 son:
 
 -   [Winston Chang](https://github.com/wch)
 -   [Lionel Henry](https://github.com/lionel-)
@@ -17,31 +17,31 @@ At the time of writing, the core developers of ggplot2 are:
 -   [Hiroaki Yutani](https://github.com/yutannihilation)
 -   [Dewey Dunnington](https://github.com/paleolimbot)
 
-You can see an up-to-date list and how to become a core developer in the [ggplot2 governance document](https://github.com/tidyverse/ggplot2/blob/master/GOVERNANCE.md).
+Puede ver una lista actualizada y cómo convertirse en desarrollador principal en el [documento de gobernanza de ggplot2](https://github.com/tidyverse/ggplot2/blob/master/GOVERNANCE.md).
 
-## Major changes {.unnumbered}
+## Cambios principales {.unnumbered}
 
--   The *Data Analysis*, *Data Transformation*, and *Modelling for Visualisation* chapters have been removed so that the book can focus on visualisation.
-    If you're looking for general advice on doing data science in R, we recommend [R for Data Science (2e)](https://r4ds.hadley.nz).
+-   Los capítulos *Análisis de datos*, *Transformación de datos* y *Modelado para visualización* se han eliminado para que el libro pueda centrarse en la visualización.
+    Si busca consejos generales sobre cómo hacer ciencia de datos en R, le recomendamos [R para ciencia de datos (2e)](https://r4ds.hadley.nz).
 
--   The *Toolbox* chapter has been expanded into six chapters that cover practical applications of layers.
-    This includes more material on maps and annotations, and a new chapter that discusses how to arrange multiple plots on one page.
+-   El capítulo *Caja de herramientas* se ha ampliado en seis capítulos que cubren aplicaciones prácticas de capas.
+    Esto incluye más material sobre mapas y anotaciones, y un nuevo capítulo que analiza cómo organizar varios gráficos en una página.
 
--   Similarly, the old *Scales, Axes, and Legends* chapter has been split into into four chapters.
-    The first three cover the practical combination of scales and guides for the most common scale types, and the final chapter focusses on the underlying theory.
+-   De manera similar, el antiguo capítulo *Escalas, ejes y leyendas* se ha dividido en cuatro capítulos.
+    Los tres primeros cubren la combinación práctica de escalas y guías para los tipos de escalas más comunes, y el último capítulo se centra en la teoría subyacente.
 
--   The old *Positioning* chapter has been split into new *Coordinate Systems* and *Faceting* chapters, giving more room for details on these important topics.
+-   El antiguo capítulo de *Posicionamiento* se ha dividido en nuevos capítulos de *Sistemas de coordenadas* y *Facetado*, lo que brinda más espacio para detalles sobre estos importantes temas.
 
--   New chapters describe more about the internals of ggplot2, and how you can extend it in your own package.
+-   Los nuevos capítulos describen más sobre los aspectos internos de ggplot2 y cómo puede ampliarlo en su propio paquete.
 
-## Acknowledgements {.unnumbered}
+## Agradecimientos {.unnumbered}
 
-This edition of the book was made possible by two new co-authors: Danielle Navarro and Thomas Lin Pedersen.
-Danielle contributed most of the new material in the layers and scales chapters, and Thomas contributed new chapters on arranging plots (using his patchwork package), and on how to extend ggplot2.
+Esta edición del libro fue posible gracias a dos nuevos coautores: Danielle Navarro y Thomas Lin Pedersen.
+Danielle contribuyó con la mayor parte del material nuevo en los capítulos de capas y escalas, y Thomas contribuyó con nuevos capítulos sobre cómo organizar las tramas (usando su paquete patchwork) y sobre cómo extender ggplot2.
 
-This book was written in the open and chapters were advertised on twitter when complete.
-It is truly a community effort: many people read drafts, fixed typos, suggested improvements, and contributed content.
-Without those contributors, the book wouldn't be nearly as good as it is, and I'm deeply grateful for their help.
+Este libro fue escrito abiertamente y los capítulos se anunciaron en Twitter cuando se completaron.
+Es verdaderamente un esfuerzo comunitario: muchas personas leyeron borradores, corrigieron errores tipográficos, sugirieron mejoras y contribuyeron con contenido.
+Sin esos colaboradores, el libro no sería tan bueno como es y estoy profundamente agradecido por su ayuda.
 
 ```{r}
 #| eval: false
@@ -92,7 +92,7 @@ contributors <- contributors %>%
     desc = ifelse(is.na(name), login, paste0(name, " (", login, ")"))
   )
 
-cat("A big thank you to all ", nrow(contributors), " people who contributed specific improvements via GitHub pull requests (in alphabetical order by username): ", sep = "")
+cat("Muchas gracias a todos ", nrow(contributors), " personas que contribuyeron con mejoras específicas a través de pull request de GitHub (en orden alfabético por nombre de usuario): ", sep = "")
 cat(paste0(contributors$desc, collapse = ", "))
 cat(".\n")
 ```
