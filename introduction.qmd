@@ -1,6 +1,4 @@
-\mainmatter
-
-# Introduction {#sec-introduction}
+# Introducción {#sec-introduction}
 
 ```{r}
 #| echo: false
@@ -10,165 +8,87 @@ source("common.R")
 status("drafting")
 ```
 
-## Welcome to ggplot2
+## Bienvenido a ggplot2
 
-ggplot2 is an R package for producing statistical, or data, graphics.
-Unlike most other graphics packages, ggplot2 has an underlying grammar, based on the Grammar of Graphics [@wilkinson:2006], that allows you to compose graphs by combining independent components.
-This makes ggplot2 powerful.
-Rather than being limited to sets of pre-defined graphics, you can create novel graphics that are tailored to your specific problem.
-While the idea of having to learn a grammar may sound overwhelming, ggplot2 is actually easy to learn: there is a simple set of core principles and there are very few special cases.
-The hard part is that it may take a little time to forget all the preconceptions that you bring over from using other graphics tools.
+ggplot2 es un paquete R para producir gráficos estadísticos o de datos. A diferencia de la mayoría de los otros paquetes de gráficos, ggplot2 tiene una gramática subyacente, basada en la Gramática de Gráficos [@wilkinson:2006], que le permite componer gráficos combinando componentes independientes. Esto hace que ggplot2 sea poderoso. En lugar de limitarse a conjuntos de gráficos predefinidos, puede crear gráficos novedosos que se adapten a su problema específico. Si bien la idea de tener que aprender una gramática puede parecer abrumadora, ggplot2 es realmente fácil de aprender: existe un conjunto simple de principios básicos y muy pocos casos especiales. La parte difícil es que puede tomar un poco de tiempo olvidar todas las ideas preconcebidas que trae consigo al usar otras herramientas gráficas.
 
-ggplot2 provides beautiful, hassle-free plots that take care of fiddly details like drawing legends.
-In fact, its carefully chosen defaults mean that you can produce publication-quality graphics in seconds.
-However, if you do have special formatting requirements, ggplot2's comprehensive theming system makes it easy to do what you want.
-Ultimately, this means that rather than spending your time making your graph look pretty, you can instead focus on creating the graph that best reveals the message in your data.
+ggplot2 proporciona tramas hermosas y sin complicaciones que se ocupan de detalles complicados como dibujar leyendas. De hecho, sus valores predeterminados cuidadosamente elegidos significan que puede producir gráficos con calidad de publicación en segundos. Sin embargo, si tiene requisitos de formato especiales, el completo sistema de temas de ggplot2 le facilita hacer lo que quiera. En última instancia, esto significa que, en lugar de dedicar su tiempo a hacer que su gráfico se vea bonito, puede concentrarse en crear el gráfico que mejor revele el mensaje de sus datos.
 
-ggplot2 is designed to work iteratively.
-You start with a layer that shows the raw data.
-Then you add layers of annotations and statistical summaries.
-This allows you to produce graphics using the same structured thinking that you would use to design an analysis.
-This reduces the distance between the plot in your head and the one on the page.
-This is especially helpful for students who have not yet developed the structured approach to analysis used by experts.
+ggplot2 está diseñado para funcionar de forma iterativa. Comienzas con una capa que muestra los datos sin procesar. Luego agrega capas de anotaciones y resúmenes estadísticos. Esto le permite producir gráficos utilizando el mismo pensamiento estructurado que usaría para diseñar un análisis. Esto reduce la distancia entre la trama en tu cabeza y la de la página. Esto es especialmente útil para estudiantes que aún no han desarrollado el enfoque estructurado de análisis utilizado por los expertos.
 
-Learning the grammar will not only help you create graphics that you're familiar with, but will also help you to create newer, better graphics.
-Without a grammar, there is no underlying theory, so most graphics packages are just a big collection of special cases.
-For example, in base R, if you design a new graphic, it's composed of raw plot elements like lines and points so it's hard to design new components that combine with existing plots.
-In ggplot2, the expressions used to create a new graphic are composed of higher-level elements, like representations of the raw data and statistical transformations, that can easily be combined with new datasets and other plots.
+Aprender la gramática no sólo te ayudará a crear gráficos con los que estás familiarizado, sino que también te ayudará a crear gráficos mejores y más nuevos. Sin una gramática, no hay una teoría subyacente, por lo que la mayoría de los paquetes de gráficos son sólo una gran colección de casos especiales. Por ejemplo, en base R, si diseña un gráfico nuevo, se compone de elementos gráficos sin formato, como líneas y puntos, por lo que es difícil diseñar nuevos componentes que se combinen con los gráficos existentes. En ggplot2, las expresiones utilizadas para crear un nuevo gráfico se componen de elementos de nivel superior, como representaciones de los datos sin procesar y transformaciones estadísticas, que se pueden combinar fácilmente con nuevos conjuntos de datos y otros gráficos.
 
-This book provides a hands-on introduction to ggplot2 with lots of example code and graphics.
-It also explains the grammar on which ggplot2 is based.
-Like other formal systems, ggplot2 is useful even when you don't understand the underlying model.
-However, the more you learn about it, the more effectively you'll be able to use ggplot2.
+Este libro proporciona una introducción práctica a ggplot2 con muchos códigos y gráficos de ejemplo. También explica la gramática en la que se basa ggplot2. Al igual que otros sistemas formales, ggplot2 es útil incluso cuando no se comprende el modelo subyacente. Sin embargo, cuanto más aprenda al respecto, más eficazmente podrá utilizar ggplot2.
 
-This book will introduce you to ggplot2 assuming that you're a novice, unfamiliar with the grammar; teach you the basics so that you can re-create plots you are already familiar with; show you how to use the grammar to create new types of graphics; and eventually turn you into an expert who can build new components to extend the grammar.
+Este libro le presentará ggplot2 suponiendo que sea un novato y no esté familiarizado con la gramática; enseñarle los conceptos básicos para que pueda recrear tramas con las que ya está familiarizado; mostrarle cómo utilizar la gramática para crear nuevos tipos de gráficos; y, finalmente, convertirte en un experto que pueda crear nuevos componentes para ampliar la gramática.
 
-## What is the grammar of graphics?
+## ¿Cuál es la gramática de los gráficos?
 
-@wilkinson:2006 created the grammar of graphics to describe the fundamental features that underlie all statistical graphics.
-The grammar of graphics is an answer to the question of what is a statistical graphic?
-ggplot2 [@wickham:2007d] builds on Wilkinson's grammar by focussing on the primacy of layers and adapting it for use in R.
-In brief, the grammar tells us that a graphic maps the data to the aesthetic attributes (colour, shape, size) of geometric objects (points, lines, bars).
-The plot may also include statistical transformations of the data and information about the plot's coordinate system.
-Facetting can be used to plot for different subsets of the data.
-The combination of these independent components are what make up a graphic.
+@wilkinson:2006 creó la gramática de los gráficos para describir las características fundamentales que subyacen a todos los gráficos estadísticos. La gramática de los gráficos es una respuesta a la pregunta de ¿qué es un gráfico estadístico? ggplot2 [@wickham:2007d] se basa en la gramática de Wilkinson centrándose en la primacía de las capas y adaptándola para su uso en R. En resumen, la gramática nos dice que un gráfico asigna los datos a los atributos estéticos (color, forma, tamaño). de objetos geométricos (puntos, líneas, barras). El gráfico también puede incluir transformaciones estadísticas de los datos e información sobre el sistema de coordenadas del gráfico. El facetado se puede utilizar para trazar diferentes subconjuntos de datos. La combinación de estos componentes independientes son los que forman un gráfico.
 
-As the book progresses, the formal grammar will be explained in greater detail.
-The first description of the components follows below.
-It introduces some of the terminology that will be used throughout the book and outlines the basic function of each component.
-Don't worry if it doesn't make sense right away: you'll have many more opportunities to learn about the components and how they work together.
+A medida que avance el libro, la gramática formal se explicará con mayor detalle. La primera descripción de los componentes sigue a continuación. Introduce parte de la terminología que se utilizará a lo largo del libro y describe la función básica de cada componente. No se preocupe si no tiene sentido de inmediato: tendrá muchas más oportunidades de aprender sobre los componentes y cómo funcionan juntos.
 
-All plots are composed of the **data**, the information you want to visualise, and a **mapping**, the description of how the data's variables are mapped to aesthetic attributes.
-There are five mapping components:
+Todos los gráficos se componen de **datos**, la información que desea visualizar, y un **mapeo**, la descripción de cómo las variables de los datos se asignan a los atributos estéticos. Hay cinco componentes de mapeo:
 
--   A **layer** is a collection of geometric elements and statistical transformations.
-    Geometric elements, **geom**s for short, represent what you actually see in the plot: points, lines, polygons, etc.
-    Statistical transformations, **stat**s for short, summarise the data: for example, binning and counting observations to create a histogram, or fitting a linear model.
+-   Una **capa** es una colección de elementos geométricos y transformaciones estadísticas. Los elementos geométricos, **geom**s para abreviar, representan lo que realmente se ve en el gráfico: puntos, líneas, polígonos, etc. Las transformaciones estadísticas, **stat**s para abreviar, resumen los datos: por ejemplo, agrupar y contar observaciones para crear un histograma o ajustar un modelo lineal.
 
--   **Scale**s map values in the data space to values in the aesthetic space.
-    This includes the use of colour, shape or size.
-    Scales also draw the legend and axes, which make it possible to read the original data values from the plot (an inverse mapping).
+-   **La escala** asigna valores en el espacio de datos a valores en el espacio estético. Esto incluye el uso de color, forma o tamaño. Las escalas también dibujan la leyenda y los ejes, lo que permite leer los valores de datos originales del gráfico (un mapeo inverso).
 
--   A **coord**, or coordinate system, describes how data coordinates are mapped to the plane of the graphic.
-    It also provides axes and gridlines to help read the graph.
-    We normally use the Cartesian coordinate system, but a number of others are available, including polar coordinates and map projections.
+-   Una **coord**, o sistema de coordenadas, describe cómo se asignan las coordenadas de los datos al plano del gráfico. También proporciona ejes y líneas de cuadrícula para ayudar a leer el gráfico. Normalmente utilizamos el sistema de coordenadas cartesiano, pero hay otros disponibles, incluidas coordenadas polares y proyecciones cartográficas.
 
--   A **facet** specifies how to break up and display subsets of data as small multiples.
-    This is also known as conditioning or latticing/trellising.
+-   Una **faceta** especifica cómo dividir y mostrar subconjuntos de datos como pequeños múltiplos. Esto también se conoce como acondicionamiento o enrejado/enrejado.
 
--   A **theme** controls the finer points of display, like the font size and background colour.
-    While the defaults in ggplot2 have been chosen with care, you may need to consult other references to create an attractive plot.
-    A good starting place is Tufte's early works [@tufte:1990; @tufte:1997; @tufte:2001].
+-   Un **tema** controla los puntos más finos de la visualización, como el tamaño de fuente y el color de fondo. Si bien los valores predeterminados en ggplot2 se han elegido con cuidado, es posible que necesites consultar otras referencias para crear una trama atractiva. Un buen punto de partida son los primeros trabajos de Tufte [@tufte:1990; @tufte:1997; @tufte:2001].
 
-It's also important to note what the grammar doesn't do:
+También es importante tener en cuenta lo que la gramática no hace:
 
--   It doesn't suggest which graphics to use.
-    While this book endeavours to promote a sensible process for producing plots, the focus is on how to produce the plots you want, not on which plot to produce.
-    For more advice on choosing or creating plots to answer the question you're interested in, you may want to consult @robbins:2004, @cleveland:1993, @chambers:1983, and @tukey:1977.
+-   No sugiere qué gráficos usar. Si bien este libro se esfuerza por promover un proceso sensato para producir tramas, la atención se centra en cómo producir las tramas que desea, no en qué trama producir. Para obtener más consejos sobre cómo elegir o crear argumentos para responder la pregunta que le interesa, puede consultar a @robbins:2004, @cleveland:1993, @chambers:1983 y @tukey:1977.
 
--   It doesn't describe interactive graphics, only static ones.
-    There is essentially no difference between displaying ggplot2 graphs on a computer screen and printing them on a piece of paper.
+-   No describe gráficos interactivos, sólo estáticos. Básicamente, no hay diferencia entre mostrar gráficos de ggplot2 en la pantalla de una computadora e imprimirlos en una hoja de papel.
 
-## How does ggplot2 fit in with other R graphics?
+## ¿Cómo encaja ggplot2 con otros gráficos R?
 
-There are a number of other graphics systems available in R: base graphics, grid graphics and trellis/lattice graphics.
-How does ggplot2 differ from them?
+Hay varios otros sistemas de gráficos disponibles en R: gráficos base, gráficos de cuadrícula y gráficos de lattice/enrejado. ¿En qué se diferencia ggplot2 de ellos?
 
--   Base graphics were written by Ross Ihaka based on experience implementing the S graphics driver and partly looking at @chambers:1983.
-    Base graphics has a pen on paper model: you can only draw on top of the plot, you cannot modify or delete existing content.
-    There is no (user accessible) representation of the graphics, apart from their appearance on the screen.
-    Base graphics includes both tools for drawing primitives and entire plots.
-    Base graphics functions are generally fast, but have limited scope.
-    If you've created a single scatterplot, or histogram, or a set of boxplots in the past, you've probably used base graphics.
-    \index{Base graphics}
+-   Los gráficos base fueron escritos por Ross Ihaka basándose en la experiencia en la implementación del controlador de gráficos S y en parte en @chambers:1983. Los gráficos base tienen un modelo de lápiz sobre papel: solo puede dibujar sobre el gráfico, no puede modificar ni eliminar el contenido existente. No existe ninguna representación (accesible para el usuario) de los gráficos, aparte de su aparición en la pantalla. Los gráficos básicos incluyen herramientas para dibujar primitivos y gráficos completos. Las funciones gráficas básicas son generalmente rápidas, pero tienen un alcance limitado. Si ha creado un único diagrama de dispersión, un histograma o un conjunto de diagramas de caja en el pasado, probablemente haya utilizado gráficos básicos.
 
--   The development of "grid" graphics, a much richer system of graphical primitives, started in 2000.
-    Grid is developed by Paul Murrell, growing out of his PhD work [@murrell:1998].
-    Grid grobs (graphical objects) can be represented independently of the plot and modified later.
-    A system of viewports (each containing its own coordinate system) makes it easier to lay out complex graphics.
-    Grid provides drawing primitives, but no tools for producing statistical graphics.
-    \index{grid}
+-   El desarrollo de gráficos de "cuadrícula", un sistema mucho más rico de primitivas gráficas, comenzó en el año 2000. Grid fue desarrollado por Paul Murrell, como resultado de su trabajo de doctorado [@murrell:1998]. Los grobs de cuadrícula (objetos gráficos) se pueden representar independientemente del gráfico y modificarse más tarde. Un sistema de ventanas gráficas (cada una con su propio sistema de coordenadas) facilita el diseño de gráficos complejos. Grid proporciona primitivas de dibujo, pero no herramientas para producir gráficos estadísticos.
 
--   The lattice package, developed by Deepayan Sarkar, uses grid graphics to implement the trellis graphics system of @cleveland:1993 and is a considerable improvement over base graphics.
-    You can easily produce conditioned plots and some plotting details (e.g., legends) are taken care of automatically.
-    However, lattice graphics lacks a formal model, which can make it hard to extend.
-    Lattice graphics are explained in depth in @sarkar:2008.
-    \index{lattice}
+-   El paquete lattice, desarrollado por Deepayan Sarkar, utiliza gráficos de cuadrícula para implementar el sistema de gráficos enrejado de @cleveland:1993 y supone una mejora considerable con respecto a los gráficos básicos. Puede producir fácilmente gráficos condicionados y algunos detalles del trazado (por ejemplo, leyendas) se cuidan automáticamente. Sin embargo, los gráficos reticulares carecen de un modelo formal, lo que puede dificultar su ampliación. Los gráficos de lattice se explican en profundidad en @sarkar:2008.
 
--   ggplot2, started in 2005, is an attempt to take the good things about base and lattice graphics and improve on them with a strong underlying model which supports the production of any kind of statistical graphic, based on the principles outlined above.
-    The solid underlying model of ggplot2 makes it easy to describe a wide range of graphics with a compact syntax, and independent components make extension easy.
-    Like lattice, ggplot2 uses grid to draw the graphics, which means you can exercise much low-level control over the appearance of the plot.
+-   ggplot2, iniciado en 2005, es un intento de tomar las cosas buenas de los gráficos base y reticulares y mejorarlas con un modelo subyacente sólido que admita la producción de cualquier tipo de gráfico estadístico, basado en los principios descritos anteriormente. El sólido modelo subyacente de ggplot2 facilita la descripción de una amplia gama de gráficos con una sintaxis compacta, y los componentes independientes facilitan la extensión. Al igual que lattice, ggplot2 usa una cuadrícula para dibujar los gráficos, lo que significa que puedes ejercer mucho control de bajo nivel sobre la apariencia de la trama.
 
--   htmlwidgets, <http://www.htmlwidgets.org>, provides a common framework for accessing web visualisation tools from R.
-    Packages built on top of htmlwidgets include leaflet (<https://rstudio.github.io/leaflet/>, maps), dygraph (<http://rstudio.github.io/dygraphs/>, time series) and networkD3 (<http://christophergandrud.github.io/networkD3/>, networks).
-    \index{htmlwidgets}
+-   htmlwidgets, <http://www.htmlwidgets.org>, proporciona un marco común para acceder a herramientas de visualización web desde R. Los paquetes creados sobre htmlwidgets incluyen leaflet (<https://rstudio.github.io/leaflet/>, mapas), dygraph (<http://rstudio.github.io/dygraphs/>, series temporales) y networkD3 (<http://christophergandrud.github.io/networkD3/>, redes).
 
--   plotly, <https://plotly-r.com>, is a popular javascript visualisation toolkit with an R interface.
-    It's a great tool if you want to make interactive graphics for HTML documents, and even comes with a `ggplotly()` function that can convert many ggplot2 graphics into their interactive equivalents.
+-   plotly, <https://plotly-r.com>, es un popular kit de herramientas de visualización de JavaScript con una interfaz R. Es una gran herramienta si desea crear gráficos interactivos para documentos HTML, e incluso viene con una función `ggplotly()` que puede convertir muchos gráficos ggplot2 en sus equivalentes interactivos.
 
-Many other R packages, such as vcd [@meyer:2006], plotrix [@plotrix] and gplots [@gplots], implement specialist graphics, but no others provide a framework for producing statistical graphics.
-A comprehensive list of all graphical tools available in other packages can be found in the graphics task view at <http://cran.r-project.org/web/views/Graphics.html>.
+Muchos otros paquetes de R, como vcd [@meyer:2006], plotrix [@plotrix] y gplots [@gplots], implementan gráficos especializados, pero ningún otro proporciona un marco para producir gráficos estadísticos. Puede encontrar una lista completa de todas las herramientas gráficas disponibles en otros paquetes en la vista de tareas de gráficos en <http://cran.r-project.org/web/views/Graphics.html>.
 
-## About this book
+## Sobre este libro
 
-The first chapter, @sec-getting-started, describes how to quickly get started using ggplot2 to make useful graphics.
-This chapter introduces several important ggplot2 concepts: geoms, aesthetic mappings and facetting.
+El primer capítulo, @sec-getting-started, describe cómo comenzar rápidamente a usar ggplot2 para crear gráficos útiles. Este capítulo presenta varios conceptos importantes de ggplot2: geoms, mapeos estéticos y facetas.
 
-@sec-individual-geoms to @sec-arranging-plots explore how to use the basic toolbox to solve a wide range of visualisation problems that you're likely to encounter in practice.
+@sec-individual-geoms a @sec-arranging-plots exploran cómo utilizar la caja de herramientas básica para resolver una amplia gama de problemas de visualización que probablemente encontrará en la práctica.
 
-Then @sec-scale-position to @sec-scale-other show you how to control the most important scales, allowing you to tweak the details of axes and legends.
+Luego, @sec-scale-position a @sec-scale-other le muestran cómo controlar las escalas más importantes, lo que le permite modificar los detalles de los ejes y las leyendas.
 
-In "The Grammar" we describe the layered grammar of graphics which underlies ggplot2.
-The theory is illustrated in @sec-layers which demonstrates how to add additional layers to your plot, exercising full control over the geoms and stats used within them.
+En "La gramática" describimos la gramática en capas de los gráficos que subyace a ggplot2. La teoría se ilustra en @sec-layers, que demuestra cómo agregar capas adicionales a su trama, ejerciendo control total sobre las geoms y las estadísticas utilizadas dentro de ellas.
 
-Understanding how scales work is crucial for fine-tuning the perceptual properties of your plot.
-Customising scales gives fine control over the exact appearance of the plot and helps to support the story that you are telling.
-@sec-scale-position, @sec-scale-colour and @sec-scale-other will show you what scales are available, how to adjust their parameters, and how to control the appearance of axes and legends.
+Comprender cómo funcionan las escalas es crucial para afinar las propiedades perceptuales de su trama. La personalización de escalas brinda un control preciso sobre la apariencia exacta de la trama y ayuda a respaldar la historia que estás contando. @sec-scale-position, @sec-scale-color y @sec-scale-other le mostrarán qué escalas están disponibles, cómo ajustar sus parámetros y cómo controlar la apariencia de los ejes y las leyendas.
 
-Coordinate systems and facetting control the position of elements of the plot.
-These are described in @sec-position.
-Faceting is a very powerful graphical tool as it allows you to rapidly compare different subsets of your data.
-Different coordinate systems are less commonly needed, but are very important for certain types of data.
+Los sistemas de coordenadas y facetados controlan la posición de los elementos de la trama. Estos se describen en @sec-position. El facetado es una herramienta gráfica muy poderosa, ya que le permite comparar rápidamente diferentes subconjuntos de sus datos. Con menos frecuencia se necesitan diferentes sistemas de coordenadas, pero son muy importantes para ciertos tipos de datos.
 
-To polish your plots for publication, you will need to learn about the tools described in @sec-polishing.
-There you will learn about how to control the theming system of ggplot2 and how to save plots to disk.
+Para pulir sus gráficos para su publicación, necesitará conocer las herramientas descritas en @sec-polish. Allí aprenderá cómo controlar el sistema de temas de ggplot2 y cómo guardar gráficos en el disco.
 
-## Prerequisites {#sec-prerequisites}
+## Requisitos previos {#sec-prerequisites}
 
-\index{Installation}
+Antes de continuar, asegúrese de tener todo el software que necesita para este libro:
 
-Before we continue, make sure you have all the software you need for this book:
+-   **R**: Si aún no tienes R instalado, es posible que estés leyendo el libro equivocado; Asumimos una familiaridad básica con R a lo largo de este libro. Si desea aprender a utilizar R, le recomendamos [*R para ciencia de datos*](https://r4ds.had.co.nz/), que está diseñado para que pueda empezar a utilizar R con un mínimo de alboroto.
 
--   **R**: If you don't have R installed already, you may be reading the wrong book; we assume a basic familiarity with R throughout this book.
-    If you'd like to learn how to use R, we'd recommend [*R for Data Science*](https://r4ds.had.co.nz/) which is designed to get you up and running with R with a minimum of fuss.
+-   **RStudio**: RStudio es un entorno de desarrollo integrado (IDE) gratuito y de código abierto para R. Si bien puede escribir y usar código R con cualquier entorno R (incluida la GUI de R y [ESS] (http://ess.r-project.org)) , RStudio tiene algunas características interesantes específicamente para crear y depurar su código. Recomendamos intentarlo, pero no es necesario para tener éxito con ggplot2 o con este libro. Puede descargar RStudio Desktop desde <https://posit.co/download/rstudio-desktop>
 
--   **RStudio**: RStudio is a free and open source integrated development environment (IDE) for R.
-    While you can write and use R code with any R environment (including R GUI and [ESS](http://ess.r-project.org)), RStudio has some nice features specifically for authoring and debugging your code.
-    We recommend giving it a try, but it's not required to be successful with ggplot2 or with this book.
-    You can download RStudio Desktop from <https://posit.co/download/rstudio-desktop>
-
--   **R packages**: This book uses a bunch of R packages.
-    You can install them all at once by running:
+-   **R packages**: Este libro utiliza varios paquetes R. Puedes instalarlos todos a la vez ejecutando:
 
     ```{r}
     #| echo: false
@@ -189,35 +109,23 @@ Before we continue, make sure you have all the software you need for this book:
     #| eval: false
     ```
 
-## Other resources {#sec-other-resources}
+## Otros recursos {#sec-other-resources}
 
-This book teaches you the elements of ggplot2's grammar and how they fit together, but it does not document every function in complete detail.
-You will need additional documentation as your use of ggplot2 becomes more complex and varied.
+Este libro le enseña los elementos de la gramática de ggplot2 y cómo encajan entre sí, pero no documenta cada función con todo detalle. Necesitará documentación adicional a medida que su uso de ggplot2 se vuelva más complejo y variado.
 
-The best resource for specific details of ggplot2 functions and their arguments will always be the built-in documentation.
-This is accessible online, <https://ggplot2.tidyverse.org/reference/index.html>, and from within R using the usual help syntax.
-The advantage of the online documentation is that you can see all the example plots and navigate between topics more easily.
+El mejor recurso para obtener detalles específicos de las funciones de ggplot2 y sus argumentos siempre será la documentación incorporada. Se puede acceder a él en línea, <https://ggplot2.tidyverse.org/reference/index.html> y desde R utilizando la sintaxis de ayuda habitual. La ventaja de la documentación en línea es que puede ver todos los gráficos de ejemplo y navegar entre temas más fácilmente.
 
-If you use ggplot2 regularly, it's a good idea to sign up for the ggplot2 mailing list, <http://groups.google.com/group/ggplot2>.
-The list has relatively low traffic and is very friendly to new users.
-Another useful resource is stackoverflow, <https://stackoverflow.com>.
-There is an active ggplot2 community on stackoverflow, and many common questions have already been asked and answered.
-In either place, you're much more likely to get help if you create a minimal reproducible example.
-The [reprex](https://github.com/jennybc/reprex) package by Jenny Bryan provides a convenient way to do this, and also include advice on creating a good example.
-The more information you provide, the easier it is for the community to help you.
+Si utiliza ggplot2 con regularidad, es una buena idea registrarse en la lista de correo de ggplot2, <http://groups.google.com/group/ggplot2>. La lista tiene un tráfico relativamente bajo y es muy amigable para los nuevos usuarios. Otro recurso útil es stackoverflow, <https://stackoverflow.com>. Hay una comunidad ggplot2 activa en stackoverflow y ya se han formulado y respondido muchas preguntas comunes. En cualquier lugar, es mucho más probable que obtenga ayuda si crea un ejemplo mínimo reproducible. El paquete [reprex](https://github.com/jennybc/reprex) de Jenny Bryan proporciona una manera conveniente de hacer esto y también incluye consejos sobre cómo crear un buen ejemplo. Cuanta más información proporciones, más fácil será para la comunidad ayudarte.
 
-The number of functions in ggplot2 can be overwhelming, but RStudio provides some great cheatsheets to jog your memory at <https://posit.co/resources/cheatsheets/>.
+La cantidad de funciones en ggplot2 puede ser abrumadora, pero RStudio proporciona algunas excelentes hojas de referencia para refrescar su memoria en <https://posit.co/resources/cheatsheets/>.
 
-Finally, the complete source code for the book is available online at <https://github.com/hadley/ggplot2-book>.
-This contains the complete text for the book, as well as all the code and data needed to recreate all the plots.
+Finalmente, el código fuente completo del libro está disponible en línea en <https://github.com/hadley/ggplot2-book>. Contiene el texto completo del libro, así como todo el código y los datos necesarios para recrear todas las tramas.
 
-## Colophon
+## Colofón
 
-This book was written in [RStudio](https://posit.co/products/open-source/rstudio/) using [bookdown](http://bookdown.org/).
-The [website](http://ggplot2-book.org/) is hosted with [netlify](http://netlify.com/), and automatically updated after every commit by [Github Actions](https://github.com/features/actions).
-The complete source is available from [GitHub](https://github.com/hadley/ggplot2-book).
+Este libro fue escrito en [RStudio](https://posit.co/products/open-source/rstudio/) usando [bookdown](http://bookdown.org/). El [sitio web](http://ggplot2-book.org/) está alojado en [netlify](http://netlify.com/) y se actualiza automáticamente después de cada confirmación mediante [Github Actions](https://github .com/features/actions). La fuente completa está disponible en [GitHub](https://github.com/hadley/ggplot2-book).
 
-This version of the book was built with `r R.version.string` and the following packages:
+Esta versión del libro se creó con `r R.version.string` y los siguientes paquetes:
 
 ```{r}
 #| echo: false

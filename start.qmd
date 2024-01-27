@@ -1,4 +1,4 @@
-# Getting Started {#sec-start}
+# Empezando {#sec-start}
 
 ```{r}
 #| echo: false
@@ -8,4 +8,4 @@ source("common.R")
 status("drafting")
 ```
 
-To be consistent with the other parts to the book there should be some opening text here.
+Para ser coherente con las otras partes del libro, aquí debería haber algún texto inicial.
