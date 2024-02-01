@@ -1,4 +1,4 @@
-# Individual geoms {#sec-individual-geoms}
+# Geomas individuales {#sec-individual-geoms}
 
 ```{r}
 #| echo: false
@@ -8,52 +8,27 @@ source("common.R")
 status("drafting")
 ```
 
-## Basic plot types {#sec-basics}
+## Tipos de gráficos básicos {#sec-basics}
 
-These geoms are the fundamental building blocks of ggplot2.
-They are useful in their own right, but are also used to construct more complex geoms.
-Most of these geoms are associated with a named plot: when that geom is used by itself in a plot, that plot has a special name.
+Estas geoms son los componentes fundamentales de ggplot2. Son útiles por sí solos, pero también se utilizan para construir geomas más complejas. La mayoría de estas geoms están asociadas con una gráfica con nombre: cuando esa geom se usa sola en una gráfica, esa gráfica tiene un nombre especial.
 
-Each of these geoms is two dimensional and requires both `x` and `y` aesthetics.
-All of them understand `colour` (or `color`) and `size` aesthetics, and the filled geoms (bar, tile and polygon) also understand `fill`.
+Cada una de estas geomas es bidimensional y requiere estética tanto `x` como `y`. Todos ellos entienden la estética de `color` (o `color`) y `size`, y las geomas rellenas (barra, mosaico y polígono) también entienden de `fill`.
 
--   `geom_area()` draws an **area plot**, which is a line plot filled to the y-axis (filled lines).
-    Multiple groups will be stacked on top of each other.
-    \index{Area plot} \indexf{geom\_area}
+-   `geom_area()` dibuja un **gráfico de área**, que es un gráfico de líneas relleno hasta el eje y (líneas rellenas). Se apilarán varios grupos uno encima del otro. \index{Area plot} \indexf{geom\_area}
 
--   `geom_bar(stat = "identity")` makes a **bar chart**.
-    We need `stat = "identity"` because the default stat automatically counts values (so is essentially a 1d geom, see @sec-distributions).
-    The identity stat leaves the data unchanged.
-    Multiple bars in the same location will be stacked on top of one another.\index{Barchart} \indexf{geom\_bar}
+-   `geom_bar(stat = "identity")` hace un **gráfico de barras**. Nosotros necesitamos `stat = "identity"` porque la estadística predeterminada cuenta automáticamente los valores (por lo que es esencialmente una geom 1d, consulte @sec-distributions). La estadística de identidad deja los datos sin cambios. Se apilarán varias barras en la misma ubicación una encima de la otra.\index{Barchart} \indexf{geom\_bar}
 
--   `geom_line()` makes a **line plot**.
-    The `group` aesthetic determines which observations are connected; see @sec-collective-geoms for more detail.
-    `geom_line()` connects points from left to right; `geom_path()` is similar but connects points in the order they appear in the data.
-    Both `geom_line()` and `geom_path()` also understand the aesthetic `linetype`, which maps a categorical variable to solid, dotted and dashed lines.
-    \index{Line plot} \indexf{geom\_line} \indexf{geom\_path}
+-   `geom_line()` hace un **gráfico lineal**. La estética del "grupo" determina qué observaciones están conectadas; consulte @sec-collective-geoms para obtener más detalles. `geom_line()` conecta puntos de izquierda a derecha; `geom_path()` es similar pero conecta puntos en el orden en que aparecen en los datos. Tanto `geom_line()` como `geom_path()` también entienden el estético `linetype`, que asigna una variable categórica a líneas sólidas, punteadas y discontinuas. \index{Line plot} \indexf{geom\_line} \indexf{geom\_path}
 
--   `geom_point()` produces a **scatterplot**.
-    `geom_point()` also understands the `shape` aesthetic.
-    \indexf{geom\_point}
+-   `geom_point()` produce un **diagrama de dispersión**. `geom_point()` También entiende la estética de la `shape`, forma. \indexf{geom\_point}
 
--   `geom_polygon()` draws polygons, which are filled paths.
-    Each vertex of the polygon requires a separate row in the data.
-    It is often useful to merge a data frame of polygon coordinates with the data just prior to plotting.
-    @sec-maps illustrates this concept in more detail for map data.
-    \indexf{geom\_polygon}
+-   `geom_polygon()` dibuja polígonos, que son caminos rellenos. Cada vértice del polígono requiere una fila separada en los datos. A menudo resulta útil fusionar un marco de datos de coordenadas poligonales con los datos justo antes de trazar. @sec-maps ilustra este concepto con más detalle para datos de mapas. \indexf{geom\_polygon}
 
--   `geom_rect()`, `geom_tile()` and `geom_raster()` draw rectangles.
-    `geom_rect()` is parameterised by the four corners of the rectangle, `xmin`, `ymin`, `xmax` and `ymax`.
-    `geom_tile()` is exactly the same, but parameterised by the center of the rect and its size, `x`, `y`, `width` and `height`.
-    `geom_raster()` is a fast special case of `geom_tile()` used when all the tiles are the same size.
-    \index{Image plot} \index{Level plot} \indexf{geom\_tile}.
-    \indexf{geom\_rect} \indexf{geom\_raster}
+-   `geom_rect()`, `geom_tile()` y `geom_raster()` dibujan rectángulos. `geom_rect()` está parametrizado por las cuatro esquinas del rectángulo, `xmin`, `ymin`, `xmax` y `ymax`. `geom_tile()` es exactamente igual, pero parametrizado por el centro del rectángulo y su tamaño, `x`, `y`, `width` y `height`. `geom_raster()` es un caso especial rápido de `geom_tile()` se utiliza cuando todos los mosaicos son del mismo tamaño.. \index{Image plot} \index{Level plot} \indexf{geom\_tile}. \indexf{geom\_rect} \indexf{geom\_raster}
 
--   `geom_text()` adds text to a plot.
-    It requires a `label` aesthetic that provides the text to display, and has a number of parameters (`angle`, `family`, `fontface`, `hjust` and `vjust`) that control the appearance of the text.
+-   `geom_text()` agrega texto a una gráfica. Requiere una estética de `label` que proporcione el texto que se mostrará y que tenga varios parámetros. (`angle`, `family`, `fontface`, `hjust` y `vjust`) que controlan la apariencia del texto.
 
-Each geom is shown in the code below.
-Observe the different axis ranges for the bar, area and tile plots: these geoms take up space outside the range of the data, and so push the axes out.
+Cada geom se muestra en el siguiente código. Observe los diferentes rangos de ejes para los gráficos de barras, áreas y mosaicos: estas geomas ocupan espacio fuera del rango de los datos y, por lo tanto, empujan los ejes hacia afuera.
 
 ```{r}
 #| label: geom-basic
@@ -84,16 +59,14 @@ p + geom_polygon() + ggtitle("polygon")
 
 ### Exercises
 
-1.  What geoms would you use to draw each of the following named plots?
+1.  ¿Qué geomas usarías para dibujar cada una de las siguientes gráficas nombradas?
 
-    1.  Scatterplot
-    2.  Line chart
-    3.  Histogram
-    4.  Bar chart
-    5.  Pie chart
+    1.  Gráfico de dispersión
+    2.  Gráfico de líneas
+    3.  Histograma
+    4.  Gráfico de barras
+    5.  Gráfico circular
 
-2.  What's the difference between `geom_path()` and `geom_polygon()`?
-    What's the difference between `geom_path()` and `geom_line()`?
+2.  ¿Cuál es la diferencia entre `geom_path()` y `geom_polygon()`? ¿Cuál es la diferencia entre `geom_path()` y `geom_line()`?
 
-3.  What low-level geoms are used to draw `geom_smooth()`?
-    What about `geom_boxplot()` and `geom_violin()`?
+3.  ¿Qué geoms de bajo nivel se utilizan para dibujar `geom_smooth()`? ¿Qué pasa con `geom_boxplot()` y `geom_violin()`?
