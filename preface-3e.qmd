@@ -1,12 +1,8 @@
 # Prefacio a la tercera edición {#sec-preface-3e .unnumbered}
 
-Bienvenidos a la tercera edición de "ggplot2: gráficos elegantes para análisis de datos".
-Estoy muy emocionado de tener una nueva edición del libro actualizada con todos los cambios que le han ocurrido a ggplot2 en los últimos cinco años.
-También estoy emocionado de tener finalmente una versión en línea del libro, [\<https://ggplot2-book.org/\>](https://ggplot2-book.org/){.uri}, gracias a un contrato renegociado con Springer.
+Bienvenidos a la tercera edición de "ggplot2: gráficos elegantes para análisis de datos". Estoy muy emocionado de tener una nueva edición del libro actualizada con todos los cambios que le han ocurrido a ggplot2 en los últimos cinco años. También estoy emocionado de tener finalmente una versión en línea del libro, [\<https://ggplot2-book.org/\>](https://ggplot2-book.org/){.uri}, gracias a un contrato renegociado con Springer.
 
-Desde la última versión del libro, el cambio más importante en ggplot2 es el crecimiento de la comunidad de contribuyentes.
-Si bien sigo liderando el proyecto y sigo preocupándome profundamente por la visualización, ya no estoy involucrado en el desarrollo diario del paquete.
-Al momento de escribir este artículo, los desarrolladores principales de ggplot2 son:
+Desde la última versión del libro, el cambio más importante en ggplot2 es el crecimiento de la comunidad de contribuyentes. Si bien sigo liderando el proyecto y sigo preocupándome profundamente por la visualización, ya no estoy involucrado en el desarrollo diario del paquete. Al momento de escribir este artículo, los desarrolladores principales de ggplot2 son:
 
 -   [Winston Chang](https://github.com/wch)
 -   [Lionel Henry](https://github.com/lionel-)
@@ -21,14 +17,11 @@ Puede ver una lista actualizada y cómo convertirse en desarrollador principal e
 
 ## Cambios principales {.unnumbered}
 
--   Los capítulos *Análisis de datos*, *Transformación de datos* y *Modelado para visualización* se han eliminado para que el libro pueda centrarse en la visualización.
-    Si busca consejos generales sobre cómo hacer ciencia de datos en R, le recomendamos [R para ciencia de datos (2e)](https://r4ds.hadley.nz).
+-   Los capítulos *Análisis de datos*, *Transformación de datos* y *Modelado para visualización* se han eliminado para que el libro pueda centrarse en la visualización. Si busca consejos generales sobre cómo hacer ciencia de datos en R, le recomendamos [R para ciencia de datos (2e)](https://r4ds.hadley.nz).
 
--   El capítulo *Caja de herramientas* se ha ampliado en seis capítulos que cubren aplicaciones prácticas de capas.
-    Esto incluye más material sobre mapas y anotaciones, y un nuevo capítulo que analiza cómo organizar varios gráficos en una página.
+-   El capítulo *Caja de herramientas* se ha ampliado en seis capítulos que cubren aplicaciones prácticas de capas. Esto incluye más material sobre mapas y anotaciones, y un nuevo capítulo que analiza cómo organizar varios gráficos en una página.
 
--   De manera similar, el antiguo capítulo *Escalas, ejes y leyendas* se ha dividido en cuatro capítulos.
-    Los tres primeros cubren la combinación práctica de escalas y guías para los tipos de escalas más comunes, y el último capítulo se centra en la teoría subyacente.
+-   De manera similar, el antiguo capítulo *Escalas, ejes y leyendas* se ha dividido en cuatro capítulos. Los tres primeros cubren la combinación práctica de escalas y guías para los tipos de escalas más comunes, y el último capítulo se centra en la teoría subyacente.
 
 -   El antiguo capítulo de *Posicionamiento* se ha dividido en nuevos capítulos de *Sistemas de coordenadas* y *Facetado*, lo que brinda más espacio para detalles sobre estos importantes temas.
 
@@ -36,12 +29,9 @@ Puede ver una lista actualizada y cómo convertirse en desarrollador principal e
 
 ## Agradecimientos {.unnumbered}
 
-Esta edición del libro fue posible gracias a dos nuevos coautores: Danielle Navarro y Thomas Lin Pedersen.
-Danielle contribuyó con la mayor parte del material nuevo en los capítulos de capas y escalas, y Thomas contribuyó con nuevos capítulos sobre cómo organizar las tramas (usando su paquete patchwork) y sobre cómo extender ggplot2.
+Esta edición del libro fue posible gracias a dos nuevos coautores: Danielle Navarro y Thomas Lin Pedersen. Danielle contribuyó con la mayor parte del material nuevo en los capítulos de capas y escalas, y Thomas contribuyó con nuevos capítulos sobre cómo organizar las gráficas (usando su paquete patchwork) y sobre cómo extender ggplot2.
 
-Este libro fue escrito abiertamente y los capítulos se anunciaron en Twitter cuando se completaron.
-Es verdaderamente un esfuerzo comunitario: muchas personas leyeron borradores, corrigieron errores tipográficos, sugirieron mejoras y contribuyeron con contenido.
-Sin esos colaboradores, el libro no sería tan bueno como es y estoy profundamente agradecido por su ayuda.
+Este libro fue escrito abiertamente y los capítulos se anunciaron en Twitter cuando se completaron. Es verdaderamente un esfuerzo comunitario: muchas personas leyeron borradores, corrigieron errores tipográficos, sugirieron mejoras y contribuyeron con contenido. Sin esos colaboradores, el libro no sería tan bueno como es y estoy profundamente agradecido por su ayuda.
 
 ```{r}
 #| eval: false
