@@ -14,7 +14,7 @@ Me he esforzado mucho en garantizar que esta edición sea una verdadera actualiz
 
 -   Se publicó la fuente completa en línea en <https://github.com/hadley/ggplot2-book>.
 
--   Se cambió de `qplot()` a `ggplot()` en la introducción. Los comentarios indicaron que `qplot()` era una muleta: facilita un poco las tramas simples, pero no ayuda a dominar la gramática.
+-   Se cambió de `qplot()` a `ggplot()` en la introducción. Los comentarios indicaron que `qplot()` era una muleta: facilita un poco las gráficas simples, pero no ayuda a dominar la gramática.
 
 -   Se agregaron ejercicios de práctica a lo largo del libro para que puedas practicar nuevas técnicas inmediatamente después de aprender sobre ellas.
 
@@ -32,7 +32,7 @@ El libro va acompañado de una nueva versión de ggplot2: versión 2.0.0. Esto i
 
 ggplot2 ahora es estable y es poco probable que cambie mucho en el futuro. Habrá correcciones de errores y es posible que haya nuevas geoms, pero no habrá grandes cambios en el funcionamiento de ggplot2. La siguiente iteración de ggplot2 es ggvis. ggvis es significativamente más ambicioso porque pretende proporcionar una gramática de gráficos *interactivos*. ggvis es todavía joven y carece de muchas de las características de ggplot2 (en particular, actualmente carece de facetado y no tiene forma de crear gráficos estáticos), pero en los próximos años el objetivo es hacer que ggvis sea mejor que ggplot2.
 
-La sintaxis de ggvis es un poco diferente a la de ggplot2. No podrá convertir trivialmente sus gráficos de ggplot2 a ggvis, pero creemos que el costo vale la pena: la nueva sintaxis es considerablemente más consistente y será más fácil de aprender para los recién llegados. Si domina ggplot2, descubrirá que sus habilidades se transfieren muy bien a ggvis y, después de luchar con la sintaxis por un tiempo, comenzará a sentirse bastante natural. Las habilidades importantes que se aprenden al dominar ggplot2 no son los detalles programáticos de describir una trama en código, sino el desafío mucho más difícil de pensar en cómo convertir datos en visualizaciones efectivas.
+La sintaxis de ggvis es un poco diferente a la de ggplot2. No podrá convertir trivialmente sus gráficos de ggplot2 a ggvis, pero creemos que el costo vale la pena: la nueva sintaxis es considerablemente más consistente y será más fácil de aprender para los recién llegados. Si domina ggplot2, descubrirá que sus habilidades se transfieren muy bien a ggvis y, después de luchar con la sintaxis por un tiempo, comenzará a sentirse bastante natural. Las habilidades importantes que se aprenden al dominar ggplot2 no son los detalles programáticos de describir una gráfica en código, sino el desafío mucho más difícil de pensar en cómo convertir datos en visualizaciones efectivas.
 
 ## Agradecimientos {.unnumbered}
 
