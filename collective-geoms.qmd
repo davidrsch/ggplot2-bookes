@@ -1,4 +1,4 @@
-# Collective geoms {#sec-collective-geoms}
+# Geomas colectivas {#sec-collective-geoms}
 
 ```{r}
 #| echo: false
@@ -8,24 +8,11 @@ source("common.R")
 status("drafting")
 ```
 
-Geoms can be roughly divided into individual and collective geoms.
-An **individual** geom draws a distinct graphical object for each observation (row).
-For example, the point geom draws one point per row.
-A **collective** geom displays multiple observations with one geometric object.
-This may be a result of a statistical summary, like a boxplot, or may be fundamental to the display of the geom, like a polygon.
-Lines and paths fall somewhere in between: each line is composed of a set of straight segments, but each segment represents two points.
-How do we control the assignment of observations to graphical elements?
-This is the job of the `group` aesthetic.
-\index{Grouping} \indexc{group} \index{Geoms!collective}
+Las geoms se pueden dividir a grandes rasgos en geoms individuales y colectivas. Una geom **individual** dibuja un objeto gráfico distinto para cada observación (fila). Por ejemplo, el punto geom dibuja un punto por fila. Una geom **colectiva** muestra múltiples observaciones con un objeto geométrico. Esto puede ser el resultado de un resumen estadístico, como un diagrama de caja, o puede ser fundamental para la visualización de la geom, como un polígono. Las líneas y los caminos se encuentran en algún punto intermedio: cada línea se compone de un conjunto de segmentos rectos, pero cada segmento representa dos puntos. ¿Cómo controlamos la asignación de observaciones a elementos gráficos? Éste es el trabajo de la estética `group`. \index{Grouping} \indexc{group} \index{Geoms!collective}
 
-By default, the `group` aesthetic is mapped to the interaction of all discrete variables in the plot.
-This often partitions the data correctly, but when it does not, or when no discrete variable is used in a plot, you'll need to explicitly define the grouping structure by mapping group to a variable that has a different value for each group.
+De forma predeterminada, la estética del `group` se asigna a la interacción de todas las variables discretas en la gráfica. Esto a menudo divide los datos correctamente, pero cuando no lo hace, o cuando no se utiliza ninguna variable discreta en un gráfico, deberá definir explícitamente la estructura de agrupación asignando grupo a una variable que tenga un valor diferente para cada grupo.
 
-There are three common cases where the default is not enough, and we will consider each one below.
-In the following examples, we will use a simple longitudinal dataset, `Oxboys`, from the nlme package.
-It records the heights (`height`) and centered ages (`age`) of 26 boys (`Subject`), measured on nine occasions (`Occasion`).
-`Subject` and `Occasion` are stored as ordered factors.
-\index{nlme} \index{Data!Oxboys@\texttt{Oxboys}}
+Hay tres casos comunes en los que el valor predeterminado no es suficiente y los consideraremos a continuación. En los siguientes ejemplos, utilizaremos un conjunto de datos longitudinal simple, `Oxboys`, del paquete nlme. Registra las alturas (`height`) y edades centradas (`age`) de 26 niños (`Subject`), medidas en nueve ocasiones (`Occasion`). `Subject` y Occasion` se almacenan como factores ordenados. \index{nlme} \index{Data!Oxboys@\texttt{Oxboys}}
 
 ```{r}
 #| label: oxboys
@@ -33,12 +20,9 @@ data(Oxboys, package = "nlme")
 head(Oxboys)
 ```
 
-## Multiple groups, one aesthetic
+## Múltiples grupos, una estética
 
-In many situations, you want to separate your data into groups, but render them in the same way.
-In other words, you want to be able to distinguish individual subjects, but not identify them.
-This is common in longitudinal studies with many subjects, where the plots are often descriptively called spaghetti plots.
-For example, the following plot shows the growth trajectory for each boy (each `Subject`): \index{Data!longitudinal} \indexf{geom\_line}
+En muchas situaciones, querrás separar tus datos en grupos, pero renderizarlos de la misma manera. En otras palabras, se desea poder distinguir sujetos individuales, pero no identificarlos. Esto es común en estudios longitudinales con muchos sujetos, donde las gráficas a menudo se denominan descriptivamente gráficas de espagueti. Por ejemplo, el siguiente gráfico muestra la trayectoria de crecimiento de cada niño (cada `Subject`): \index{Data!longitudinal} \indexf{geom\_line}
 
 ```{r}
 #| label: oxboys-line
@@ -47,7 +31,7 @@ ggplot(Oxboys, aes(age, height, group = Subject)) +
   geom_line()
 ```
 
-If you incorrectly specify the grouping variable, you'll get a characteristic sawtooth appearance:
+Si especifica incorrectamente la variable de agrupación, obtendrá una apariencia característica de diente de sierra:
 
 ```{r}
 #| label: oxboys-line-bad
@@ -56,14 +40,11 @@ ggplot(Oxboys, aes(age, height)) +
   geom_line()
 ```
 
-If a group isn't defined by a single variable, but instead by a combination of multiple variables, use `interaction()` to combine them, e.g. `aes(group = interaction(school_id, student_id))`.
-\indexf{interaction}
+Si un grupo no está definido por una sola variable, sino por una combinación de múltiples variables, use `interaction()` para combinarlas, p.e. `aes(group = interaction(school_id, student_id))`. \indexf{interaction}
 
-## Different groups on different layers
+## Diferentes grupos en diferentes capas.
 
-Sometimes we want to plot summaries that use different levels of aggregation: one layer might display individuals, while another displays an overall summary.
-Building on the previous example, suppose we want to add a single smooth line, showing the overall trend for *all* boys.
-If we use the same grouping in both layers, we get one smooth per boy: \indexf{geom\_smooth}
+A veces queremos trazar resúmenes que utilicen diferentes niveles de agregación: una capa puede mostrar individuos, mientras que otra muestra un resumen general. Basándonos en el ejemplo anterior, supongamos que queremos agregar una única línea suave que muestre la tendencia general para *todos* los niños. Si utilizamos la misma agrupación en ambas capas, obtenemos un liso por niño: \indexf{geom\_smooth}
 
 ```{r}
 #| label: layer18
@@ -72,11 +53,9 @@ ggplot(Oxboys, aes(age, height, group = Subject)) +
   geom_smooth(method = "lm", se = FALSE)
 ```
 
-This is not what we wanted; we have inadvertently added a smoothed line for each boy.
-Grouping controls both the display of the geoms, and the operation of the stats: one statistical transformation is run for each group.
+Esto no es lo que queríamos; Sin darnos cuenta, hemos agregado una línea suavizada para cada niño. La agrupación controla tanto la visualización de las geoms como el funcionamiento de las estadísticas: se ejecuta una transformación estadística para cada grupo.
 
-Instead of setting the grouping aesthetic in `ggplot()`, where it will apply to all layers, we set it in `geom_line()` so it applies only to the lines.
-There are no discrete variables in the plot so the default grouping variable will be a constant and we get one smooth:
+En lugar de configurar la estética de agrupación en `ggplot()`, donde se aplicará a todas las capas, la configuramos en `geom_line()` para que se aplique solo a las líneas. No hay variables discretas en el gráfico, por lo que la variable de agrupación predeterminada será una constante y obtenemos una suave:
 
 ```{r}
 #| label: layer19
@@ -85,11 +64,9 @@ ggplot(Oxboys, aes(age, height)) +
   geom_smooth(method = "lm", linewidth = 2, se = FALSE)
 ```
 
-## Overriding the default grouping
+## Anulación de la agrupación predeterminada
 
-Some plots have a discrete x scale, but you still want to draw lines connecting *across* groups.
-This is the strategy used in interaction plots, profile plots, and parallel coordinate plots, among others.
-For example, imagine we've drawn boxplots of height at each measurement occasion: \indexf{geom\_boxplot}
+Algunos gráficos tienen una escala x discreta, pero aún desea dibujar líneas que conecten *entre* grupos. Esta es la estrategia utilizada en gráficos de interacción, gráficos de perfil y gráficos de coordenadas paralelas, entre otros. Por ejemplo, imagina que hemos dibujado diagramas de caja de la altura en cada ocasión de medición: \indexf{geom\_boxplot}
 
 ```{r}
 #| label: oxbox
@@ -97,9 +74,7 @@ ggplot(Oxboys, aes(Occasion, height)) +
   geom_boxplot()
 ```
 
-There is one discrete variable in this plot, `Occasion`, so we get one boxplot for each unique x value.
-Now we want to overlay lines that connect each individual boy.
-Simply adding `geom_line()` does not work: the lines are drawn within each occasion, not across each subject:
+Hay una variable discreta en este gráfico, `Occasion`, por lo que obtenemos un diagrama de caja para cada valor x único. Ahora queremos superponer líneas que conecten a cada niño individualmente. Simplemente agregar `geom_line()` no funciona: las líneas se dibujan dentro de cada ocasión, no en cada tema:
 
 ```{r}
 #| label: oxbox-line-bad
@@ -108,7 +83,7 @@ ggplot(Oxboys, aes(Occasion, height)) +
   geom_line(colour = "#3366FF", alpha = 0.5)
 ```
 
-To get the plot we want, we need to override the grouping to say we want one line per boy:
+Para obtener la gráfica que queremos, debemos anular la agrupación para decir que queremos una línea por niño:
 
 ```{r}
 #| label: oxbox-line
@@ -117,16 +92,11 @@ ggplot(Oxboys, aes(Occasion, height)) +
   geom_line(aes(group = Subject), colour = "#3366FF", alpha = 0.5)
 ```
 
-## Matching aesthetics to graphic objects {#sec-matching}
+## Combinar la estética con los objetos gráficos {#sec-matching}
 
-A final important issue with collective geoms is how the aesthetics of the individual observations are mapped to the aesthetics of the complete entity.
-What happens when different aesthetics are mapped to a single geometric element?
-\index{Aesthetics!matching to geoms}
+Una última cuestión importante con las geomas colectivas es cómo la estética de las observaciones individuales se relaciona con la estética de la entidad completa. ¿Qué sucede cuando se asignan diferentes estéticas a un solo elemento geométrico? \index{Aesthetics!matching to geoms}
 
-In ggplot2, this is handled differently for different collective geoms.
-Lines and paths operate on a "first value" principle: each segment is defined by two observations, and ggplot2 applies the aesthetic value (e.g., colour) associated with the *first* observation when drawing the segment.
-That is, the aesthetic for the first observation is used when drawing the first segment, the second observation is used when drawing the second segment and so on.
-The aesthetic value for the last observation is not used:
+En ggplot2, esto se maneja de manera diferente para diferentes geoms colectivas. Las líneas y caminos operan según el principio de "primer valor": cada segmento está definido por dos observaciones, y ggplot2 aplica el valor estético (por ejemplo, color) asociado con la *primera* observación al dibujar el segmento. Es decir, la estética de la primera observación se utiliza al dibujar el primer segmento, la segunda observación se utiliza al dibujar el segundo segmento y así sucesivamente. No se utiliza el valor estético de la última observación:
 
 ```{r}
 #| layout-ncol: 2
@@ -142,10 +112,7 @@ ggplot(df, aes(x, y, colour = colour)) +
   geom_point(size = 5)
 ```
 
-On the left --- where colour is discrete --- the first point and first line segment are red, the second point and second line segment are green, and the final point (with no corresponding segment) is blue.
-On the right --- where colour is continuous --- the same principle is applied to the three different shades of blue.
-Notice that even though the colour variable is continuous, ggplot2 does not smoothly blend from one aesthetic value to another.
-If this is the behaviour you want, you can perform the linear interpolation yourself:
+A la izquierda, donde el color es discreto, el primer punto y el primer segmento de línea son rojos, el segundo punto y el segundo segmento de línea son verdes y el punto final (sin segmento correspondiente) es azul. A la derecha, donde el color es continuo, se aplica el mismo principio a los tres tonos diferentes de azul. Tenga en cuenta que, aunque la variable de color es continua, ggplot2 no combina suavemente de un valor estético a otro. Si este es el comportamiento que deseas, puedes realizar la interpolación lineal tú mismo:
 
 ```{r}
 #| label: matching-lines2
@@ -160,22 +127,11 @@ ggplot(interp, aes(x, y, colour = colour)) +
   geom_point(data = df, size = 5)
 ```
 
-An additional limitation for paths and lines is worth noting: the line type must be constant over each individual line.
-In R there is no way to draw a line which has varying line type.
-\indexf{geom\_line} \indexf{geom\_path}
+Vale la pena señalar una limitación adicional para rutas y líneas: el tipo de línea debe ser constante en cada línea individual. En R no hay forma de dibujar una línea que tenga diferentes tipos de línea. \indexf{geom\_line} \indexf{geom\_path}
 
-What about other collective geoms, such as polygons?
-Most collective geoms are more complicated than lines and path, and a single geometric object can map onto many observations.
-In such cases it is not obvious how the aesthetics of individual observations should be combined.
-For instance, how would you colour a polygon that had a different fill colour for each point on its border?
-Due to this ambiguity ggplot2 adopts a simple rule: the aesthetics from the individual components are used only if they are all the same.
-If the aesthetics differ for each component, ggplot2 uses a default value instead.
-\indexf{geom\_polygon}
+¿Qué pasa con otras geomas colectivas, como los polígonos? La mayoría de las geomas colectivas son más complicadas que las líneas y los caminos, y un solo objeto geométrico puede corresponder a muchas observaciones. En tales casos no resulta obvio cómo combinar la estética de las observaciones individuales. Por ejemplo, ¿cómo colorearías un polígono que tuviera un color de relleno diferente para cada punto de su borde? Debido a esta ambigüedad, ggplot2 adopta una regla simple: la estética de los componentes individuales se usa solo si todos son iguales. Si la estética difiere para cada componente, ggplot2 usa un valor predeterminado. \indexf{geom\_polygon}
 
-These issues are most relevant when mapping aesthetics to continuous variables.
-For discrete variables, the default behaviour of ggplot2 is to treat the variable as part of the group aesthetic, as described above.
-This has the effect of splitting the collective geom into smaller pieces.
-This works particularly well for bar and area plots, because stacking the individual pieces produces the same shape as the original ungrouped data:
+Estas cuestiones son más relevantes cuando se asigna la estética a variables continuas. Para variables discretas, el comportamiento predeterminado de ggplot2 es tratar la variable como parte de la estética del grupo, como se describió anteriormente. Esto tiene el efecto de dividir la geom colectiva en pedazos más pequeños. Esto funciona particularmente bien para gráficos de barras y áreas, porque al apilar las piezas individuales se produce la misma forma que los datos originales desagrupados:
 
 ```{r}
 #| label: bar-split-disc
@@ -187,10 +143,7 @@ ggplot(mpg, aes(class, fill = drv)) +
   geom_bar()
 ```
 
-If you try to map the fill aesthetic to a continuous variable (e.g., `hwy`) in the same way, it doesn't work.
-The default grouping will only be based on `class`, so each bar is now associated with multiple colours (depending on the value of `hwy` for the observations in each class).
-Because a bar can only display one colour, ggplot2 reverts to the default grey in this case.
-To show multiple colours, we need multiple bars for each `class`, which we can get by overriding the grouping:
+Si intenta asignar la estética del relleno a una variable continua (por ejemplo, `hwy`) de la misma manera, no funciona. La agrupación predeterminada solo se basará en `class`, por lo que cada barra ahora está asociada con varios colores (dependiendo del valor de `hwy` para las observaciones en cada clase). Debido a que una barra solo puede mostrar un color, ggplot2 vuelve al gris predeterminado en este caso. Para mostrar varios colores, necesitamos varias barras para cada `class`, que podemos obtener anulando la agrupación:
 
 ```{r}
 #| label: bar-split-cont
@@ -202,16 +155,13 @@ ggplot(mpg, aes(class, fill = hwy, group = hwy)) +
   geom_bar()
 ```
 
-In the plot on the right, the "shaded bars" for each `class` have been constructed by stacking many distinct bars on top of each other, each filled with a different shade based on the value of `hwy`.
-Note that when you do this, the bars are stacked in the order defined by the grouping variable (in this example `hwy`).
-If you need fine control over this behaviour, you'll need to create a factor with levels ordered as needed.
+En el gráfico de la derecha, las "barras sombreadas" para cada `class` se construyeron apilando muchas barras distintas una encima de la otra, cada una rellena con un tono diferente según el valor de `hwy`. Tenga en cuenta que cuando hace esto, las barras se apilan en el orden definido por la variable de agrupación (en este ejemplo, `hwy`). Si necesita un control preciso sobre este comportamiento, deberá crear un factor con niveles ordenados según sea necesario.
 
-## Exercises
+## Ejercicios
 
-1.  Draw a boxplot of `hwy` for each value of `cyl`, without turning `cyl` into a factor.
-    What extra aesthetic do you need to set?
+1.  Dibuja un diagrama de caja de `hwy` para cada valor de `cyl`, sin convertir `cyl` en un factor. ¿Qué estética extra necesitas configurar?
 
-2.  Modify the following plot so that you get one boxplot per integer value of `displ`.
+2.  Modifique el siguiente gráfico para obtener un diagrama de caja por valor entero de `displ`.
 
     ```{r}
     #| eval: false
@@ -219,13 +169,9 @@ If you need fine control over this behaviour, you'll need to create a factor wit
       geom_boxplot()
     ```
 
-3.  When illustrating the difference between mapping continuous and discrete colours to a line, the discrete example needed `aes(group = 1)`.
-    Why?
-    What happens if that is omitted?
-    What's the difference between `aes(group = 1)` and `aes(group = 2)`?
-    Why?
+3.  Al ilustrar la diferencia entre asignar colores continuos y discretos a una línea, el ejemplo discreto necesitaba `aes (grupo = 1)`. ¿Por qué? ¿Qué pasa si eso se omite? ¿Cuál es la diferencia entre `aes(grupo = 1)` y `aes(grupo = 2)`? ¿Por qué?
 
-4.  How many bars are in each of the following plots?
+4.  ¿Cuántas barras hay en cada una de las siguientes gráficas?
 
     ```{r}
     #| eval: false
@@ -241,12 +187,9 @@ If you need fine control over this behaviour, you'll need to create a factor wit
       geom_bar()
     ```
 
-    (Hint: try adding an outline around each bar with `colour = "white"`)
+    (Sugerencia: intente agregar un contorno alrededor de cada barra con `colour = "white"`)
 
-5.  Install the babynames package.
-    It contains data about the popularity of baby names in the US.
-    Run the following code and fix the resulting graph.
-    Why does this graph make us unhappy?
+5.  Instale el paquete babynames. Contiene datos sobre la popularidad de los nombres de bebés en Estados Unidos. Ejecute el siguiente código y corrija el gráfico resultante. ¿Por qué este gráfico nos hace infelices?
 
     ```{r}
     #| eval: false
