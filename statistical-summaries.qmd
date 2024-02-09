@@ -51,7 +51,7 @@ Hay algunas cosas diferentes que quizás queramos considerar:
 -   Población total, para trabajar con números absolutos.
 -   Área, para investigar efectos geográficos. (Esto no es útil para el `midwest`, pero lo sería si tuviéramos variables como el porcentaje de tierras de cultivo).
 
-La elección de una variable de ponderación afecta profundamente lo que estamos viendo en la trama y las conclusiones que sacaremos. Hay dos atributos estéticos que se pueden utilizar para ajustar los pesos. En primer lugar, para geoms simples como líneas y puntos, use la estética de tamaño:
+La elección de una variable de ponderación afecta profundamente lo que estamos viendo en la gráfica y las conclusiones que sacaremos. Hay dos atributos estéticos que se pueden utilizar para ajustar los pesos. En primer lugar, para geoms simples como líneas y puntos, use la estética de tamaño:
 
 ```{r}
 #| label: miss-basic
@@ -268,7 +268,7 @@ Hay varias formas de abordarlo según el tamaño de los datos y la gravedad del 
 
 Alternativamente, podemos pensar en el sobregráfico como un problema de estimación de densidad 2D, lo que da lugar a dos enfoques más:
 
--   Agrupe los puntos y cuente el número en cada contenedor, luego visualice ese recuento (la segunda generalización del histograma), `geom_bin2d()`. Dividir la trama en muchos cuadrados pequeños puede producir artefactos visuales que distraigan. [@carr:1987] sugiere usar hexágonos en su lugar, y esto se implementa en `geom_hex()`, usando el paquete **hexbin** [@hexbin]. \index{hexbin}
+-   Agrupe los puntos y cuente el número en cada contenedor, luego visualice ese recuento (la segunda generalización del histograma), `geom_bin2d()`. Dividir la gráfica en muchos cuadrados pequeños puede producir artefactos visuales que distraigan. [@carr:1987] sugiere usar hexágonos en su lugar, y esto se implementa en `geom_hex()`, usando el paquete **hexbin** [@hexbin]. \index{hexbin}
 
     El siguiente código compara contenedores cuadrados y hexagonales, utilizando los parámetros `bins` y `binwidth` para controlar el número y el tamaño de los contenedores. \index{Histogram!2d} \indexf{geom\_hexagon} \indexf{geom\_hex} \indexf{geom\_bin2d}
 
