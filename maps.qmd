@@ -1,4 +1,4 @@
-# Maps {#sec-maps}
+# Mapas {#sec-maps}
 
 ```{r}
 #| echo: false
@@ -8,21 +8,13 @@ source("common.R")
 status("polishing")
 ```
 
-Plotting geospatial data is a common visualisation task, and one that requires specialised tools.
-Typically, the problem can be decomposed into two problems: using one data source to draw a map, and adding metadata from another information source to the map.
-This chapter will help you tackle both problems.
-We've structured the chapter in the following way: @sec-polygonmaps outlines a simple way to draw maps using `geom_polygon()`, which is followed in @sec-sf by a modern "simple features" (sf) approach using `geom_sf()`.
-Next, @sec-mapproj and @sec-sfdetail discuss how to work with map projections and the underlying sf data structure.
-Finally, @sec-rastermaps discusses how to draw maps based on raster data.
+Trazar datos geoespaciales es una tarea de visualización común y que requiere herramientas especializadas. Normalmente, el problema se puede descomponer en dos problemas: utilizar una fuente de datos para dibujar un mapa y agregar metadatos de otra fuente de información al mapa. Este capítulo le ayudará a abordar ambos problemas. Hemos estructurado el capítulo de la siguiente manera: @sec-polygonmaps describe una forma sencilla de dibujar mapas usando `geom_polygon()`, seguida en @sec-sf por un enfoque moderno de "características simples" (sf) usando ` geom_sf()`. A continuación, @sec-mapproj y @sec-sfdetail analizan cómo trabajar con proyecciones de mapas y la estructura de datos sf subyacente. Finalmente, @sec-rastermaps analiza cómo dibujar mapas basados en datos ráster.
 
-## Polygon maps {#sec-polygonmaps}
+## Mapas de polígonos {#sec-polygonmaps}
 
 \index{Maps!geoms} \index{Data!spatial} \index{geom\_polygon}
 
-Perhaps the simplest approach to drawing maps is to use `geom_polygon()` to draw boundaries for different regions.
-For this example we take data from the maps package using `ggplot2::map_data()`.
-The maps package isn't particularly accurate or up-to-date, but it's built into R so it's an easy place to start.
-Here's a data set specifying the county boundaries for Michigan:
+Quizás el método más sencillo para dibujar mapas sea utilizar `geom_polygon()` para dibujar límites para diferentes regiones. Para este ejemplo tomamos datos del paquete de mapas usando `ggplot2::map_data()`. El paquete de mapas no es particularmente preciso ni está actualizado, pero está integrado en R, por lo que es un lugar fácil para comenzar. Aquí hay un conjunto de datos que especifica los límites del condado de Michigan:
 
 ```{r}
 mi_counties <- map_data("county", "michigan") %>% 
@@ -30,11 +22,7 @@ mi_counties <- map_data("county", "michigan") %>%
 head(mi_counties)
 ```
 
-In this data set we have four variables: `lat` and `long` specify the latitude and longitude of a vertex (i.e. a corner of the polygon), `id` specifies the name of a region, and `group` provides a unique identifier for contiguous areas within a region (e.g. if a region consisted of multiple islands).
-To get a better sense of what the data contains, we can plot `mi_counties` using `geom_point()`, as shown in the left panel below.
-In this plot, each row in the data frame is plotted as a single point, producing a scatterplot that shows the corners of every county.
-To turn this scatterplot into a map, we use `geom_polygon()` instead, which draws each county as a distinct polygon.
-This is illustrated in the right panel below.
+En este conjunto de datos tenemos cuatro variables: `lat` y `long` especifican la latitud y longitud de un vértice (es decir, una esquina del polígono), `id` especifica el nombre de una región y `group` proporciona un valor único. identificador de áreas contiguas dentro de una región (por ejemplo, si una región constaba de varias islas). Para tener una mejor idea de lo que contienen los datos, podemos trazar `mi_counties` usando `geom_point()`, como se muestra en el panel izquierdo a continuación. En este gráfico, cada fila del marco de datos se traza como un único punto, lo que produce un diagrama de dispersión que muestra las esquinas de cada condado. Para convertir este diagrama de dispersión en un mapa, usamos `geom_polygon()`, que dibuja cada condado como un polígono distinto. Esto se ilustra en el panel derecho a continuación.
 
 ```{r}
 #| layout-ncol: 2
@@ -48,18 +36,13 @@ ggplot(mi_counties, aes(lon, lat, group = group)) +
   coord_quickmap()
 ```
 
-In both plots we use `coord_quickmap()` to adjust the axes to ensure that longitude and latitude are rendered on the same scale.
-@sec-coord discusses coordinate systems in ggplot2 in more general terms, but as we'll see below, geospatial data often require a more exacting approach.
-For this reason, ggplot2 provides `geom_sf()` and `coord_sf()` to handle spatial data specified in simple features format.
+En ambos gráficos usamos `coord_quickmap()` para ajustar los ejes y garantizar que la longitud y la latitud se representen en la misma escala. @sec-coord analiza los sistemas de coordenadas en ggplot2 en términos más generales, pero como veremos a continuación, los datos geoespaciales a menudo requieren un enfoque más exigente. Por esta razón, ggplot2 proporciona `geom_sf()` y `coord_sf()` para manejar datos espaciales especificados en formato de características simples.
 
-## Simple features maps {#sec-sf}
+## Mapas de características simples {#sec-sf}
 
-There are a few limitations to the approach outlined above, not least of which is the fact that the simple "longitude-latitude" data format is not typically used in real world mapping.
-Vector data for maps are typically encoded using the "simple features" standard produced by the Open Geospatial Consortium.
-The sf package [@sf] developed by Edzer Pebesma <https://github.com/r-spatial/sf> provides an excellent toolset for working with such data, and the `geom_sf()` and `coord_sf()` functions in ggplot2 are designed to work together with the sf package.
+El enfoque descrito anteriormente tiene algunas limitaciones, entre las que destaca el hecho de que el formato de datos simple "longitud-latitud" no se utiliza normalmente en la cartografía del mundo real. Los datos vectoriales para mapas normalmente se codifican utilizando el estándar de "características simples" producido por el Open Geospatial Consortium. El paquete sf [@sf] desarrollado por Edzer Pebesma <https://github.com/r-spatial/sf> proporciona un excelente conjunto de herramientas para trabajar con dichos datos y las funciones `geom_sf()` y `coord_sf()` en ggplot2 están diseñados para funcionar junto con el paquete sf.
 
-To introduce these functions, we rely on the ozmaps package by Michael Sumner <https://github.com/mdsumner/ozmaps/> which provides maps for Australian state boundaries, local government areas, electoral boundaries, and so on [@ozmaps].
-To illustrate what an sf data set looks like, we import a data set depicting the borders of Australian states and territories:
+Para presentar estas funciones, nos basamos en el paquete ozmaps de Michael Sumner <https://github.com/mdsumner/ozmaps/> que proporciona mapas de las fronteras estatales de Australia, áreas de gobierno local, límites electorales, etc. [@ozmaps] . Para ilustrar cómo se ve un conjunto de datos sf, importamos un conjunto de datos que representa las fronteras de los estados y territorios australianos:
 
 ```{r}
 library(ozmaps)
@@ -69,13 +52,9 @@ oz_states <- ozmaps::ozmap_states
 oz_states
 ```
 
-This output shows some of the metadata associated with the data (discussed momentarily), and tells us that the data is essentially a tibble with 9 rows and 2 columns.
-One advantage to sf data is immediately apparent, we can easily see the overall structure of the data: Australia is comprised of six states and some territories.
-There are 9 distinct geographical units, so there are 9 rows in this tibble (cf. `mi_counties data` where there is one row per polygon vertex).
+Este resultado muestra algunos de los metadatos asociados con los datos (que se analizan momentáneamente) y nos dice que los datos son esencialmente un tibble con 9 filas y 2 columnas. Una ventaja de los datos de ciencia ficción es inmediatamente evidente: podemos ver fácilmente la estructura general de los datos: Australia se compone de seis estados y algunos territorios. Hay 9 unidades geográficas distintas, por lo que hay 9 filas en este tibble (cf. `mi_counties data` donde hay una fila por vértice del polígono).
 
-The most important column is `geometry`, which specifies the spatial geometry for each of the states and territories.
-Each element in the `geometry` column is a multipolygon object which, as the name suggests, contains data specifying the vertices of one or more polygons that demark the border of a region.
-Given data in this format, we can use `geom_sf()` and `coord_sf()` to draw a serviceable map without specifying any parameters or even explicitly declaring any aesthetics:
+La columna más importante es "geometría" `geometry`, que especifica la geometría espacial para cada uno de los estados y territorios. Cada elemento de la columna `geometry` es un objeto multipolígono que, como su nombre indica, contiene datos que especifican los vértices de uno o más polígonos que delimitan el borde de una región. Dados los datos en este formato, podemos usar `geom_sf()` y `coord_sf()` para dibujar un mapa útil sin especificar ningún parámetro o incluso declarar explícitamente ninguna estética:
 
 ```{r}
 ggplot(oz_states) + 
@@ -83,36 +62,28 @@ ggplot(oz_states) +
   coord_sf()
 ```
 
-To understand why this works, note that `geom_sf()` relies on a `geometry` aesthetic that is not used elsewhere in ggplot2.
-This aesthetic can be specified in one of three ways:
+Para entender por qué esto funciona, tenga en cuenta que `geom_sf()` se basa en una estética de `geometry` que no se utiliza en ninguna otra parte de ggplot2. Esta estética se puede especificar de una de tres maneras:
 
--   In the simplest case (illustrated above) when the user does nothing, `geom_sf()` will attempt to map it to a column named `geometry`.
+-   En el caso más simple (ilustrado arriba) cuando el usuario no hace nada, `geom_sf()` intentará asignarlo a una columna llamada `geometry`.
 
--   If the `data` argument is an sf object then `geom_sf()` can automatically detect a geometry column, even if it's not called `geometry`.
+-   Si el argumento `data` es un objeto sf entonces `geom_sf()` puede detectar automáticamente una columna de geometría, incluso si no se llama `geometry`.
 
--   You can specify the mapping manually in the usual way with `aes(geometry = my_column)`.
-    This is useful if you have multiple geometry columns.
+-   Puede especificar el mapeo manualmente de la forma habitual con `aes(geometry = my_column)`. Esto es útil si tiene varias columnas de geometría.
 
-The `coord_sf()` function governs the map projection, discussed in @sec-mapproj.
+La función `coord_sf()` gobierna la proyección del mapa, discutida en @sec-mapproj.
 
-### Layered maps
+### Mapas en capas
 
-In some instances you may want to overlay one map on top of another.
-The ggplot2 package supports this by allowing you to add multiple `geom_sf()` layers to a plot.
-As an example, we'll use the `oz_states` data to draw the Australian states in different colours, and will overlay this plot with the boundaries of Australian electoral regions.
-To do this, there are two preprocessing steps to perform.
-First, we'll use `dplyr::filter()` to remove the "Other Territories" from the state boundaries.
+En algunos casos, es posible que desees superponer un mapa encima de otro. El paquete ggplot2 admite esto permitiéndole agregar múltiples capas `geom_sf()` a un gráfico. Como ejemplo, usaremos los datos de "oz_states" para dibujar los estados australianos en diferentes colores y superpondremos este gráfico con los límites de las regiones electorales australianas. Para hacer esto, hay que realizar dos pasos de preprocesamiento. Primero, usaremos `dplyr::filter()` para eliminar los "Other Territories" de las fronteras estatales.
 
-The code below draws a plot with two map layers: the first uses `oz_states` to fill the states in different colours, and the second uses `oz_votes` to draw the electoral boundaries.
-Second, we'll extract the electoral boundaries in a simplified form using the `ms_simplify()` function from the rmapshaper package [@rmapshaper].
-This is generally a good idea if the original data set (in this case `ozmaps::abs_ced`) is stored at a higher resolution than your plot requires, in order to reduce the time taken to render the plot.
+El siguiente código dibuja un gráfico con dos capas de mapa: la primera usa `oz_states` para llenar los estados en diferentes colores, y la segunda usa `oz_votes` para dibujar los límites electorales. En segundo lugar, extraeremos los límites electorales de forma simplificada utilizando la función `ms_simplify()` del paquete rmapshaper [@rmapshaper]. Generalmente, esto es una buena idea si el conjunto de datos original (en este caso, `ozmaps::abs_ced`) se almacena a una resolución más alta que la que requiere su gráfico, para reducir el tiempo necesario para renderizar el gráfico.
 
 ```{r}
 oz_states <- ozmaps::ozmap_states %>% filter(NAME != "Other Territories")
 oz_votes <- rmapshaper::ms_simplify(ozmaps::abs_ced)
 ```
 
-Now that we have data sets `oz_states` and `oz_votes` to represent the state borders and electoral borders respectively, the desired plot can be constructed by adding two `geom_sf()` layers to the plot:
+Ahora que tenemos los conjuntos de datos `oz_states` y `oz_votes` para representar las fronteras estatales y electorales respectivamente, el gráfico deseado se puede construir agregando dos capas `geom_sf()` al gráfico:
 
 ```{r}
 ggplot() + 
@@ -121,19 +92,14 @@ ggplot() +
   coord_sf()
 ```
 
-It is worth noting that the first layer to this plot maps the `fill` aesthetic in onto a variable in the data.
-In this instance the `NAME` variable is a categorical variable and does not convey any additional information, but the same approach can be used to visualise other kinds of area metadata.
-For example, if `oz_states` had an additional column specifying the unemployment level in each state, we could map the `fill` aesthetic to that variable.
+Vale la pena señalar que la primera capa de este gráfico asigna la estética del `fill` a una variable de los datos. En este caso, la variable `NAME` es una variable categórica y no transmite ninguna información adicional, pero se puede utilizar el mismo enfoque para visualizar otros tipos de metadatos de área. Por ejemplo, si `oz_states` tuviera una columna adicional que especificara el nivel de desempleo en cada estado, podríamos asignar la estética del `fill` a esa variable.
 
-### Labelled maps {#sec-geom_sf_label}
+### Mapas etiquetados {#sec-geom_sf_label}
 
-Adding labels to maps is an example of annotating plots (@sec-annotations) and is supported by `geom_sf_label()` and `geom_sf_text()`.
-For example, while an Australian audience might be reasonably expected to know the names of the Australian states (and are left unlabelled in the plot above) few Australians would know the names of different electorates in the Sydney metropolitan region.
-In order to draw an electoral map of Sydney, then, we would first need to extract the map data for the relevant electorates, and then add the label.
-The plot below zooms in on the Sydney region by specifying `xlim` and `ylim` in `coord_sf()` and then uses `geom_sf_label()` to overlay each electorate with a label:
+Agregar etiquetas a mapas es un ejemplo de anotar gráficos (@sec-annotations) y es compatible con `geom_sf_label()` y `geom_sf_text()`. Por ejemplo, si bien es razonable esperar que una audiencia australiana conozca los nombres de los estados australianos (y no están etiquetados en el gráfico anterior), pocos australianos conocerían los nombres de los diferentes electorados en la región metropolitana de Sydney. Entonces, para dibujar un mapa electoral de Sydney, primero necesitaríamos extraer los datos del mapa para los electorados relevantes y luego agregar la etiqueta. El siguiente gráfico se acerca a la región de Sydney especificando `xlim` y `ylim` en `coord_sf()` y luego usa `geom_sf_label()` para superponer cada electorado con una etiqueta:
 
 ```{r}
-# Filter electorates in the Sydney metropolitan region
+# Filtrar electorados en la región metropolitana de Sydney
 sydney_map <- ozmaps::abs_ced %>% filter(NAME %in% c(
   "Sydney", "Wentworth", "Warringah", "Kingsford Smith", "Grayndler", "Lowe", 
   "North Sydney", "Barton", "Bradfield", "Banks", "Blaxland", "Reid", 
@@ -141,25 +107,20 @@ sydney_map <- ozmaps::abs_ced %>% filter(NAME %in% c(
   "Mackellar", "Greenway", "Mitchell", "Chifley", "McMahon"
 ))
 
-# Draw the electoral map of Sydney
+# Dibuja el mapa electoral de Sydney
 ggplot(sydney_map) + 
   geom_sf(aes(fill = NAME), show.legend = FALSE) + 
   coord_sf(xlim = c(150.97, 151.3), ylim = c(-33.98, -33.79)) + 
   geom_sf_label(aes(label = NAME), label.padding = unit(1, "mm"))
 ```
 
-The warning message is worth noting.
-Internally `geom_sf_label()` uses the function `st_point_on_surface()` from the sf package to place labels, and the warning message occurs because most algorithms used by sf to compute geometric quantities (e.g., centroids, interior points) are based on an assumption that the points lie in on a flat two dimensional surface and parameterised with Cartesian co-ordinates.
-This assumption is not strictly warranted, and in some cases (e.g., regions near the poles) calculations that treat longitude and latitude in this way will give erroneous answers.
-For this reason, the sf package produces warning messages when it relies on this approximation.
+Vale la pena señalar el mensaje de advertencia. Internamente, `geom_sf_label()` usa la función `st_point_on_surface()` del paquete sf para colocar etiquetas, y el mensaje de advertencia aparece porque la mayoría de los algoritmos utilizados por sf para calcular cantidades geométricas (por ejemplo, centroides, puntos interiores) se basan en una suposición. que los puntos se encuentran sobre una superficie plana bidimensional y parametrizados con coordenadas cartesianas. Esta suposición no está estrictamente justificada y, en algunos casos (por ejemplo, regiones cercanas a los polos), los cálculos que tratan la longitud y la latitud de esta manera darán respuestas erróneas. Por este motivo, el paquete sf genera mensajes de advertencia cuando se basa en esta aproximación.
 
 <!-- HW: worth commenting on warning? "st_point_on_surface may not give correct results for longitude/latitude data" -->
 
-### Adding other geoms
+### Agregar otras geomas
 
-Though `geom_sf()` is special in some ways, it nevertheless behaves in much the same fashion as any other geom, allowing additional data to be plotted on a map with standard geoms.
-For example, we may wish to plot the locations of the Australian capital cities on the map using `geom_point()`.
-The code below illustrates how this is done:
+Aunque `geom_sf()` es especial en algunos aspectos, se comporta de la misma manera que cualquier otra geom, lo que permite trazar datos adicionales en un mapa con geoms estándar. Por ejemplo, es posible que deseemos trazar las ubicaciones de las capitales australianas en el mapa usando `geom_point()`. El siguiente código ilustra cómo se hace esto:
 
 ```{r}
 oz_capitals <- tibble::tribble( 
@@ -181,64 +142,39 @@ ggplot() +
   coord_sf()
 ```
 
-In this example `geom_point` is used only to specify the locations of the capital cities, but the basic idea can be extended to handle point metadata more generally.
-For example, if the oz_capitals data were to include an additional variable specifying the number of electorates within each metropolitan area, we could encode that data using the `size` aesthetic.
+En este ejemplo, `geom_point` se usa solo para especificar las ubicaciones de las ciudades capitales, pero la idea básica se puede ampliar para manejar metadatos de puntos de manera más general. Por ejemplo, si los datos de oz_capitals incluyeran una variable adicional que especificara el número de electorados dentro de cada área metropolitana, podríamos codificar esos datos utilizando la estética `size`.
 
-## Map projections {#sec-mapproj}
+## Proyecciones de mapas {#sec-mapproj}
 
-At the start of the chapter we drew maps by plotting longitude and latitude on a Cartesian plane, as if geospatial data were no different to other kinds of data one might want to plot.
-To a first approximation this is okay, but it's not good enough if you care about accuracy.
-There are two fundamental problems with the approach.
+Al comienzo del capítulo dibujamos mapas trazando la longitud y la latitud en un plano cartesiano, como si los datos geoespaciales no fueran diferentes de otros tipos de datos que uno podría querer trazar. En una primera aproximación, esto está bien, pero no es lo suficientemente bueno si lo que importa es la precisión. Hay dos problemas fundamentales con este enfoque.
 
-The first issue is the shape of the planet.
-The Earth is neither a flat plane, nor indeed is it a perfect sphere.
-As a consequence, to map a co-ordinate value (longitude and latitude) to a location we need to make assumptions about all kinds of things.
-How ellipsoidal is the Earth?
-Where is the centre of the planet?
-Where is the origin point for longitude and latitude?
-Where is the sea level?
-How do the tectonic plates move?
-All these things are relevant, and depending on what assumptions one makes the same co-ordinate can be mapped to locations that are many meters apart.
-The set of assumptions about the shape of the Earth is referred to as the **geodetic datum** and while it might not matter for some data visualisations, for others it is critical.
-There are several different choices one might consider: if your focus is North America the "North American Datum" (NAD83) is a good choice, whereas if your perspective is global the "World Geodetic System" (WGS84) is probably better.
+La primera cuestión es la forma del planeta. La Tierra no es un plano ni una esfera perfecta. Como consecuencia, para asignar un valor de coordenadas (longitud y latitud) a una ubicación necesitamos hacer suposiciones sobre todo tipo de cosas. ¿Qué tan elipsoidal es la Tierra? ¿Dónde está el centro del planeta? ¿Dónde está el punto de origen de la longitud y la latitud? ¿Dónde está el nivel del mar? ¿Cómo se mueven las placas tectónicas? Todas estas cosas son relevantes y, dependiendo de las suposiciones que se hagan, la misma coordenada se puede asignar a ubicaciones que están a muchos metros de distancia. El conjunto de suposiciones sobre la forma de la Tierra se conoce como **dato geodésico** y, si bien puede no ser importante para algunas visualizaciones de datos, para otras es fundamental. Hay varias opciones diferentes que uno podría considerar: si su enfoque es América del Norte, el "Datum de América del Norte" (NAD83) es una buena opción, mientras que si su perspectiva es global, el "Sistema Geodésico Mundial" (WGS84) probablemente sea mejor.
 
-The second issue is the shape of your map.
-The Earth is approximately ellipsoidal, but in most instances your spatial data need to be drawn on a two-dimensional plane.
-It is not possible to map the surface of an ellipsoid to a plane without some distortion or cutting, and you will have to make choices about what distortions you are prepared to accept when drawing a map.
-This is the job of the **map projection**.
+La segunda cuestión es la forma de su mapa. La Tierra es aproximadamente elipsoidal, pero en la mayoría de los casos los datos espaciales deben dibujarse en un plano bidimensional. No es posible mapear la superficie de un elipsoide en un plano sin cierta distorsión o corte, y tendrás que elegir qué distorsiones estás dispuesto a aceptar al dibujar un mapa. Este es el trabajo de la **proyección cartográfica**.
 
-Map projections are often classified in terms of the geometric properties that they preserve, e.g.
+Las proyecciones cartográficas a menudo se clasifican en términos de las propiedades geométricas que conservan, p.
 
--   Area-preserving projections ensure that regions of equal area on the globe are drawn with equal area on the map.
+-   Las proyecciones que preservan el área garantizan que las regiones de igual área en el mundo se dibujen con igual área en el mapa.
 
--   Shape-preserving (or conformal) projections ensure that the local shape of regions is preserved.
+-   Las proyecciones que preservan la forma (o conformes) garantizan que se conserve la forma local de las regiones.
 
-And unfortunately, it's not possible for any projection to be shape-preserving and area-preserving.
-This makes it a little beyond the scope of this book to discuss map projections in detail, other than to note that the simple features specification allows you to indicate which map projection you want to use.
-For more information on map projections, see Geocomputation with R <https://geocompr.robinlovelace.net/> [@lovelace_geocomputation_2019].
+Y desafortunadamente, no es posible que ninguna proyección conserve la forma y el área. Esto hace que esté un poco más allá del alcance de este libro discutir las proyecciones cartográficas en detalle, aparte de señalar que la especificación de características simples le permite indicar qué proyección cartográfica desea utilizar. Para obtener más información sobre proyecciones de mapas, consulte Geocómputo con R <https://geocompr.robinlovelace.net/> [@lovelace_geocomputation_2019].
 
-Taken together, the geodetic datum (e.g, WGS84), the type of map projection (e.g., Mercator) and the parameters of the projection (e.g., location of the origin) specify a **coordinate reference system**, or CRS, a complete set of assumptions used to translate the latitude and longitude information into a two-dimensional map.
-An sf object often includes a default CRS, as illustrated below:
+En conjunto, el datum geodésico (p. ej., WGS84), el tipo de proyección cartográfica (p. ej., Mercator) y los parámetros de la proyección (p. ej., ubicación del origen) especifican un **sistema de referencia de coordenadas**, o CRS, un conjunto completo de suposiciones utilizadas para traducir la información de latitud y longitud en un mapa bidimensional. Un objeto sf a menudo incluye un CRS predeterminado, como se ilustra a continuación:
 
 ```{r}
 st_crs(oz_votes)
 ```
 
-Most of this output corresponds to a **well-known text** (WKT) string that unambiguously describes the CRS.
-This verbose WKT representation is used by sf internally, but there are several ways to provide user input that sf understands.
-One such method is to provide numeric input in the form of an **EPSG code** (see <https://epsg.org/home.html>).
-The default CRS in the `oz_votes` data corresponds to EPSG code 4283:
+La mayor parte de este resultado corresponde a una cadena de **texto conocido** (WKT) que describe sin ambigüedades el CRS. sf utiliza esta representación detallada de WKT internamente, pero hay varias formas de proporcionar información al usuario que sf comprenda. Uno de esos métodos es proporcionar entrada numérica en forma de **código EPSG** (consulte <https://epsg.org/home.html>). El CRS predeterminado en los datos `oz_votes` corresponde al código EPSG 4283: El CRS predeterminado en los datos `oz_votes` corresponde al código EPSG 4283:
 
 ```{r}
 st_crs(oz_votes) == st_crs(4283)
 ```
 
-In ggplot2, the CRS is controlled by `coord_sf()`, which ensures that every layer in the plot uses the same projection.
-By default, `coord_sf()` uses the CRS associated with the geometry column of the data[^maps-1].
-Because sf data typically supply a sensible choice of CRS, this process usually unfolds invisibly, requiring no intervention from the user.
-However, should you need to set the CRS yourself, you can specify the `crs` parameter by passing valid user input to `st_crs()`. The example below illustrates how to switch from the default CRS to EPSG code 3112:
+En ggplot2, el CRS está controlado por `coord_sf()`, lo que garantiza que cada capa del gráfico utilice la misma proyección. Por defecto, `coord_sf()` usa el CRS asociado con la columna de geometría de los datos[^maps-1]. Dado que los datos de ciencia ficción suelen ofrecer una opción sensata de CRS, este proceso normalmente se desarrolla de forma invisible y no requiere intervención del usuario. Sin embargo, si necesita configurar el CRS usted mismo, puede especificar el parámetro `crs` pasando una entrada de usuario válida a `st_crs()`. El siguiente ejemplo ilustra cómo cambiar del CRS predeterminado al código EPSG 3112:
 
-[^maps-1]: If there are multiple data sets with a different associated CRS, it uses the CRS from the first layer.
+[^maps-1]: Si hay varios conjuntos de datos con un CRS asociado diferente, utiliza el CRS de la primera capa.
 
 ```{r}
 #| layout-ncol: 2
@@ -248,13 +184,11 @@ ggplot(oz_votes) + geom_sf()
 ggplot(oz_votes) + geom_sf() + coord_sf(crs = st_crs(3112))
 ```
 
-## Working with sf data {#sec-sfdetail}
+## Trabajar con datos sf {#sec-sfdetail}
 
-As noted earlier, maps created using `geom_sf()` and `coord_sf()` rely heavily on tools provided by the sf package, and indeed the sf package contains many more useful tools for manipulating simple features data.
-In this section we provide an introduction to a few such tools; more detailed coverage can be found on the sf package website <https://r-spatial.github.io/sf/>.
+Como se señaló anteriormente, los mapas creados usando `geom_sf()` y `coord_sf()` dependen en gran medida de las herramientas proporcionadas por el paquete sf y, de hecho, el paquete sf contiene muchas más herramientas útiles para manipular datos de características simples. En esta sección proporcionamos una introducción a algunas de estas herramientas; Puede encontrar una cobertura más detallada en el sitio web del paquete SF <https://r-spatial.github.io/sf/>.
 
-To get started, recall that one advantage to simple features over other representations of spatial data is that geographical units can have complicated structure.
-A good example of this in the Australian maps data is the electoral district of Eden-Monaro, plotted below:
+Para comenzar, recuerde que una ventaja de las características simples sobre otras representaciones de datos espaciales es que las unidades geográficas pueden tener una estructura complicada. Un buen ejemplo de esto en los datos de los mapas australianos es el distrito electoral de Eden-Monaro, que se muestra a continuación:
 
 ```{r}
 #| layout-ncol: 2
@@ -266,41 +200,35 @@ p + coord_sf(xlim = c(147.75, 150.25), ylim = c(-37.5, -34.5))
 p + coord_sf(xlim = c(150, 150.25), ylim = c(-36.3, -36)) 
 ```
 
-As this illustrates, Eden-Monaro is defined in terms of two distinct polygons, a large one on the Australian mainland and a small island.
-However, the large region has a hole in the middle (the hole exists because the Australian Capital Territory is a distinct political unit that is wholly contained within Eden-Monaro, and as illustrated above, electoral boundaries in Australia do not cross state lines).
-In sf terminology this is an example of a `MULTIPOLYGON` geometry.
-In this section we'll talk about the structure of these objects and how to work with them.
+Como lo ilustra esto, Eden-Monaro se define en términos de dos polígonos distintos, uno grande en el continente australiano y una isla pequeña. Sin embargo, la gran región tiene un agujero en el medio (el agujero existe porque el Territorio de la Capital Australiana es una unidad política distinta que está totalmente contenida dentro de Eden-Monaro y, como se ilustra arriba, las fronteras electorales en Australia no cruzan las fronteras estatales). En terminología sf, este es un ejemplo de geometría `MULTIPOLYGON`. En esta sección hablaremos sobre la estructura de estos objetos y cómo trabajar con ellos.
 
-First, let's use dplyr to grab only the geometry object:
+Primero, usemos dplyr para tomar solo el objeto de geometría:
 
 ```{r}
 edenmonaro <- edenmonaro %>% pull(geometry)
 ```
 
-The metadata for the edenmonaro object can be accessed using helper functions.
-For example, `st_geometry_type()` extracts the geometry type (e.g., `MULTIPOLYGON`), `st_dimension()` extracts the number of dimensions (2 for XY data, 3 for XYZ), `st_bbox()` extracts the bounding box as a numeric vector, and `st_crs()` extracts the CRS as a list with two components, one for the EPSG code and the other for the proj4string.
-For example:
+Se puede acceder a los metadatos del objeto edenmonaro mediante funciones auxiliares. Por ejemplo, `st_geometry_type()` extrae el tipo de geometría (por ejemplo, `MULTIPOLYGON`), `st_dimension()` extrae el número de dimensiones (2 para datos XY, 3 para XYZ), `st_bbox()` extrae el cuadro delimitador como un vector numérico, y `st_crs()` extrae el CRS como una lista con dos componentes, uno para el código EPSG y el otro para proj4string. Por ejemplo:
 
 ```{r}
 st_bbox(edenmonaro)
 ```
 
-Normally when we print the `edenmonaro` object the output would display all the additional information (dimension, bounding box, geodetic datum etc) but for the remainder of this section we will show only the relevant lines of the output.
-In this case edenmonaro is defined by a MULTIPOLYGON geometry containing one feature:
+Normalmente, cuando imprimimos el objeto `edenmonaro`, la salida mostrará toda la información adicional (dimensión, cuadro delimitador, dato geodésico, etc.), pero durante el resto de esta sección mostraremos solo las líneas relevantes de la salida. En este caso, edenmonaro está definido por una geometría MULTIPOLYGON que contiene una característica:
 
 ```{r}
 #| output.lines: !expr -(3:6)
 edenmonaro 
 ```
 
-However, we can "cast" the MULTIPOLYGON into the two distinct POLYGON geometries from which it is constructed using `st_cast()`:
+Sin embargo, podemos "fundir" el MULTIPOLYGON en las dos geometrías POLYGON distintas a partir de las cuales está construido usando `st_cast()`:
 
 ```{r}
 #| output.lines: !expr -(3:6)
 st_cast(edenmonaro, "POLYGON")
 ```
 
-To illustrate when this might be useful, consider the Dawson electorate, which consists of 69 islands in addition to a coastal region on the Australian mainland.
+Para ilustrar cuándo esto podría ser útil, consideremos el electorado de Dawson, que consta de 69 islas además de una región costera en el continente australiano.
 
 ```{r}
 #| output.lines: !expr -(3:6)
@@ -314,17 +242,14 @@ ggplot(dawson) +
   coord_sf()
 ```
 
-Suppose, however, our interest is only in mapping the islands.
-If so, we can first use the `st_cast()` function to break the Dawson electorate into the constituent polygons.
-After doing so, we can use `st_area()` to calculate the area of each polygon and `which.max()` to find the polygon with maximum area:
+Supongamos, sin embargo, que nuestro interés es sólo cartografiar las islas. Si es así, primero podemos usar la función `st_cast()` para dividir el electorado de Dawson en los polígonos constituyentes. Después de hacerlo, podemos usar `st_area()` para calcular el área de cada polígono y `which.max()` para encontrar el polígono con área máxima:
 
 ```{r}
 dawson <- st_cast(dawson, "POLYGON")
 which.max(st_area(dawson))
 ```
 
-The large mainland region corresponds to the 69th polygon within Dawson.
-Armed with this knowledge, we can draw a map showing only the islands:
+La gran región continental corresponde al polígono 69 dentro de Dawson. Armados con este conocimiento, podemos dibujar un mapa que muestre solo las islas:
 
 ```{r}
 ggplot(dawson[-69]) + 
@@ -332,24 +257,15 @@ ggplot(dawson[-69]) +
   coord_sf()
 ```
 
-## Raster maps {#sec-rastermaps}
+## Mapas ráster {#sec-rastermaps}
 
 <!-- HW: do you have any thoughts on a modern approach to this problem? -->
 
-A second way to supply geospatial information for mapping is to rely on **raster data**.
-Unlike the simple features format, in which geographical entities are specified in terms of a set of lines, points and polygons, rasters take the form of images.
-In the simplest case raster data might be nothing more than a bitmap file, but there are many different image formats out there.
-In the geospatial context specifically, there are image formats that include metadata (e.g., geodetic datum, coordinate reference system) that can be used to map the image information to the surface of the Earth.
-For example, one common format is GeoTIFF, which is a regular TIFF file with additional metadata supplied.
-Happily, most formats can be easily read into R with the assistance of GDAL (the Geospatial Data Abstraction Library, <https://gdal.org/>).
-For example the sf package contains a function `sf::gdal_read()` that provides access to the GDAL raster drivers from R.
-However, you rarely need to call this function directly, as there are other high level functions that take care of this for you.
+Una segunda forma de proporcionar información geoespacial para la cartografía es confiar en **datos ráster**. A diferencia del formato de entidades simples, en el que las entidades geográficas se especifican en términos de un conjunto de líneas, puntos y polígonos, los rásteres toman la forma de imágenes. En el caso más simple, los datos ráster pueden no ser más que un archivo de mapa de bits, pero existen muchos formatos de imagen diferentes. Específicamente en el contexto geoespacial, existen formatos de imágenes que incluyen metadatos (por ejemplo, datos geodésicos, sistema de referencia de coordenadas) que se pueden usar para mapear la información de la imagen en la superficie de la Tierra. Por ejemplo, un formato común es GeoTIFF, que es un archivo TIFF normal con metadatos adicionales. Afortunadamente, la mayoría de los formatos se pueden leer fácilmente en R con la ayuda de GDAL (la Biblioteca de abstracción de datos geoespaciales, <https://gdal.org/>). Por ejemplo, el paquete sf contiene una función `sf::gdal_read()` que proporciona acceso a los controladores ráster GDAL desde R. Sin embargo, rara vez es necesario llamar a esta función directamente, ya que existen otras funciones de alto nivel que se encargan de esto. para ti.
 
-As an illustration, we'll use a satellite image taken by the Himawari-8 geostationary satellite operated by the Japan Meteorological Agency, and originally sourced from the Australian Bureau of Meteorology website.
-This image is stored in a GeoTIFF file called "IDE00422.202001072100.tif".[^maps-2]
-To import this data into R, we'll use the stars package [@stars] to create a stars objects:
+Como ilustración, usaremos una imagen de satélite tomada por el satélite geoestacionario Himawari-8 operado por la Agencia Meteorológica de Japón y obtenida originalmente del sitio web de la Oficina Australiana de Meteorología. Esta imagen está almacenada en un archivo GeoTIFF llamado "IDE00422.202001072100.tif".[^maps-2] Para importar estos datos a R, usaremos el paquete de estrellas [@stars] para crear objetos de estrellas:
 
-[^maps-2]: If you want to try this code yourself, you can find a copy of the image on the github repository for the book: <https://github.com/hadley/ggplot2-book/raw/master/IDE00422.202001072100.tif>.
+[^maps-2]: Si desea probar este código usted mismo, puede encontrar una copia de la imagen en el repositorio de GitHub del libro: <https://github.com/hadley/ggplot2-book/raw/master/IDE00422.202001072100.tif>.
 
 ```{r}
 library(stars)
@@ -359,22 +275,15 @@ sat_vis <- read_stars(
 )
 ```
 
-In the code above, the first argument specifies the path to the raster file, and the `RasterIO` argument is used to pass a list of low-level parameters to GDAL.
-In this case, we have used `nBufXSize` and `nBufYSize` to ensure that R reads the data at low resolution (as a 600x600 pixel image).
-To see what information R has imported, we can inspect the `sat_vis` object:
+En el código anterior, el primer argumento especifica la ruta al archivo ráster y el argumento `RasterIO` se usa para pasar una lista de parámetros de bajo nivel a GDAL. En este caso, hemos utilizado `nBufXSize` y `nBufYSize` para garantizar que R lea los datos en baja resolución (como una imagen de 600x600 píxeles). Para ver qué información ha importado R, podemos inspeccionar el objeto `sat_vis`:
 
 ```{r}
 sat_vis
 ```
 
-This output tells us something about the structure of a stars object.
-For the `sat_vis` object the underlying data is stored as a three-dimensional array, with `x` and `y` dimensions specifying the spatial data.
-The `band` dimension in this case corresponds to the colour channel (RGB) but is redundant for this image as the data are greyscale.
-In other data sets there might be bands corresponding to different sensors, and possibly a time dimension as well.
-Note that the spatial data is also associated with a coordinate reference system (referred to as "refsys" in the output).
+Este resultado nos dice algo sobre la estructura de un objeto estrella. Para el objeto `sat_vis`, los datos subyacentes se almacenan como una matriz tridimensional, con las dimensiones `x` e `y` que especifican los datos espaciales. La dimensión `band` en este caso corresponde al canal de color (RGB), pero es redundante para esta imagen ya que los datos están en escala de grises. En otros conjuntos de datos puede haber bandas correspondientes a diferentes sensores y posiblemente también una dimensión temporal. Tenga en cuenta que los datos espaciales también están asociados con un sistema de referencia de coordenadas (denominado "refsys" en el resultado).
 
-To plot the `sat_vis` data in ggplot2, we can use the `geom_stars()` function provided by the stars package.
-A minimal plot might look like this:
+Para trazar los datos `sat_vis` en ggplot2, podemos usar la función `geom_stars()` proporcionada por el paquete stars. Un gráfico mínimo podría verse así:
 
 ```{r}
 ggplot() + 
@@ -382,10 +291,7 @@ ggplot() +
   coord_equal()
 ```
 
-The `geom_stars()` function requires the `data` argument to be a stars object, and maps the raster data to the fill aesthetic.
-Accordingly, the blue shading in the satellite image above is determined by the ggplot2 scale, not the image itself.
-That is, although `sat_vis` contains three bands, the plot above only displays the first one, and the raw data values (which range from 0 to 255) are mapped onto the default blue palette that ggplot2 uses for continuous data.
-To see what the image file "really" looks like we can separate the bands using `facet_wrap()`:
+La función `geom_stars()` requiere que el argumento `data` sea un objeto de estrellas y asigna los datos ráster a la estética de relleno. En consecuencia, el sombreado azul en la imagen de satélite de arriba está determinado por la escala ggplot2, no por la imagen en sí. Es decir, aunque `sat_vis` contiene tres bandas, el gráfico anterior solo muestra la primera, y los valores de datos sin procesar (que van de 0 a 255) se asignan a la paleta azul predeterminada que usa ggplot2 para datos continuos. Para ver cómo se ve "realmente" el archivo de imagen, podemos separar las bandas usando `facet_wrap()`:
 
 ```{r}
 #| fig-width: 8
@@ -397,17 +303,13 @@ ggplot() +
   scale_fill_gradient(low = "black", high = "white")
 ```
 
-One limitation to displaying only the raw image is that it is not easy to work out where the relevant landmasses are, and we may wish to overlay the satellite data with the `oz_states` vector map to show the outlines of Australian political entities.
-However, some care is required in doing so because the two data sources are associated with different coordinate reference systems.
-To project the `oz_states` data correctly, the data should be transformed using the `st_transform()` function from the sf package.
-In the code below, we extract the CRS from the `sat_vis` raster object, and transform the `oz_states` data to use the same system.
+Una limitación para mostrar solo la imagen sin procesar es que no es fácil determinar dónde están las masas de tierra relevantes y es posible que deseemos superponer los datos satelitales con el mapa vectorial `oz_states` para mostrar los contornos de las entidades políticas australianas. Sin embargo, se requiere cierto cuidado al hacerlo porque las dos fuentes de datos están asociadas con diferentes sistemas de referencia de coordenadas. Para proyectar los datos `oz_states` correctamente, los datos deben transformarse usando la función `st_transform()` del paquete sf. En el código siguiente, extraemos el CRS del objeto ráster `sat_vis` y transformamos los datos `oz_states` para usar el mismo sistema.
 
 ```{r}
 oz_states <- st_transform(oz_states, crs = st_crs(sat_vis))
 ```
 
-Having done so, we can now draw the vector map over the top of the raster image to make the image more interpretable to the reader.
-It is now clear from inspection that the satellite image was taken during the Australian sunrise:
+Una vez hecho esto, ahora podemos dibujar el mapa vectorial sobre la parte superior de la imagen rasterizada para que la imagen sea más interpretable para el lector. Ahora se desprende claramente de la inspección que la imagen de satélite fue tomada durante el amanecer en Australia:
 
 ```{r}
 ggplot() + 
@@ -418,24 +320,20 @@ ggplot() +
   scale_fill_gradient(low = "black", high = "white")
 ```
 
-What if we wanted to plot more conventional data over the top?
-A simple example of this would be to plot the locations of the Australian capital cities per the `oz_capitals` data frame that contains latitude and longitude data.
-However, because these data are not associated with a CRS and are not on the same scale as the raster data in `sat_vis`, these will *also* need to be transformed.
-To do so, we first need to create an sf object from the `oz_capitals` data using `st_as_sf()`:
+¿Qué pasaría si quisiéramos trazar datos más convencionales en la parte superior? Un ejemplo sencillo de esto sería trazar las ubicaciones de las capitales australianas según el marco de datos `oz_capitals` que contiene datos de latitud y longitud. Sin embargo, debido a que estos datos no están asociados con un CRS y no están en la misma escala que los datos ráster en `sat_vis`, *también* deberán transformarse. Para hacerlo, primero necesitamos crear un objeto sf a partir de los datos de `oz_capitals` usando `st_as_sf()`:
 
 ```{r}
 cities <- oz_capitals %>% 
   st_as_sf(coords = c("lon", "lat"), crs = 4326, remove = FALSE)
 ```
 
-This projection is set using the EPSG code 4326, an ellipsoidal projection using the latitude and longitude values as co-ordinates and relying on the WGS84 datum.
-Having done so we can now transform the co-ordinates from the latitude-longitude geometry to the match the geometry of our `sat_vis` data:
+Esta proyección se establece utilizando el código EPSG 4326, una proyección elipsoidal que utiliza los valores de latitud y longitud como coordenadas y se basa en el datum WGS84. Una vez hecho esto, ahora podemos transformar las coordenadas de la geometría de latitud-longitud para que coincidan con la geometría de nuestros datos `sat_vis`:
 
 ```{r}
 cities <- st_transform(cities, st_crs(sat_vis))
 ```
 
-The transformed data can now be overlaid using `geom_sf()`:
+Los datos transformados ahora se pueden superponer usando `geom_sf()`:
 
 ```{r}
 ggplot() + 
@@ -447,28 +345,23 @@ ggplot() +
   scale_fill_gradient(low = "black", high = "white")
 ```
 
-This version of the image makes clearer that the satellite image was taken at approximately sunrise in Darwin: the sun had risen for all the eastern cities but not in Perth.
-This could be made clearer in the data visualisation using the `geom_sf_text()` function to add labels to each city.
-For instance, we could add another layer to the plot using code like this,
+Esta versión de la imagen deja más claro que la imagen de satélite fue tomada aproximadamente al amanecer en Darwin: el sol había salido en todas las ciudades del este, pero no en Perth. Esto podría aclararse en la visualización de datos usando la función `geom_sf_text()` para agregar etiquetas a cada ciudad. Por ejemplo, podríamos agregar otra capa al gráfico usando un código como este:
 
 ```{r}
 #| eval: false
 geom_sf_text(data = cities, mapping = aes(label = city)) 
 ```
 
-though some care would be required to ensure the text is positioned nicely (see @sec-annotations).
+aunque se requeriría algo de cuidado para asegurar que el texto esté bien colocado (ver @sec-annotations).
 
-## Data sources
+## Fuentes de datos
 
--   The USAboundaries package, <https://github.com/ropensci/USAboundaries> contains state, county and zip code data for the US [@USAboundaries].
-    As well as current boundaries, it also has state and county boundaries going back to the 1600s.
+-   El paquete de límites de EE.UU., <https://github.com/ropensci/USAboundaries> contiene datos de estado, condado y código postal de EE. UU. [@USAboundaries]. Además de los límites actuales, también tiene límites estatales y de condado que se remontan al siglo XVII.
 
--   The tigris package, <https://github.com/walkerke/tigris>, makes it easy to access the US Census TIGRIS shapefiles [@tigris].
-    It contains state, county, zipcode, and census tract boundaries, as well as many other useful datasets.
+-   El paquete tigris, <https://github.com/walkerke/tigris>, facilita el acceso a los archivos de forma TIGRIS del censo de EE. UU. [@tigris]. Contiene límites de estados, condados, códigos postales y zonas censales, así como muchos otros conjuntos de datos útiles.
 
--   The rnaturalearth package [@rnaturalearth] bundles up the free, high-quality data from <https://naturalearthdata.com/>.
-    It contains country borders, and borders for the top-level region within each country (e.g. states in the USA, regions in France, counties in the UK).
+-   El paquete rnaturalearth [@rnaturalearth] reúne los datos gratuitos y de alta calidad de <https://naturalearthdata.com/>. Contiene las fronteras de los países y las fronteras de la región de nivel superior dentro de cada país (por ejemplo, estados de EE. UU., regiones de Francia, condados del Reino Unido).
 
--   The osmar package, <https://cran.r-project.org/package=osmar> wraps up the OpenStreetMap API so you can access a wide range of vector data including individual streets and buildings [@osmar].
+-   El paquete osmar, <https://cran.r-project.org/package=osmar> resume la API de OpenStreetMap para que pueda acceder a una amplia gama de datos vectoriales, incluidas calles y edificios individuales [@osmar].
 
--   If you have your own shape files (`.shp`) you can load them into R with `sf::read_sf()`.
+-   Si tienes tus propios archivos de formas (`.shp`) puedes cargarlos en R con `sf::read_sf()`.
