@@ -1,4 +1,4 @@
-# Annotations {#sec-annotations}
+# Anotaciones {#sec-annotations}
 
 ```{r}
 #| echo: false
@@ -8,33 +8,26 @@ source("common.R")
 status("polishing")
 ```
 
-When constructing a data visualisation, it is often necessary to make annotations to the data displayed.
-Conceptually, an annotation supplies *metadata* for the plot: that is, it provides additional information about the data being displayed.
-From a practical standpoint, however, metadata is just another form of data.
-Because of this, the annotation tools in ggplot2 reuse the same geoms that are used to create other plots.
-However, to meet the specific needs that users often have when annotating plots, there are some helper functions in ggplot2 itself, and a number of other packages have extended ggplot2 in ways you may find helpful.
+Al construir una visualización de datos, a menudo es necesario hacer anotaciones en los datos mostrados. Conceptualmente, una anotación proporciona *metadatos* para el gráfico: es decir, proporciona información adicional sobre los datos que se muestran. Sin embargo, desde un punto de vista práctico, los metadatos son sólo otra forma de datos. Debido a esto, las herramientas de anotación en ggplot2 reutilizan las mismas geoms que se usan para crear otros gráficos. Sin embargo, para satisfacer las necesidades específicas que los usuarios suelen tener al anotar gráficos, existen algunas funciones auxiliares en ggplot2 y varios otros paquetes han ampliado ggplot2 de maneras que pueden resultarle útiles.
 
-## Plot and axis titles {#sec-titles}
+## Títulos de trama y eje {#sec-titles}
 
-When customising a plot, it is often useful to modify the titles associated with the plot, axes, and legends.
-To assist with this task ggplot2 provides the `labs()` helper function, which lets you set the various titles using name-value pairs like `title = My plot title"`, `x = "X axis"` or `fill = "fill legend"`:
+Al personalizar un gráfico, suele ser útil modificar los títulos asociados con el gráfico, los ejes y las leyendas. Para ayudar con esta tarea, ggplot2 proporciona la función auxiliar `labs()`, que le permite configurar los diversos títulos usando pares de nombre-valor como `título = "Título de mi gráfico`, `x = "Eje X"` o `fill = "fill legend"`:
 
 ```{r}
 #| label: guide-names-helper
 ggplot(mpg, aes(displ, hwy)) + 
   geom_point(aes(colour = factor(cyl))) + 
   labs(
-    x = "Engine displacement (litres)", 
-    y = "Highway miles per gallon", 
-    colour = "Number of cylinders",
-    title = "Mileage by engine size and cylinders",
-    subtitle = "Source: https://fueleconomy.gov"
+    x = "Cilindrada del motor (litros)", 
+    y = "Millas de carretera por galón", 
+    colour = "Número de cilindros",
+    title = "Kilometraje por tamaño de motor y cilindros.",
+    subtitle = "Fuente: https://fueleconomy.gov"
   )
 ```
 
-The values supplied to `labs()` are typically text strings, with `\n` used to specify line breaks, but you can also supply mathematical expressions wrapped in `quote()`.
-The rules by which these expressions are interpreted can be found by typing `?plotmath`.
-\index{Axis!title} \index{Legend!title}
+Los valores proporcionados a `labs()` suelen ser cadenas de texto, y `\n` se usa para especificar saltos de línea, pero también puede proporcionar expresiones matemáticas envueltas en `quote()`. Las reglas mediante las cuales se interpretan estas expresiones se pueden encontrar escribiendo `?plotmath`. \index{Axis!title} \index{Legend!title}
 
 ```{r}
 #| label: guide-names
@@ -45,8 +38,7 @@ ggplot(df, aes(x, y)) +
   labs(y = quote(f(x) == x^3))
 ```
 
-It is also possible to include (some) markdown in axis and legend titles with the help of the ggtext package [@ggtext] and the ggplot2 theme system (see @sec-polishing).
-To enable markdown you need to set the relevant theme element to `ggtext::element_markdown()`, as demonstrated below:
+También es posible incluir (algunas) rebajas en los títulos de ejes y leyendas con la ayuda del paquete ggtext [@ggtext] y el sistema de temas ggplot2 (ver @sec-polish). Para habilitar la reducción, debe configurar el elemento del tema relevante en `ggtext::element_markdown()`, como se demuestra a continuación:
 
 ```{r}
 #| label: markdown-with-ggtext
@@ -55,34 +47,25 @@ To enable markdown you need to set the relevant theme element to `ggtext::elemen
 df <- data.frame(x = 1:3, y = 1:3)
 base <- ggplot(df, aes(x, y)) + 
   geom_point() + 
-  labs(x = "Axis title with *italics* and **boldface**")
+  labs(x = "Título del eje con *cursiva* y **negrita**")
 
 base 
 base + theme(axis.title.x = ggtext::element_markdown())
 ```
 
-There are two ways to remove the axis label.
-Setting `labs(x = "")` omits the label but still allocates space; setting `labs(x = NULL)` removes the label and its space.
+Hay dos formas de eliminar la etiqueta del eje. Configurar `labs(x = "")` omite la etiqueta pero aún asigna espacio; configurar `labs(x = NULL)` elimina la etiqueta y su espacio.
 
-To learn more about how `labs()` is related to scales in ggplot2, see @sec-scale-names.
+Para obtener más información sobre cómo se relaciona `labs()` con las escalas en ggplot2, consulte @sec-scale-names.
 
 \index{Metadata}
 
-## Text labels {#sec-text-labels}
+## Etiquetas de texto {#sec-text-labels}
 
 \index{Labels} \index{Text} \indexf{geom\_text}
 
-Adding text to a plot is one of the most common forms of annotation.
-Most plots will not benefit from adding text to every single observation on the plot, but labelling outliers and other important points is very useful.
-However, text annotation can be tricky due to the way that R handles fonts.
-The ggplot2 package doesn't have all the answers, but it does provide some tools to make your life a little easier.
-The main tool for labelling plots is `geom_text()`, which adds `label` text at the specified `x` and `y` positions.
-`geom_text()` has the most aesthetics of any geom, because there are so many ways to control the appearance of a text:
+Agregar texto a un gráfico es una de las formas más comunes de anotación. La mayoría de los gráficos no se beneficiarán al agregar texto a cada observación en el gráfico, pero etiquetar los valores atípicos y otros puntos importantes es muy útil. Sin embargo, la anotación de texto puede resultar complicada debido a la forma en que R maneja las fuentes. El paquete ggplot2 no tiene todas las respuestas, pero proporciona algunas herramientas para hacerle la vida un poco más fácil. La herramienta principal para etiquetar gráficos es `geom_text()`, que agrega un etiqueta de texto, `label`, en las posiciones `x` e `y` especificadas. `geom_text()` tiene la mayor estética de cualquier geom, porque hay muchas maneras de controlar la apariencia de un texto:
 
--   The `family` aesthetic provides the name of a font.
-    This aesthetic *does* allow you to use the name of a system font, but some care is required.
-    There are only three fonts that are guaranteed to work everywhere: "sans" (the default), "serif", or "mono".
-    To illustrate these:
+-   La estética `family` proporciona el nombre de una fuente. Esta estética *sí* le permite usar el nombre de una fuente del sistema, pero se requiere algo de cuidado. Sólo hay tres fuentes que garantizan su funcionamiento en todas partes: "sans" (la predeterminada), "serif" o "mono". Para ilustrar estos:
 
     ```{r}
     #| label: text-family
@@ -91,20 +74,15 @@ The main tool for labelling plots is `geom_text()`, which adds `label` text at t
       geom_text(aes(label = family, family = family))
     ```
 
-    The reason that it can be tricky to use system fonts in a plot is that text drawing is handled differently by each graphics device (GD).
-    There are two groups of GDs: screen devices such as `windows()` (for Windows), `quartz()` (for Macs), `x11()` (mostly for Linux) and `RStudioGD()` (within RStudio) draw the plot to the screen, whereas file devices such as `png()` and `pdf()` write the plot to a file.
-    Unfortunately, the devices do not specify fonts in the same way so if you want a font to work everywhere you need to configure the devices in different ways.
-    Two packages simplify the quandary a bit:
+    La razón por la que puede resultar complicado utilizar fuentes del sistema en un gráfico es que cada dispositivo gráfico (GD) maneja el dibujo de texto de forma diferente. Hay dos grupos de GD: dispositivos de pantalla como `windows()` (para Windows), `quartz()` (para Mac), `x11()` (principalmente para Linux) y `RStudioGD()` (dentro de RStudio)) dibujan el gráfico en la pantalla, mientras que los dispositivos de archivos como `png()` y `pdf()` escriben el gráfico en un archivo. Desafortunadamente, los dispositivos no especifican las fuentes de la misma manera, por lo que si desea que una fuente funcione en todas partes, deberá configurar los dispositivos de diferentes maneras. Dos paquetes simplifican un poco el dilema:
 
-    -   showtext, <https://github.com/yixuan/showtext>, by Yixuan Qiu, makes GD-independent plots by rendering all text as polygons.
+    -   showtext, <https://github.com/yixuan/showtext>, de Yixuan Qiu, crea gráficos independientes de GD al representar todo el texto como polígonos.
 
-    -   extrafont, <https://github.com/wch/extrafont>, by Winston Chang, converts fonts to a standard format that all devices can use.
+    -   extrafont, <https://github.com/wch/extrafont>, de Winston Chang, convierte fuentes a un formato estándar que todos los dispositivos pueden usar.
 
-    Both approaches have pros and cons, so you will to need to try both of them and see which works best for your needs.
-    \index{Font!family}
+    Ambos enfoques tienen ventajas y desventajas, por lo que tendrás que probar ambos y ver cuál funciona mejor para tus necesidades. \index{Font!family}
 
--   The `fontface` aesthetic specifies the face, and can take three values: "plain" (the default), "bold" or "italic".
-    For example: \index{Font!face}
+-   La estética `fontface` especifica el formato y puede tomar tres valores: "plain" (el valor predeterminado), "bold" para negrita o "italic" para cursiva. Por ejemplo: \index{Font!face}
 
     ```{r}
     #| label: text-face
@@ -113,10 +91,7 @@ The main tool for labelling plots is `geom_text()`, which adds `label` text at t
       geom_text(aes(label = face, fontface = face))
     ```
 
--   You can adjust the alignment of the text with the `hjust` ("left", "center", "right", "inward", "outward") and `vjust` ("bottom", "middle", "top", "inward", "outward") aesthetics.
-    The aligment is centered by default, but there are often good reasons to override this.
-    One of the most useful alignments is "inward".
-    It aligns text towards the middle of the plot, which ensures that labels remain within the plot limits: \index{Font!justification}
+-   Puede ajustar la alineación del texto con las estéticas `hjust` ("left", "center", "right", "inward", "outward") y `vjust` ("bottom", "middle", "top" ,  "inward", "outward"). La alineación está centrada de forma predeterminada, pero a menudo hay buenas razones para anularla. Una de las alineaciones más útiles es la "inward". Alinea el texto hacia el centro de la trama, lo que garantiza que las etiquetas permanezcan dentro de los límites de la trama: \index{Font!justification}
 
     ```{r}
     #| label: text-justification
@@ -136,21 +111,15 @@ The main tool for labelling plots is `geom_text()`, which adds `label` text at t
       geom_text(aes(label = text), vjust = "inward", hjust = "inward")
     ```
 
--   The font size is controlled by the `size` aesthetic.
-    Unlike most tools, ggplot2 specifies the size in millimeters (mm), rather than the usual points (pts).
-    The reason for this choice is that it makes it the units for font sizes consistent with how other sizes are specified in ggplot2.
-    (There are 72.27 pts in a inch, so to convert from points to mm, just multiply by 25.4 / 72.27).
-    \index{Font!size}
+-   El tamaño de fuente está controlado por la estética del `size`. A diferencia de la mayoría de herramientas, ggplot2 especifica el tamaño en milímetros (mm), en lugar de los puntos habituales (pts). El motivo de esta elección es que hace que las unidades para tamaños de fuente sean consistentes con la forma en que se especifican otros tamaños en ggplot2. (Hay 72,27 puntos en una pulgada, por lo que para convertir de puntos a mm, simplemente multiplique por 25,4/72,27). \index{Font!size}
 
--   `angle` specifies the rotation of the text in degrees.
+-   `angle` especifica la rotación del texto en grados.
 
-The ggplot2 package does allow you to map data values to the aesthetics used by `geom_text()`, but you should use restraint: it is hard to perceive the relationship between variables mapped to these aesthetics, and rarely useful to do so.
+El paquete ggplot2 le permite asignar valores de datos a la estética utilizada por `geom_text()`, pero debe usar moderación: es difícil percibir la relación entre las variables asignadas a esta estética, y rara vez es útil hacerlo.
 
-In addition to the various aesthetics, `geom_text()` has three parameters that you can specify.
-Unlike the aesthetics these only take single values, so they must be the same for all labels:
+Además de las diversas estéticas, `geom_text()` tiene tres parámetros que puedes especificar. A diferencia de la estética, estos sólo toman valores únicos, por lo que deben ser los mismos para todas las etiquetas:
 
--   Often you want to label existing points on the plot, but you don't want the text to overlap with the points (or bars etc).
-    In this situation it's useful to offset the text a little, which you can do with the `nudge_x` and `nudge_y` parameters:
+-   A menudo desea etiquetar puntos existentes en el gráfico, pero no desea que el texto se superponga con los puntos (o barras, etc.). En esta situación es útil desplazar un poco el texto, lo que puedes hacer con los parámetros `nudge_x` y `nudge_y`:
 
     ```{r}
     #| label: text-nudge
@@ -168,12 +137,9 @@ Unlike the aesthetics these only take single values, so they must be the same fo
       ylim(1.1, 3.6)
     ```
 
-    (Note that we manually tweaked the y-axis limits to give the labels a little extra room.)
+    (Tenga en cuenta que modificamos manualmente los límites del eje y para darles a las etiquetas un poco más de espacio.)
 
--   The third parameter is `check_overlap`.
-    If `check_overlap = TRUE`, overlapping labels will be automatically removed from the plot.
-    The algorithm is simple: labels are plotted in the order they appear in the data frame; if a label would overlap with an existing point, it's omitted.
-    \indexc{check\_overlap}
+-   El tercer parámetro es `check_overlap`. Si `check_overlap = TRUE`, las etiquetas superpuestas se eliminarán automáticamente del gráfico. El algoritmo es simple: las etiquetas se trazan en el orden en que aparecen en el marco de datos; si una etiqueta se superpone con un punto existente, se omite. \indexc{check\_overlap}
 
     ```{r}
     #| label: text-overlap
@@ -188,11 +154,9 @@ Unlike the aesthetics these only take single values, so they must be the same fo
       xlim(1, 8)
     ```
 
-    At first glance this feature does not appear very useful, but the simplicity of the algorithm comes in handy.
-    If you sort the input data in order of priority the result is a plot with labels that emphasise important data points.
+    A primera vista, esta característica no parece muy útil, pero la simplicidad del algoritmo resulta útil. Si ordena los datos de entrada por orden de prioridad, el resultado es un gráfico con etiquetas que enfatizan puntos de datos importantes.
 
-A variation on `geom_text()` is `geom_label()`: it draws a rounded rectangle behind the text.
-This makes it useful for adding labels to plots with busy backgrounds: \indexf{geom\_label}
+Una variación de `geom_text()` es `geom_label()`: dibuja un rectángulo redondeado detrás del texto. Esto lo hace útil para agregar etiquetas a gráficos con fondos ocupados: \indexf{geom\_label}
 
 ```{r}
 #| label: label
@@ -207,18 +171,11 @@ ggplot(faithfuld, aes(waiting, eruptions)) +
   geom_label(data = label, aes(label = label))
 ```
 
-Labelling data well poses some challenges:
+Etiquetar bien los datos plantea algunos desafíos:
 
--   Text does not affect the limits of the plot.
-    Unfortunately there's no way to make this work since a label has an absolute size (e.g. 3 cm), regardless of the size of the plot.
-    This means that the limits of a plot would need to be different depending on the size of the plot --- there's just no way to make that happen with ggplot2.
-    Instead, you'll need to tweak `xlim()` and `ylim()` based on your data and plot size.
+-   El texto no afecta los límites de la trama. Desafortunadamente, no hay forma de hacer que esto funcione ya que una etiqueta tiene un tamaño absoluto (por ejemplo, 3 cm), independientemente del tamaño de la trama. Esto significa que los límites de un gráfico tendrían que ser diferentes dependiendo del tamaño del mismo; simplemente no hay forma de que eso suceda con ggplot2. En su lugar, necesitarás modificar `xlim()` y `ylim()` según tus datos y el tamaño del gráfico.
 
--   If you want to label many points, it is difficult to avoid overlaps.
-    `check_overlap = TRUE` is useful, but offers little control over which labels are removed.
-    A popular technique for addressing this is to use the ggrepel package <https://github.com/slowkow/ggrepel> by Kamil Slowikowski.
-    The package supplies `geom_text_repel()`, which optimizes the label positioning to avoid overlap.
-    It works quite well so long as the number of labels is not excessive:
+-   Si desea etiquetar muchos puntos, es difícil evitar superposiciones. `check_overlap = TRUE` es útil, pero ofrece poco control sobre qué etiquetas se eliminan. Una técnica popular para solucionar este problema es utilizar el paquete ggrepel <https://github.com/slowkow/ggrepel> de Kamil Slowikowski. El paquete proporciona `geom_text_repel()`, que optimiza la posición de la etiqueta para evitar la superposición. Funciona bastante bien siempre que el número de etiquetas no sea excesivo:
 
     ```{r}
     #| label: ggrepel
@@ -228,34 +185,23 @@ Labelling data well poses some challenges:
       ggrepel::geom_text_repel(data = mini_mpg, aes(label = class))
     ```
 
--   It can sometimes be difficult to ensure that text labels fit within the space that you want.
-    The ggfittext package <https://github.com/wilkox/ggfittext> by Claus Wilke contains useful tools that can assist with this, including functions that allow you to place text labels inside the columns in a bar chart.
+-   A veces puede resultar difícil garantizar que las etiquetas de texto encajen en el espacio deseado. El paquete ggfittext <https://github.com/wilkox/ggfittext> de Claus Wilke contiene herramientas útiles que pueden ayudar con esto, incluidas funciones que le permiten colocar etiquetas de texto dentro de las columnas en un gráfico de barras.
 
-## Building custom annotations {#sec-custom-annotations}
+## Crear anotaciones personalizadas {#sec-custom-annotations}
 
 \index{Annotation}
 
-Labelling individual points with text is an important kind of annotation, but it is not the only useful technique.
-The ggplot2 package provides several other tools to annotate plots using the same geoms you would use to display data.
-For example, you can use:
+Etiquetar puntos individuales con texto es un tipo importante de anotación, pero no es la única técnica útil. El paquete ggplot2 proporciona varias otras herramientas para anotar trazados usando las mismas geoms que usaría para mostrar datos. Por ejemplo, puedes utilizar:
 
--   `geom_text()` and `geom_label()` to add text, as illustrated earlier.
+-   `geom_text()` y `geom_label()` para agregar texto, como se ilustró anteriormente.
 
--   `geom_rect()` to highlight interesting rectangular regions of the plot.
-    `geom_rect()` has aesthetics `xmin`, `xmax`, `ymin` and `ymax`.
-    \indexf{geom\_rect}
+-   `geom_rect()` para resaltar interesantes regiones rectangulares de la trama. `geom_rect()` tiene estética `xmin`, `xmax`, `ymin` y `ymax`. \indexf{geom\_rect}
 
--   `geom_line()`, `geom_path()` and `geom_segment()` to add lines.
-    All these geoms have an `arrow` parameter, which allows you to place an arrowhead on the line.
-    Create arrowheads with `arrow()`, which has arguments `angle`, `length`, `ends` and `type`.
-    \indexf{geom\_line}
+-   `geom_line()`, `geom_path()` y `geom_segment()` para agregar líneas. Todas estas geoms tienen una `arrow` parámetro, que le permite colocar una punta de flecha en la línea. Crea puntas de flecha con `arrow()`, que tiene argumentos `angle`, `length`, `ends` y `type`. \indexf{geom\_line}
 
--   `geom_vline()`, `geom_hline()` and `geom_abline()` allow you to add reference lines (sometimes called rules), that span the full range of the plot.
-    \indexf{geom\_vline} \indexf{geom\_hline} \indexf{geom\_abline}
+-   `geom_vline()`, `geom_hline()` y `geom_abline()` le permiten agregar líneas de referencia (a veces llamadas reglas), que abarcan todo el rango de la trama. \indexf{geom\_vline} \indexf{geom\_hline} \indexf{geom\_abline}
 
-Typically, you can either put annotations in the foreground (using `alpha` if needed so you can still see the data), or in the background.
-With the default background, a thick white line makes a useful reference: it's easy to see but it doesn't jump out at you.
-To illustrate how ggplot2 tools can be used to annotate plots we'll start with a time series plotting US unemployment over time:
+Normalmente, puede colocar anotaciones en primer plano (usando `alpha` si es necesario para poder seguir viendo los datos) o en segundo plano. Con el fondo predeterminado, una línea blanca gruesa es una referencia útil: es fácil de ver pero no llama la atención. Para ilustrar cómo se pueden utilizar las herramientas ggplot2 para anotar gráficos, comenzaremos con una serie temporal que representa el desempleo en EE. UU. a lo largo del tiempo:
 
 ```{r}
 #| label: umep
@@ -263,8 +209,7 @@ ggplot(economics, aes(date, unemploy)) +
   geom_line()
 ```
 
-One useful way to annotate this plot is to use shading to indicate which president was in power at the time.
-To do this, we use `geom_rect()` to introduce shading, `geom_vline()` to introduce separators, `geom_text()` to add labels, and then use `geom_line()` to overlay the data on top of these background elements:
+Una forma útil de anotar este gráfico es utilizar sombreado para indicar qué presidente estaba en el poder en ese momento. Para hacer esto, usamos `geom_rect()` para introducir sombreado, `geom_vline()` para introducir separadores, `geom_text()` para agregar etiquetas y luego usamos `geom_line()` para superponer los datos sobre estos fondos. elementos:
 
 ```{r}
 #| label: unemp-pres
@@ -288,25 +233,21 @@ ggplot(economics) +
   ) + 
   geom_line(aes(date, unemploy)) + 
   scale_fill_manual(values = c("blue", "red")) +
-  xlab("date") + 
-  ylab("unemployment")
+  xlab("Fecha") + 
+  ylab("Deseempleo")
 ```
 
-Notice that there is little new here: for the most part, annotating plots in `ggplot2` is a straightforward manipulation of existing geoms.
-That said, there is one special thing to note in this code: the use of `-Inf` and `Inf` as positions.
-These refer to the top and bottom (or left and right) limits of the plot.
-\indexc{Inf}
+Tenga en cuenta que hay pocas novedades aquí: en su mayor parte, anotar gráficos en `ggplot2` es una manipulación sencilla de geoms existentes. Dicho esto, hay una cosa especial a tener en cuenta en este código: el uso de `-Inf` e `Inf` como posiciones. Estos se refieren a los límites superior e inferior (o izquierdo y derecho) del gráfico. \indexc{Inf}
 
-This technique can be applied in other ways too.
-For instance, you can use it to add a single annotation to a plot, but it's a bit fiddly because you have to create a one row data frame:
+Esta técnica también se puede aplicar de otras formas. Por ejemplo, puedes usarlo para agregar una sola anotación a un gráfico, pero es un poco complicado porque tienes que crear un marco de datos de una fila:
 
 ```{r}
 #| label: annotate_hardway
 #| fig.show: hide
 yrng <- range(economics$unemploy)
 xrng <- range(economics$date)
-caption <- paste(strwrap("Unemployment rates in the US have 
-  varied a lot over the years", 40), collapse = "\n")
+caption <- paste(strwrap("Las tasas de desempleo en EE.UU. han
+  varió mucho a lo largo de los años", 40), collapse = "\n")
 
 ggplot(economics, aes(date, unemploy)) + 
   geom_line() + 
@@ -317,8 +258,7 @@ ggplot(economics, aes(date, unemploy)) +
   )
 ```
 
-This code works, and generates the desired plot, but it is very cumbersome.
-It would be annoying to have to do this every time you want to add a single annotation, so ggplot2 includes the `annotate()` helper function which creates the data frame for you: \indexf{annotate}
+Este código funciona y genera la trama deseada, pero es muy engorroso. Sería molesto tener que hacer esto cada vez que quieras agregar una sola anotación, por lo que ggplot2 incluye la función auxiliar `annotate()` que crea el marco de datos por ti: \indexf{annotate}
 
 ```{r}
 #| label: annotate_easyway
@@ -330,9 +270,7 @@ ggplot(economics, aes(date, unemploy)) +
   )
 ```
 
-The convenience of the `annotate()` function comes in handy in other situations.
-For example, a common form of annotation is to highlight a subset of points by drawing larger points in a different colour underneath the main data set.
-To highlight vehicles manufactured by Subaru you could use this to create the basic plot:
+La conveniencia de la función `annotate()` resulta útil en otras situaciones. Por ejemplo, una forma común de anotación es resaltar un subconjunto de puntos dibujando puntos más grandes en un color diferente debajo del conjunto de datos principal. Para resaltar los vehículos fabricados por Subaru, puedes usar esto para crear la trama básica:
 
 ```{r}
 #| label: underplot_noshow
@@ -345,8 +283,7 @@ p <- ggplot(mpg, aes(displ, hwy)) +
   geom_point() 
 ```
 
-The problem with this is that the highlighted category would not be labelled.
-This is easily rectified using `annotate()`
+El problema con esto es que la categoría resaltada no estaría etiquetada. Esto se soluciona fácilmente usando `annotate()`
 
 ```{r}
 #| label: underplot
@@ -356,9 +293,7 @@ p +
   annotate(geom = "text", x = 5.6, y = 40, label = "subaru", hjust = "left")
 ```
 
-This approach has the advantage of creating a label inside the plot region, but the drawback is that the label is distant from the points it picks out (otherwise the orange and black dot adjacent to the label might be confused for real data).
-An alternative approach is to use a different geom to do the work.
-`geom_curve()` and `geom_segment()` can be used to draw curves and lines connecting points with labels, and can be used in conjunction with `annotate()` as illustrated below:
+Este enfoque tiene la ventaja de crear una etiqueta dentro de la región del trazado, pero el inconveniente es que la etiqueta está distante de los puntos que selecciona (de lo contrario, el punto naranja y negro adyacente a la etiqueta podría confundirse con datos reales). Un enfoque alternativo es utilizar una geom diferente para hacer el trabajo. `geom_curve()` y `geom_segment()` se pueden usar para dibujar curvas y líneas que conectan puntos con etiquetas, y se pueden usar junto con `annotate()` como se ilustra a continuación:
 
 ```{r}
 #| label: curve_annotation
@@ -370,12 +305,9 @@ p +
   annotate(geom = "text", x = 4.1, y = 35, label = "subaru", hjust = "left")
 ```
 
-## Direct labelling
+## Etiquetado directo
 
-The Subaru plots above provide examples of "direct labelling", in which the plot region itself contains the labels for groups of points instead of using a legend.
-This usually makes the plot easier to read because it puts the labels closer to the data.
-The broader ggplot2 ecosystem contains a variety of other tools to accomplish this in a more automated fashion.
-The [directlabels](https://github.com/tdhock/directlabels) package, by Toby Dylan Hocking, provides a number of tools to make this easier: \index{directlabels}
+Los gráficos de Subaru anteriores proporcionan ejemplos de "etiquetado directo", en los que la propia región del trazado contiene las etiquetas para grupos de puntos en lugar de utilizar una leyenda. Esto generalmente hace que el gráfico sea más fácil de leer porque acerca las etiquetas a los datos. El ecosistema más amplio de ggplot2 contiene una variedad de otras herramientas para lograr esto de una manera más automatizada. El paquete [directlabels](https://github.com/tdhock/directlabels), de Toby Dylan Hocking, proporciona una serie de herramientas para facilitar esto: \index{directlabels}
 
 ```{r}
 #| label: directlabels
@@ -389,13 +321,9 @@ ggplot(mpg, aes(displ, hwy, colour = class)) +
   directlabels::geom_dl(aes(label = class), method = "smart.grid")
 ```
 
-Directlabels provides a number of position methods.
-`smart.grid` is a reasonable place to start for scatterplots, but there are other methods that are more useful for frequency polygons and line plots.
-See the directlabels website, <http://directlabels.r-forge.r-project.org>, for other techniques.
+Directlabels proporciona varios métodos de posición. `smart.grid` es un lugar razonable para comenzar con los diagramas de dispersión, pero existen otros métodos que son más útiles para los polígonos de frecuencia y los diagramas de líneas. Consulte el sitio web de directlabels, <http://directlabels.r-forge.r-project.org>, para conocer otras técnicas.
 
-Another take on this idea comes from the ggforce package by Thomas Lin Pedersen <https://github.com/thomasp85/ggforce>.
-The ggforce package contains a lot of useful tools to extend ggplot2 functionality, including functions such as `geom_mark_ellipse()` that overlays a plot with circular "highlight" marks.
-For example:
+Otra versión de esta idea proviene del paquete ggforce de Thomas Lin Pedersen <https://github.com/thomasp85/ggforce>. El paquete ggforce contiene muchas herramientas útiles para ampliar la funcionalidad de ggplot2, incluidas funciones como `geom_mark_ellipse()` que superpone un gráfico con marcas circulares "resaltadas". Por ejemplo:
 
 ```{r}
 #| label: geom_mark_ellipse
@@ -404,8 +332,7 @@ ggplot(mpg, aes(displ, hwy)) +
   ggforce::geom_mark_ellipse(aes(label = cyl, group = cyl))
 ```
 
-A third approach to direct labelling is provided in the gghighlight package by Hiroaki Yutani <https://github.com/yutannihilation/gghighlight>.
-In many situations is useful for highlighting points or lines (or indeed a variety of different geoms) within a plot, particularly for longitudinal data:
+Un tercer enfoque para el etiquetado directo lo proporciona el paquete gghighlight de Hiroaki Yutani <https://github.com/yutannihilation/gghighlight>. En muchas situaciones es útil para resaltar puntos o líneas (o incluso una variedad de geoms diferentes) dentro de un gráfico, particularmente para datos longitudinales:
 
 ```{r}
 #| label: gghighlight
@@ -416,11 +343,9 @@ ggplot(Oxboys, aes(age, height, group = Subject)) +
   gghighlight::gghighlight(Subject %in% 1:3)
 ```
 
-## Annotation across facets
+## Anotación entre facetas
 
-When used well, annotations can be a powerful tool to help your reader make sense of your data.
-One example of this is when you want the reader to compare groups across facets.
-For example, in the plot below it is easy to see the relationship within each facet, but the subtle differences across facets do not pop out:
+Cuando se usan bien, las anotaciones pueden ser una herramienta poderosa para ayudar al lector a entender sus datos. Un ejemplo de esto es cuando desea que el lector compare grupos entre facetas. Por ejemplo, en el gráfico siguiente es fácil ver la relación dentro de cada faceta, pero las diferencias sutiles entre las facetas no resaltan:
 
 ```{r}
 #| label: faceted_noline
@@ -429,7 +354,7 @@ ggplot(diamonds, aes(log10(carat), log10(price))) +
   facet_wrap(vars(cut), nrow = 1)
 ```
 
-It is much easier to see these subtle differences if we add a reference line:
+Es mucho más fácil ver estas sutiles diferencias si añadimos una línea de referencia:
 
 ```{r}
 #| label: faceted_line
@@ -441,11 +366,9 @@ ggplot(diamonds, aes(log10(carat), log10(price))) +
   facet_wrap(vars(cut), nrow = 1)
 ```
 
-In this plot, each facet displays the data for one category agains the same regression line.
-This makes it easier to compare the facets to each other because there is shared reference line to assist the visual comparison.
+En este gráfico, cada faceta muestra los datos de una categoría frente a la misma línea de regresión. Esto facilita la comparación de las facetas entre sí porque existe una línea de referencia compartida para ayudar en la comparación visual.
 
-A variation on this theme arises when you want each facet of a plot to display data from a single group, with the complete data set plotted unobtrusively in each panel to aid visual comparison.
-The gghighlight package is particularly useful in this context:
+Una variación de este tema surge cuando desea que cada faceta de un gráfico muestre datos de un solo grupo, con el conjunto de datos completo trazado discretamente en cada panel para ayudar a la comparación visual. El paquete gghighlight es particularmente útil en este contexto:
 
 ```{r}
 #| label: gghighlight_facet
