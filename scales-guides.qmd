@@ -1,4 +1,4 @@
-# Scales and guides {#sec-scales-guides}
+# Escalas y guías {#sec-scales-guides}
 
 ```{r}
 #| echo: false
@@ -24,62 +24,50 @@ toy <- data.frame(
 )
 ```
 
-The scales toolbox in @sec-scale-position to @sec-scale-other provides extensive guidance for how to work with scales, focusing on solving common data visualisation problems.
-The practical goals of the toolbox mean that topics are introduced when they are most relevant: for example, scale transformations are discussed in relation to continuous position scales (@sec-scale-transformation) because that is the most common situation in which you might want to transform a scale.
-However, because ggplot2 aims to provide a grammar of graphics, there is nothing preventing you from transforming other kinds of scales (see @sec-scale-transformation-extras).
-This chapter aims to illustrate these concepts: We'll discuss the theory underpinning scales and guides, and give examples showing how concepts that we've discussed specifically for position or colour scales also apply elsewhere.
+La caja de herramientas de escalas en @sec-scale-position a @sec-scale-other proporciona una guía extensa sobre cómo trabajar con escalas, enfocándose en resolver problemas comunes de visualización de datos. Los objetivos prácticos de la caja de herramientas significan que los temas se introducen cuando son más relevantes: por ejemplo, las transformaciones de escala se analizan en relación con las escalas de posición continua (@sec-scale-transformation) porque esa es la situación más común en la que es posible que desee transformar una escala. Sin embargo, debido a que ggplot2 tiene como objetivo proporcionar una gramática de gráficos, no hay nada que le impida transformar otros tipos de escalas (consulte @sec-scale-transformation-extras). Este capítulo tiene como objetivo ilustrar estos conceptos: discutiremos la teoría que sustenta las escalas y guías, y daremos ejemplos que muestran cómo los conceptos que hemos discutido específicamente para las escalas de posición o color también se aplican en otros lugares.
 
-## Theory of scales and guides {#sec-scales-guides-theory}
+## Teoría de escalas y guías. {#sec-scales-guides-theory}
 
-Formally, each scale is a function from a region in data space (the domain of the scale) to a region in aesthetic space (the range of the scale).
-The axis or legend is the inverse function, known as the guide: it allows you to convert visual properties back to data.
-You might find it surprising that axes and legends are the same type of thing, but while they look very different, they have the same purpose: to allow you to read observations from the plot and map them back to their original values.
-The commonalities between the two are illustrated below:
+Formalmente, cada escala es una función desde una región en el espacio de datos (el dominio de la escala) hasta una región en el espacio estético (el rango de la escala). El eje o leyenda es la función inversa, conocida como guía: le permite convertir propiedades visuales nuevamente en datos. Puede que le sorprenda que los ejes y las leyendas sean el mismo tipo de cosas, pero si bien se ven muy diferentes, tienen el mismo propósito: permitirle leer las observaciones de la trama y mapearlas a sus valores originales. Los puntos en común entre los dos se ilustran a continuación:
 
-| Argument name | Axis              | Legend    |
-|:--------------|:------------------|:----------|
-| `name`        | Label             | Title     |
-| `breaks`      | Ticks & grid line | Key       |
-| `labels`      | Tick label        | Key label |
+| Nombre del argumento | Eje                           | Leyenda    |
+|:---------------------|:------------------------------|:-----------|
+| `name`               | Etiqueta                      | Título     |
+| `breaks`             | Marcas y líneas de cuadrícula | Entrada    |
+| `labels`             | Etiqueta de marca             | Etiqueta de entrada |
 
 ```{r}
 #| label: guides
 #| echo: false
-#| out.width: 100%
-#| fig.cap: Common components of axes and legends
+#| out-width: 100%
+#| fig-cap: |
+#|   Componentes comunes de ejes y leyendas.
 knitr::include_graphics("diagrams/scale-guides.png", dpi = 300, auto_pdf = TRUE)
 ```
 
-However, legends are more complicated than axes, and consequently there are a number of topics that are specific to legends:
+Sin embargo, las leyendas son más complicadas que los ejes y, en consecuencia, hay una serie de temas específicos de las leyendas:
 
-1.  A legend can display multiple aesthetics (e.g. colour and shape), from multiple layers (@sec-sub-layers-legends), and the symbol displayed in a legend varies based on the geom used in the layer (@sec-legend-glyph)
+1. Una leyenda puede mostrar múltiples estéticas (por ejemplo, color y forma), de múltiples capas (@sec-sub-layers-legends), y el símbolo que se muestra en una leyenda varía según la geom utilizada en la capa (@sec-legend -glifo)
 
-2.  Axes always appear in the same place.
-    Legends can appear in different places, so you need some global way of positioning them.
+2. Los ejes siempre aparecen en el mismo lugar. Las leyendas pueden aparecer en diferentes lugares, por lo que necesitas alguna forma global de posicionarlas.
 
-    (1) 
+3.  Las leyendas tienen más detalles que se pueden modificar: ¿deberían mostrarse vertical u horizontalmente? ¿Cuántas columnas? ¿Qué tamaño deben tener las llaves? Esto se comenta en (@sec-scale-guide)
 
-3.  Legends have more details that can be tweaked: should they be displayed vertically or horizontally?
-    How many columns?
-    How big should the keys be?
-    This is discussed in (@sec-scale-guide)
+### Especificación de escala {#sec-scale-usage}
 
-### Scale specification {#sec-scale-usage}
-
-An important property of ggplot2 is the principle that every aesthetic in your plot is associated with exactly one scale.
-For instance, when you write this
+Una propiedad importante de ggplot2 es el principio de que cada estética de su trama está asociada exactamente con una escala. Por ejemplo, cuando escribes esto
 
 ```{r}
 #| label: default-scales
-#| fig.show: hide
+#| fig-show: hide
 ggplot(mpg, aes(displ, hwy)) + 
   geom_point(aes(colour = class))
 ```
 
-ggplot2 adds a default scale for each aesthetic used in the plot:
+ggplot2 agrega una escala predeterminada para cada estética utilizada en la trama:
 
 ```{r}
-#| fig.show: hide
+#| fig-show: hide
 ggplot(mpg, aes(displ, hwy)) + 
   geom_point(aes(colour = class)) +
   scale_x_continuous() + 
@@ -87,74 +75,62 @@ ggplot(mpg, aes(displ, hwy)) +
   scale_colour_discrete()
 ```
 
-The choice of default scale depends on the aesthetic and the variable type.
-In this example `hwy` is a continuous variable mapped to the y aesthetic so the default scale is `scale_y_continuous()`; similarly `class` is discrete so when mapped to the colour aesthetic the default scale becomes `scale_colour_discrete()`.
-Specifying these defaults would be tedious so ggplot2 does it for you.
-But if you want to override the defaults, you'll need to add the scale yourself, like this: \index{Scales!defaults}
+La elección de la escala predeterminada depende de la estética y del tipo de variable. En este ejemplo, `hwy` es una variable continua asignada a la estética y, por lo que la escala predeterminada es `scale_y_continuous()`; de manera similar, `class` es discreta, por lo que cuando se asigna a la estética del color, la escala predeterminada se convierte en `scale_colour_discrete()`. Especificar estos valores predeterminados sería tedioso, por lo que ggplot2 lo hace por usted. Pero si desea anular los valores predeterminados, deberá agregar la escala usted mismo, de esta manera: \index{Scales!defaults}
 
 ```{r}
-#| fig.show: hide
+#| fig-show: hide
 ggplot(mpg, aes(displ, hwy)) + 
   geom_point(aes(colour = class)) + 
-  scale_x_continuous(name = "A really awesome x axis label") +
-  scale_y_continuous(name = "An amazingly great y axis label")
+  scale_x_continuous(name = "Una etiqueta del eje x realmente impresionante.") +
+  scale_y_continuous(name = "Una etiqueta del eje Y increíblemente genial.")
 ```
 
-In practice you would typically use `labs()` for this, discussed in @sec-titles, but it is conceptually helpful to understand that axis labels and legend titles are both examples of scale names: see @sec-scale-names.
+En la práctica, normalmente usarías `labs()` para esto, lo cual se analiza en @sec-titles, pero conceptualmente es útil comprender que las etiquetas de los ejes y los títulos de las leyendas son ejemplos de nombres de escala: consulta @sec-scale-names.
 
-The use of `+` to "add" scales to a plot is a little misleading because if you supply two scales for the same aesthetic, the last scale takes precedence.
-In other words, when you `+` a scale, you're not actually adding it to the plot, but overriding the existing scale.
-This means that the following two specifications are equivalent: \indexc{+}
+El uso de `+` para "agregar" escalas a una trama es un poco engañoso porque si proporcionas dos escalas para la misma estética, la última escala tiene prioridad. En otras palabras, cuando haces `+` en una escala, en realidad no la agregas al gráfico, sino que anulas la escala existente. Esto significa que las dos especificaciones siguientes son equivalentes: \indexc{+}
 
 ```{r}
 #| label: multiple-scales
-#| fig.show: hide
+#| fig-show: hide
 #| layout-ncol: 2
 #| fig-width: 4
 ggplot(mpg, aes(displ, hwy)) + 
   geom_point() + 
-  scale_x_continuous(name = "Label 1") +
-  scale_x_continuous(name = "Label 2")
+  scale_x_continuous(name = "Etiqueta 1") +
+  scale_x_continuous(name = "Etiqueta 2")
 
 ggplot(mpg, aes(displ, hwy)) + 
   geom_point() + 
-  scale_x_continuous(name = "Label 2")
+  scale_x_continuous(name = "Etiqueta 2")
 ```
 
-Note the message when you add multiple scales for the same aesthetic, which makes it harder to accidentally overwrite an existing scale.
-If you see this in your own code, you should make sure that you're only adding one scale to each aesthetic.
+Tenga en cuenta el mensaje cuando agrega varias escalas para la misma estética, lo que hace que sea más difícil sobrescribir accidentalmente una escala existente. Si ve esto en su propio código, debe asegurarse de agregar solo una escala a cada estética.
 
-If you're making small tweaks to the scales, you might continue to use the default scales, supplying a few extra arguments.
-If you want to make more radical changes you will override the default scales with alternatives:
+Si está haciendo pequeños ajustes a las escalas, puede continuar usando las escalas predeterminadas, proporcionando algunos argumentos adicionales. Si desea realizar cambios más radicales, anulará las escalas predeterminadas con alternativas:
 
 ```{r}
-#| fig.show: hide
+#| fig-show: hide
 ggplot(mpg, aes(displ, hwy)) + 
   geom_point(aes(colour = class)) +
   scale_x_sqrt() + 
   scale_colour_brewer()
 ```
 
-Here `scale_x_sqrt()` changes the scale for the x axis scale, and `scale_colour_brewer()` does the same for the colour scale.
+Aquí `scale_x_sqrt()` cambia la escala para la escala del eje x, y `scale_colour_brewer()` hace lo mismo para la escala de color.
 
-### Naming scheme
+### Esquema de nombres
 
-The scale functions intended for users all follow a common naming scheme.
-You've probably already figured out the scheme, but to be concrete, it's made up of three pieces separated by "\_":
+Todas las funciones de báscula destinadas a los usuarios siguen un esquema de nomenclatura común. Probablemente ya hayas descubierto el esquema, pero para ser concretos, se compone de tres piezas separadas por "\_":
 
 1.  `scale`
-2.  The name of the primary aesthetic (e.g., `colour`, `shape` or `x`)
-3.  The name of the scale (e.g., `continuous`, `discrete`, `brewer`).
+2.  El nombre de la estética primaria (e.g., `colour`, `shape` o `x`)
+3.  El nombre de la escala (e.g., `continuous`, `discrete`, `brewer`).
 
-The naming structure is often helpful, but can sometimes be ambiguous.
-For example, it is immediately clear that `scale_x_*()` functions apply to the x aesthetic, but it takes a little more thought to recognise that they also govern the behaviour of other aesthetics that describe a horizontal position (e.g., the `xmin`, `xmax`, and `xend` aesthetics).
-Similarly, while the name `scale_colour_continuous()` clearly refers to the colour scale associated with a continuous variables, it is less obvious that `scale_colour_distiller()` is simply a different method for creating colour scales for continuous variables.
+La estructura de nombres suele ser útil, pero a veces puede resultar ambigua. Por ejemplo, queda inmediatamente claro que las funciones `scale_x_*()` se aplican a la estética x, pero se necesita un poco más de reflexión para reconocer que también gobiernan el comportamiento de otras estéticas que describen una posición horizontal (por ejemplo, la función `xmin `, `xmax` y `xend` estética). De manera similar, si bien el nombre `scale_colour_continuous()` se refiere claramente a la escala de colores asociada con variables continuas, es menos obvio que `scale_colour_distiller()` es simplemente un método diferente para crear escalas de colores para variables continuas.
 
-### Fundamental scale types
+### Tipos de escalas fundamentales
 
-It is useful to note that internally all scale functions in ggplot2 belong to one of three fundamental types; continuous scales, discrete scales, and binned scales.
-Each fundamental type is handled by one of three scale constructor functions; `continuous_scale()`, `discrete_scale()` and `binned_scale()`.
-Although you should never need to call these constructor functions, they provide the organising structure for scales and it is useful to know about them.
+Es útil señalar que internamente todas las funciones de escala en ggplot2 pertenecen a uno de tres tipos fundamentales; escalas continuas, escalas discretas y escalas agrupadas. Cada tipo fundamental es manejado por una de las tres funciones constructoras de escala; `continuous_scale()`, `discrete_scale()` y `binned_scale()`. Aunque nunca debería necesitar llamar a estas funciones constructoras, proporcionan la estructura organizativa para las escalas y es útil conocerlas.
 
 <!-- ### Exercises -->
 
@@ -192,25 +168,19 @@ Although you should never need to call these constructor functions, they provide
 
 <!--     What happens if you pair a continuous variable with a discrete scale? -->
 
-## Scale names {#sec-scale-names}
+## Nombres de escala {#sec-scale-names}
 
-Extend discussion of `labs()` in @sec-titles.
+Amplíar la discusión sobre `labs()` en @sec-titles.
 
-## Scale breaks {#sec-scale-breaks}
+## Saltos de escala {#sec-scale-breaks}
 
-Discussion of what unifies the concept of `breaks` across continuous, discrete and binned scales: they are specific data values at which the guide needs to display something.
-Include additional detail about break functions.
+Discusión sobre lo que unifica el concepto de `breaks` en escalas continuas, discretas y agrupadas: son valores de datos específicos en los que la guía necesita mostrar algo. Incluya detalles adicionales sobre las funciones de descanso.
 
-## Scale limits {#sec-oob}
+## Límites de escala {#sec-oob}
 
-@sec-scales-guides-theory introduced the concept that a scale defines a mapping from the data space to the aesthetic space.
-Scale limits are an extension of this idea: they dictate the **region** of the data space over which the mapping is defined.
-At a theoretical level this region is defined differently depending on the fundamental scale type.
-For continuous and binned scales, the data space is inherently continuous and one-dimensional, so the limits can be specified by two end points.
-For discrete scales, however, the data space is unstructured and consists only of a set of categories: as such the limits for a discrete scale can only be specified by enumerating the set of categories over which the mapping is defined.
+@sec-scales-guides-theory introdujo el concepto de que una escala define un mapeo desde el espacio de datos al espacio estético. Los límites de escala son una extensión de esta idea: dictan la **región** del espacio de datos sobre la cual se define el mapeo. A nivel teórico esta región se define de forma diferente según el tipo de escala fundamental. Para escalas continuas y agrupadas, el espacio de datos es inherentemente continuo y unidimensional, por lo que los límites se pueden especificar mediante dos puntos finales. Sin embargo, para las escalas discretas, el espacio de datos no está estructurado y consta únicamente de un conjunto de categorías: como tal, los límites de una escala discreta sólo pueden especificarse enumerando el conjunto de categorías sobre las cuales se define el mapeo.
 
-The toolbox chapters outline the common practical goals for specifying the limits: for position scales the limits are used to set the end points of the axis, for example.
-This leads naturally to the question of what ggplot2 should do if the data set contains "out of bounds" values that fall outside the limits.
+Los capítulos de la caja de herramientas describen los objetivos prácticos comunes para especificar los límites: para escalas de posición, los límites se utilizan para establecer los puntos finales del eje, por ejemplo. Esto lleva naturalmente a la pregunta de qué debería hacer ggplot2 si el conjunto de datos contiene valores "fuera de límites" que quedan fuera de los límites.
 
 ```{=html}
 <!-- DJN: this is taken from the positions "oob" section. I think it makes sense to 
@@ -224,12 +194,7 @@ for that it would be an esoteric theory thing. -->
 continuous. try to cover most of the oob_* functions. might be valuable to highlight 
 oob_keep() for position scales, as a way of making limits behave like zoom -->
 ```
-The default behaviour in ggplot2 is to convert out of bounds values to `NA`, the logic for this being that if a data value is not part of the mapped region, it should be treated as missing.
-This can occasionally lead to unexpected behaviour, as illustrated in @sec-zooming-in.
-You can override this default by setting `oob` argument of the scale, a function that is applied to all observations outside the scale limits.
-The default is `scales::oob_censor()` which replaces any value outside the limits with `NA`.
-Another option is `scales::oob_squish()` which squishes all values into the range.
-An example using a fill scale is shown below:
+El comportamiento predeterminado en ggplot2 es convertir valores fuera de límites a `NA`, la lógica para esto es que si un valor de datos no es parte de la región asignada, debe tratarse como faltante. En ocasiones, esto puede provocar un comportamiento inesperado, como se ilustra en @sec-zooming-in. Puede anular este valor predeterminado configurando el argumento `oob` de la escala, una función que se aplica a todas las observaciones fuera de los límites de la escala. El valor predeterminado es `scales::oob_censor()` que reemplaza cualquier valor fuera de los límites con `NA`. Otra opción es `scales::oob_squish()` que comprime todos los valores en el rango. A continuación se muestra un ejemplo que utiliza una escala de relleno:
 
 ```{r}
 #| layout-ncol: 3
@@ -245,45 +210,37 @@ base + scale_fill_gradient(limits = c(1, 3))
 base + scale_fill_gradient(limits = c(1, 3), oob = scales::squish)
 ```
 
-On the left the default fill colours are shown, ranging from dark blue to light blue.
-In the middle panel the scale limits for the fill aesthetic are reduced so that the values for the three rightmost bars are replace with `NA` and are mapped to a grey shade.
-In some cases, this is desired behaviour but often it is not: the right panel addresses this by modifying the `oob` function appropriately.
+A la izquierda se muestran los colores de relleno predeterminados, que van del azul oscuro al azul claro. En el panel central, los límites de escala para la estética del relleno se reducen de modo que los valores de las tres barras más a la derecha se reemplazan con `NA` y se asignan a un tono gris. En algunos casos, este es el comportamiento deseado, pero a menudo no lo es: el panel derecho soluciona este problema modificando la función `oob` de forma adecuada.
 
-## Scale guides {#sec-scale-guide}
+## Guías de escala {#sec-scale-guide}
 
-Scale guides are more complex than scale names: where the `name` argument (and `labs()` ) takes text as input, the `guide` argument (and `guides()`) require a guide object created by a **guide function** such as `guide_colourbar()` and `guide_legend()`.
-These arguments to these functions offer additional fine control over the guide.
+Las guías de escala son más complejas que los nombres de escala: donde el argumento `name` (y `labs()` ) toma texto como entrada, el argumento `guide` (y `guides()`) requieren un objeto guía creado por un ** función de guía** como `guide_colourbar()` y `guide_legend()`. Estos argumentos para estas funciones ofrecen un control preciso adicional sobre la guía.
 
-The table below summarises the default guide functions associated with different scale types:
+La siguiente tabla resume las funciones de guía predeterminadas asociadas con diferentes tipos de báscula:
 
-| Scale type                                         | Default guide type |
-|:---------------------------------------------------|:-------------------|
-| continuous scales for colour/fill aesthetics       | colourbar          |
-| binned scales for colour/fill aesthetics           | coloursteps        |
-| position scales (continuous, binned and discrete)  | axis               |
-| discrete scales (except position scales)           | legend             |
-| binned scales (except position/colour/fill scales) | bins               |
+| Tipo de escala                                     | Tipo de guía predeterminado |
+|:----------------------------------------------------|:------------------|
+| escalas continuas para estética de color/relleno    | barra de colores  |
+| escalas agrupadas para estética de color/relleno    | pasos de color    |
+| escalas de posición (continua, agrupada y discreta) | ejes              |
+| escalas discretas (excepto escalas de posición)     | leyenda           |
+| escalas agrupadas (excepto escalas de posición/color/relleno) | contenedores               |
 
-Each of these guide types has appeared earlier in the toolbox:
+Cada uno de estos tipos de guía apareció anteriormente en la caja de herramientas:
 
--   `guide_colourbar()` is discussed in @sec-guide-colourbar
--   `guide_coloursteps()` is discussed in @sec-guide-coloursteps
--   `guide_axis()` is discussed in @sec-guide-axis
--   `guide_legend()` is discussed in @sec-guide-legend
--   `guide_bins()` is discussed in @sec-guide-bins
+-   `guide_colourbar()` se discute en @sec-guide-colourbar
+-   `guide_coloursteps()` se discute en @sec-guide-coloursteps
+-   `guide_axis()` se discute en @sec-guide-axis
+-   `guide_legend()` se discute en @sec-guide-legend
+-   `guide_bins()` se discute en @sec-guide-bins
 
-In addition to the functionality discussed in those sections, the guide functions have many arguments that are equivalent to theme settings like text colour, size, font etc, but only apply to a single guide.
-For information about those settings, see @sec-polishing.
+Además de la funcionalidad analizada en esas secciones, las funciones de la guía tienen muchos argumentos que son equivalentes a la configuración del tema, como el color del texto, el tamaño, la fuente, etc., pero solo se aplican a una única guía. Para obtener información sobre esas configuraciones, consulte @sec-polish.
 
-New stuff: show examples where something other than the default guide is used...
+Cosas nuevas: muestra ejemplos en los que se utiliza algo distinto a la guía predeterminada...
 
-## Scale transformation {#sec-scale-transformation-extras}
+## Transformación de escala {#sec-scale-transformation-extras}
 
-The most common use for scale transformations is to adjust a continuous position scale, as discussed in @sec-scale-transformation.
-However, they can sometimes be helpful to when applied to other aesthetics.
-Often this is purely a matter of visual emphasis.
-An example of this for the Old Faithful density plot is shown below.
-The linearly mapped scale on the left makes it easy to see the peaks of the distribution, whereas the transformed representation on the right makes it easier to see the regions of non-negligible density around those peaks: \index{Transformation!scales}
+El uso más común de las transformaciones de escala es ajustar una escala de posición continua, como se explica en @sec-scale-transformation. Sin embargo, a veces pueden resultar útiles cuando se aplican a otras estéticas. A menudo esto es puramente una cuestión de énfasis visual. A continuación se muestra un ejemplo de esto para el gráfico de densidad de Old Faithful. La escala mapeada linealmente a la izquierda hace que sea fácil ver los picos de la distribución, mientras que la representación transformada a la derecha hace que sea más fácil ver las regiones de densidad no despreciable alrededor de esos picos: \index{Transformation!scales}
 
 ```{r}
 #| layout-ncol: 2
@@ -298,7 +255,7 @@ base
 base + scale_fill_continuous(trans = "sqrt")
 ```
 
-Transforming size aesthetics is also possible:
+Transformar la estética del tamaño también es posible:
 
 ```{r}
 #| layout-ncol: 2
@@ -311,8 +268,7 @@ base
 base + scale_size(trans = "reverse")
 ```
 
-In the plot on the left, the `z` value is naturally interpreted as a "weight": if each dot corresponds to a group, the `z` value might be the size of the group.
-In the plot on the right, the size scale is reversed, and `z` is more naturally interpreted as a "distance" measure: distant entities are scaled to appear smaller in the plot.
+En el gráfico de la izquierda, el valor `z` se interpreta naturalmente como un "peso": si cada punto corresponde a un grupo, el valor `z` podría ser el tamaño del grupo. En el gráfico de la derecha, la escala de tamaño se invierte y `z` se interpreta de forma más natural como una medida de "distancia": las entidades distantes se escalan para que parezcan más pequeñas en el gráfico.
 
 ````{=html}
 <!-- DN: This was the beginning of the binned transformation section. Tempted to omit this entirely?
@@ -326,20 +282,20 @@ p1 <- base + scale_x_binned(breaks = seq(-50,50,10), limits = c(-50, 50))
 p2 <- base + scale_x_binned(breaks = seq(-50,50,10), limits = c(-50, 50), trans = "reverse")
 ```
 
-Binned scales can be transformed, much like continuous scales, but some care is required because the bins are constructed in the transformed space. In some cases this can produce undesirable outcomes. In the code below, we take a uniformly distributed variable and use `scale_x_binned()` and `geom_bar()` to construct a histogram of the logarithmically transformed data. 
+Las básculas agrupadas se pueden transformar, al igual que las básculas continuas, pero se requiere cierto cuidado porque las bandejas se construyen en el espacio transformado. En algunos casos, esto puede producir resultados indeseables. En el siguiente código, tomamos una variable distribuida uniformemente y usamos `scale_x_binned()` y `geom_bar()` para construir un histograma de los datos transformados logarítmicamente. 
 
 ```{r}
 df <- data.frame(val = runif(10000, 1, 20000))
 ggplot(df, aes(log10(val))) + geom_bar() + scale_x_binned()
 ```
 
-In this example the transformation takes place in the data: the x aesthetic is mapped to the value of `log10(val)`, and no scale transformation is applied. The bins are evenly spaced on this logarithmic scale. Alternatively, you can specify the transformation by setting `trans = "log10"` in the scale function:
+En este ejemplo, la transformación tiene lugar en los datos: la estética x se asigna al valor de `log10(val)` y no se aplica ninguna transformación de escala. Los contenedores están espaciados uniformemente en esta escala logarítmica. Alternativamente, puede especificar la transformación configurando `trans = "log10"` en la función de escala:
 
 ```{r}
 ggplot(df, aes(val)) + geom_bar() + scale_x_binned(trans="log10") 
 ```
 
-The unevenly spaced bins occur due to an interaction of two things: (1) binned scales use breaks to construct the bins, and (2) the default breaks for a transformed scale are specified by the transformation and are designed to look nice, but may not be good for binning data. The solution to this is to override the default breaks: 
+Los contenedores espaciados de manera desigual se producen debido a una interacción de dos cosas: (1) las escalas agrupadas usan cortes para construir los contenedores, y (2) los cortes predeterminados para una escala transformada están especificados por la transformación y están diseñados para verse bien, pero pueden No será bueno para agrupar datos. La solución a esto es anular los descansos predeterminados: 
 
 ```{r}
 ggplot(df, aes(val)) + geom_bar() + 
@@ -349,19 +305,15 @@ ggplot(df, aes(val)) + geom_bar() +
 -->
 ````
 
-## Legend merging and splitting {#sec-legend-merge-split}
+## Leyenda fusionándose y dividiéndose {#sec-legend-merge-split}
 
-There is always a one-to-one correspondence between position scales and axes.
-But the connection between non-position scales and legend is more complex: one legend may need to draw symbols from multiple layers ("merging"), or one aesthetic may need multiple legends ("splitting").
+Siempre existe una correspondencia uno a uno entre las escalas de posición y los ejes. Pero la conexión entre las escalas sin posición y la leyenda es más compleja: una leyenda puede necesitar dibujar símbolos de múltiples capas ("fusión"), o una estética puede necesitar múltiples leyendas ("división").
 
-### Merging legends {#sec-sub-layers-legends}
+### Fusionando leyendas {#sec-sub-layers-legends}
 
 \index{Legend}
 
-Merging legends occurs quite frequently when using ggplot2.
-For example, if you've mapped colour to both points and lines, the keys will show both points and lines.
-If you've mapped fill colour, you get a rectangle.
-Note the way the legend varies in the plots below:
+La fusión de leyendas ocurre con bastante frecuencia cuando se usa ggplot2. Por ejemplo, si ha asignado color tanto a puntos como a líneas, las claves mostrarán tanto los puntos como las líneas. Si has asignado el color de relleno, obtendrás un rectángulo. Tenga en cuenta la forma en que varía la leyenda en los gráficos siguientes:
 
 ```{r}
 #| label: legend-geom
@@ -369,20 +321,20 @@ Note the way the legend varies in the plots below:
 #| layout-ncol: 3
 #| fig-width: 3
 #| fig-height: 3
+
 base <- ggplot(toy, aes(const, up, colour = txt))
 base + geom_point()
 base + geom_point() + geom_path(aes(group = 1))
 base + geom_raster(aes(fill = txt))
 ```
 
-By default, a layer will only appear if the corresponding aesthetic is mapped to a variable with `aes()`.
-You can override whether or not a layer appears in the legend with `show.legend`: `FALSE` to prevent a layer from ever appearing in the legend; `TRUE` forces it to appear when it otherwise wouldn't.
-Using `TRUE` can be useful in conjunction with the following trick to make points stand out:
+De forma predeterminada, una capa solo aparecerá si la estética correspondiente se asigna a una variable con `aes()`. Puede anular si una capa aparece o no en la leyenda con `show.legend`: `FALSE` para evitar que una capa aparezca en la leyenda; `TRUE` lo obliga a aparecer cuando de otro modo no lo haría. Usar `TRUE` puede ser útil junto con el siguiente truco para resaltar los puntos:
 
 ```{r}
 #| layout-ncol: 2
 #| fig-width: 4
 #| fig-height: 4
+
 ggplot(toy, aes(up, up)) + 
   geom_point(size = 4, colour = "grey20") +
   geom_point(aes(colour = txt), size = 2) 
@@ -392,16 +344,14 @@ ggplot(toy, aes(up, up)) +
   geom_point(aes(colour = txt), size = 2) 
 ```
 
-ggplot2 tries to use the fewest number of legends to accurately convey the aesthetics used in the plot.
-It does this by combining legends where the same variable is mapped to different aesthetics.
-The figure below shows how this works for points: if both colour and shape are mapped to the same variable, then only a single legend is necessary.
-\index{Legend!merging}
+ggplot2 intenta utilizar la menor cantidad de leyendas para transmitir con precisión la estética utilizada en la trama. Lo hace combinando leyendas donde la misma variable se asigna a diferentes estéticas. La siguiente figura muestra cómo funciona esto para puntos: si tanto el color como la forma se asignan a la misma variable, entonces solo es necesaria una única leyenda. \index{Legend!merging}
 
 ```{r}
 #| label: legend-merge
 #| layout-ncol: 3
 #| fig-width: 3
 #| fig-height: 4
+
 base <- ggplot(toy, aes(const, up)) +
   scale_x_continuous(NULL, breaks = NULL)
 base + geom_point(aes(colour = txt))
@@ -409,14 +359,13 @@ base + geom_point(aes(shape = txt))
 base + geom_point(aes(shape = txt, colour = txt))
 ```
 
-In order for legends to be merged, they must have the same `name`.
-So if you change the name of one of the scales, you'll need to change it for all of them.
-One way to do this is by using `labs()` helper function:
+Para que las leyendas se fusionen, deben tener el mismo "nombre". Entonces, si cambia el nombre de una de las escalas, deberá cambiarlo para todas ellas. Una forma de hacer esto es usando la función auxiliar `labs()`:
 
 ```{r}
 #| layout-ncol: 3
 #| fig-width: 3
 #| fig-height: 4
+
 base <- ggplot(toy, aes(const, up)) + 
   geom_point(aes(shape = txt, colour = txt)) + 
   scale_x_continuous(NULL, breaks = NULL)
@@ -426,19 +375,16 @@ base + labs(shape = "Split legend")
 base + labs(shape = "Merged legend", colour = "Merged legend")
 ```
 
-### Splitting legends
+### Dividiendo leyendas
 
-Splitting a legend is a much less common data visualisation task.
-In general it is not advisable to map one aesthetic (e.g. colour) to multiple variables, and so by default ggplot2 does not allow you to "split" the colour aesthetic into multiple scales with separate legends.
-Nevertheless, there are exceptions to this general rule, and it is possible to override this behaviour using the ggnewscale package [@ggnewscale].
-The `ggnewscale::new_scale_colour()` command acts as an instruction to ggplot2 to initialise a new colour scale: scale and guide commands that appear above the `new_scale_colour()` command will be applied to the first colour scale, and commands that appear below are applied to the second colour scale.
+Dividir una leyenda es una tarea de visualización de datos mucho menos común. En general, no es recomendable asignar una estética (por ejemplo, color) a múltiples variables y, por lo tanto, de forma predeterminada, ggplot2 no le permite "dividir" la estética del color en múltiples escalas con leyendas separadas. Sin embargo, existen excepciones a esta regla general y es posible anular este comportamiento utilizando el paquete ggnewscale [@ggnewscale]. El comando `ggnewscale::new_scale_colour()` actúa como una instrucción para ggplot2 para inicializar una nueva escala de color: los comandos de escala y guía que aparecen encima del comando `new_scale_colour()` se aplicarán a la primera escala de color, y los comandos que aparecen A continuación se aplican a la segunda escala de colores.
 
-To illustrate this the plot on the left uses `geom_point()` to display a large marker for each vehicle make in the `mpg` data, with a single colour scale that maps to the year.
-On the right, a second `geom_point()` layer is overlaid on the plot using small markers: this layer is associated with a different colour scale, used to indicate whether the vehicle has a 4-cylinder engine.
+Para ilustrar esto, el gráfico de la izquierda usa `geom_point()` para mostrar un marcador grande para cada marca de vehículo en los datos de `mpg`, con una escala de color única que se asigna al año. A la derecha, una segunda capa `geom_point()` se superpone en el gráfico mediante pequeños marcadores: esta capa está asociada a una escala de colores diferente, que se utiliza para indicar si el vehículo tiene un motor de 4 cilindros.
 
 ```{r}
 #| layout-ncol: 2
 #| fig-width: 4
+
 base <- ggplot(mpg, aes(displ, hwy)) + 
   geom_point(aes(colour = factor(year)), size = 5) + 
   scale_colour_brewer("year", type = "qual", palette = 5) 
@@ -450,27 +396,24 @@ base +
   scale_colour_manual("4 cylinder", values = c("grey60", "black"))
 ```
 
-Additional details, including functions that apply to other scale types, are available on the package website, <https://github.com/eliocamp/ggnewscale>.
+Detalles adicionales, incluidas funciones que se aplican a otros tipos de básculas, están disponibles en el sitio web del paquete, <https://github.com/eliocamp/ggnewscale>.
 
-## Legend key glyphs {#sec-legend-glyph}
+## Glifos clave de leyenda {#sec-legend-glyph}
 
-In most cases the default glyphs shown in the legend key will be appropriate to the layer and the aesthetic.
-Line plots of different colours will show up as lines of different colours in the legend, boxplots will appear as small boxplots in the legend, and so on.
-Should you need to override this behaviour, the `key_glyph` argument can be used to associate a particular layer with a different kind of glyph.
-For example:
+En la mayoría de los casos, los glifos predeterminados que se muestran en la clave de leyenda serán apropiados para la capa y la estética. Los diagramas de líneas de diferentes colores aparecerán como líneas de diferentes colores en la leyenda, los diagramas de caja aparecerán como diagramas de caja pequeños en la leyenda, y así sucesivamente. Si necesita anular este comportamiento, el argumento `key_glyph` se puede utilizar para asociar una capa particular con un tipo diferente de glifo. Por ejemplo:
 
 ```{r}
 #| layout-ncol: 2
 #| fig-width: 4
 #| fig-height: 3
+
 base <- ggplot(economics, aes(date, psavert, color = "savings"))
 
 base + geom_line()
 base + geom_line(key_glyph = "timeseries")
 ```
 
-More precisely, each geom is associated with a function such as `draw_key_boxplot()` or `draw_key_path()` which is responsible for drawing the key when the legend is created.
-You can pass the desired key drawing function directly: for example, `base + geom_line(key_glyph = draw_key_timeseries)` would also produce the plot shown above right.
+Más precisamente, cada geom está asociada con una función como `draw_key_boxplot()` o `draw_key_path()` que es responsable de dibujar la clave cuando se crea la leyenda. Puede pasar directamente la función de dibujo clave deseada: por ejemplo, `base + geom_line(key_glyph = draw_key_timeseries)` también produciría el gráfico que se muestra arriba a la derecha.
 
 <!-- ## Exercises -->
 
