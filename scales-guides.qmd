@@ -28,12 +28,12 @@ La caja de herramientas de escalas en @sec-scale-position a @sec-scale-other pro
 
 ## Teoría de escalas y guías. {#sec-scales-guides-theory}
 
-Formalmente, cada escala es una función desde una región en el espacio de datos (el dominio de la escala) hasta una región en el espacio estético (el rango de la escala). El eje o leyenda es la función inversa, conocida como guía: le permite convertir propiedades visuales nuevamente en datos. Puede que le sorprenda que los ejes y las leyendas sean el mismo tipo de cosas, pero si bien se ven muy diferentes, tienen el mismo propósito: permitirle leer las observaciones de la trama y mapearlas a sus valores originales. Los puntos en común entre los dos se ilustran a continuación:
+Formalmente, cada escala es una función desde una región en el espacio de datos (el dominio de la escala) hasta una región en el espacio estético (el rango de la escala). El eje o leyenda es la función inversa, conocida como guía: le permite convertir propiedades visuales nuevamente en datos. Puede que le sorprenda que los ejes y las leyendas sean el mismo tipo de cosas, pero si bien se ven muy diferentes, tienen el mismo propósito: permitirle leer las observaciones de la gráfica y mapearlas a sus valores originales. Los puntos en común entre los dos se ilustran a continuación:
 
-| Nombre del argumento | Eje                           | Leyenda    |
-|:---------------------|:------------------------------|:-----------|
-| `name`               | Etiqueta                      | Título     |
-| `breaks`             | Marcas y líneas de cuadrícula | Entrada    |
+| Nombre del argumento | Eje                           | Leyenda             |
+|:---------------------|:------------------------------|:--------------------|
+| `name`               | Etiqueta                      | Título              |
+| `breaks`             | Marcas y líneas de cuadrícula | Entrada             |
 | `labels`             | Etiqueta de marca             | Etiqueta de entrada |
 
 ```{r}
@@ -47,15 +47,15 @@ knitr::include_graphics("diagrams/scale-guides.png", dpi = 300, auto_pdf = TRUE)
 
 Sin embargo, las leyendas son más complicadas que los ejes y, en consecuencia, hay una serie de temas específicos de las leyendas:
 
-1. Una leyenda puede mostrar múltiples estéticas (por ejemplo, color y forma), de múltiples capas (@sec-sub-layers-legends), y el símbolo que se muestra en una leyenda varía según la geom utilizada en la capa (@sec-legend -glifo)
+1.  Una leyenda puede mostrar múltiples estéticas (por ejemplo, color y forma), de múltiples capas (@sec-sub-layers-legends), y el símbolo que se muestra en una leyenda varía según la geom utilizada en la capa (@sec-legend -glifo)
 
-2. Los ejes siempre aparecen en el mismo lugar. Las leyendas pueden aparecer en diferentes lugares, por lo que necesitas alguna forma global de posicionarlas.
+2.  Los ejes siempre aparecen en el mismo lugar. Las leyendas pueden aparecer en diferentes lugares, por lo que necesitas alguna forma global de posicionarlas.
 
 3.  Las leyendas tienen más detalles que se pueden modificar: ¿deberían mostrarse vertical u horizontalmente? ¿Cuántas columnas? ¿Qué tamaño deben tener las llaves? Esto se comenta en (@sec-scale-guide)
 
 ### Especificación de escala {#sec-scale-usage}
 
-Una propiedad importante de ggplot2 es el principio de que cada estética de su trama está asociada exactamente con una escala. Por ejemplo, cuando escribes esto
+Una propiedad importante de ggplot2 es el principio de que cada estética de su gráfica está asociada exactamente con una escala. Por ejemplo, cuando escribes esto
 
 ```{r}
 #| label: default-scales
@@ -64,7 +64,7 @@ ggplot(mpg, aes(displ, hwy)) +
   geom_point(aes(colour = class))
 ```
 
-ggplot2 agrega una escala predeterminada para cada estética utilizada en la trama:
+ggplot2 agrega una escala predeterminada para cada estética utilizada en la gráfica:
 
 ```{r}
 #| fig-show: hide
@@ -87,7 +87,7 @@ ggplot(mpg, aes(displ, hwy)) +
 
 En la práctica, normalmente usarías `labs()` para esto, lo cual se analiza en @sec-titles, pero conceptualmente es útil comprender que las etiquetas de los ejes y los títulos de las leyendas son ejemplos de nombres de escala: consulta @sec-scale-names.
 
-El uso de `+` para "agregar" escalas a una trama es un poco engañoso porque si proporcionas dos escalas para la misma estética, la última escala tiene prioridad. En otras palabras, cuando haces `+` en una escala, en realidad no la agregas al gráfico, sino que anulas la escala existente. Esto significa que las dos especificaciones siguientes son equivalentes: \indexc{+}
+El uso de `+` para "agregar" escalas a una gráfica es un poco engañoso porque si proporcionas dos escalas para la misma estética, la última escala tiene prioridad. En otras palabras, cuando haces `+` en una escala, en realidad no la agregas al gráfico, sino que anulas la escala existente. Esto significa que las dos especificaciones siguientes son equivalentes: \indexc{+}
 
 ```{r}
 #| label: multiple-scales
@@ -126,7 +126,7 @@ Todas las funciones de báscula destinadas a los usuarios siguen un esquema de n
 2.  El nombre de la estética primaria (e.g., `colour`, `shape` o `x`)
 3.  El nombre de la escala (e.g., `continuous`, `discrete`, `brewer`).
 
-La estructura de nombres suele ser útil, pero a veces puede resultar ambigua. Por ejemplo, queda inmediatamente claro que las funciones `scale_x_*()` se aplican a la estética x, pero se necesita un poco más de reflexión para reconocer que también gobiernan el comportamiento de otras estéticas que describen una posición horizontal (por ejemplo, la función `xmin `, `xmax` y `xend` estética). De manera similar, si bien el nombre `scale_colour_continuous()` se refiere claramente a la escala de colores asociada con variables continuas, es menos obvio que `scale_colour_distiller()` es simplemente un método diferente para crear escalas de colores para variables continuas.
+La estructura de nombres suele ser útil, pero a veces puede resultar ambigua. Por ejemplo, queda inmediatamente claro que las funciones `scale_x_*()` se aplican a la estética x, pero se necesita un poco más de reflexión para reconocer que también gobiernan el comportamiento de otras estéticas que describen una posición horizontal (por ejemplo, la función `xmin`, `xmax` y `xend` estética). De manera similar, si bien el nombre `scale_colour_continuous()` se refiere claramente a la escala de colores asociada con variables continuas, es menos obvio que `scale_colour_distiller()` es simplemente un método diferente para crear escalas de colores para variables continuas.
 
 ### Tipos de escalas fundamentales
 
@@ -214,17 +214,17 @@ A la izquierda se muestran los colores de relleno predeterminados, que van del a
 
 ## Guías de escala {#sec-scale-guide}
 
-Las guías de escala son más complejas que los nombres de escala: donde el argumento `name` (y `labs()` ) toma texto como entrada, el argumento `guide` (y `guides()`) requieren un objeto guía creado por un ** función de guía** como `guide_colourbar()` y `guide_legend()`. Estos argumentos para estas funciones ofrecen un control preciso adicional sobre la guía.
+Las guías de escala son más complejas que los nombres de escala: donde el argumento `name` (y `labs()` ) toma texto como entrada, el argumento `guide` (y `guides()`) requieren un objeto guía creado por un \*\* función de guía\*\* como `guide_colourbar()` y `guide_legend()`. Estos argumentos para estas funciones ofrecen un control preciso adicional sobre la guía.
 
 La siguiente tabla resume las funciones de guía predeterminadas asociadas con diferentes tipos de báscula:
 
-| Tipo de escala                                     | Tipo de guía predeterminado |
-|:----------------------------------------------------|:------------------|
-| escalas continuas para estética de color/relleno    | barra de colores  |
-| escalas agrupadas para estética de color/relleno    | pasos de color    |
-| escalas de posición (continua, agrupada y discreta) | ejes              |
-| escalas discretas (excepto escalas de posición)     | leyenda           |
-| escalas agrupadas (excepto escalas de posición/color/relleno) | contenedores               |
+| Tipo de escala                                                | Tipo de guía predeterminado |
+|:---------------------------------------------------|:-------------------|
+| escalas continuas para estética de color/relleno              | barra de colores            |
+| escalas agrupadas para estética de color/relleno              | pasos de color              |
+| escalas de posición (continua, agrupada y discreta)           | ejes                        |
+| escalas discretas (excepto escalas de posición)               | leyenda                     |
+| escalas agrupadas (excepto escalas de posición/color/relleno) | contenedores                |
 
 Cada uno de estos tipos de guía apareció anteriormente en la caja de herramientas:
 
@@ -344,7 +344,7 @@ ggplot(toy, aes(up, up)) +
   geom_point(aes(colour = txt), size = 2) 
 ```
 
-ggplot2 intenta utilizar la menor cantidad de leyendas para transmitir con precisión la estética utilizada en la trama. Lo hace combinando leyendas donde la misma variable se asigna a diferentes estéticas. La siguiente figura muestra cómo funciona esto para puntos: si tanto el color como la forma se asignan a la misma variable, entonces solo es necesaria una única leyenda. \index{Legend!merging}
+ggplot2 intenta utilizar la menor cantidad de leyendas para transmitir con precisión la estética utilizada en la gráfica. Lo hace combinando leyendas donde la misma variable se asigna a diferentes estéticas. La siguiente figura muestra cómo funciona esto para puntos: si tanto el color como la forma se asignan a la misma variable, entonces solo es necesaria una única leyenda. \index{Legend!merging}
 
 ```{r}
 #| label: legend-merge
