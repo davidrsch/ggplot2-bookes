@@ -1,4 +1,4 @@
-# Coordinate systems {#sec-coord}
+# Sistemas coordinados {#sec-coord}
 
 ```{r}
 #| echo: false
@@ -8,49 +8,37 @@ source("common.R")
 status("drafting")
 ```
 
-Coordinate systems have two main jobs: \index{Coordinate systems}
+Los sistemas de coordenadas tienen dos funciones principales: \index{Coordinate systems}
 
--   Combine the two position aesthetics to produce a 2d position on the plot.
-    The position aesthetics are called `x` and `y`, but they might be better called position 1 and 2 because their meaning depends on the coordinate system used.
-    For example, with the polar coordinate system they become angle and radius (or radius and angle), and with maps they become latitude and longitude.
+-   Combine la estética de las dos posiciones para producir una posición 2D en la gráfica. La estética de las posiciones se denomina `x` e `y`, pero sería mejor llamarlas posición 1 y 2 porque su significado depende del sistema de coordenadas utilizado. Por ejemplo, con el sistema de coordenadas polares se convierten en ángulo y radio (o radio y ángulo), y con los mapas se convierten en latitud y longitud.
 
--   In coordination with the faceter, coordinate systems draw axes and panel backgrounds.
-    While the scales control the values that appear on the axes, and how they map from data to position, it is the coordinate system which actually draws them.
-    This is because their appearance depends on the coordinate system: an angle axis looks quite different than an x axis.
+-   En coordinación con el faceter, los sistemas de coordenadas dibujan ejes y fondos de paneles. Si bien las escalas controlan los valores que aparecen en los ejes y cómo se asignan desde los datos hasta la posición, es el sistema de coordenadas el que realmente los dibuja. Esto se debe a que su apariencia depende del sistema de coordenadas: un eje de ángulo se ve bastante diferente a un eje x.
 
-There are two types of coordinate systems.
-Linear coordinate systems preserve the shape of geoms:
+Hay dos tipos de sistemas de coordenadas. Los sistemas de coordenadas lineales preservan la forma de las geoms:
 
--   `coord_cartesian()`: the default Cartesian coordinate system, where the 2d position of an element is given by the combination of the x and y positions.
+-   `coord_cartesian()`: el sistema de coordenadas cartesiano predeterminado, donde la posición 2d de un elemento viene dada por la combinación de las posiciones xey.
 
--   `coord_flip()`: Cartesian coordinate system with x and y axes flipped.
+-   `coord_flip()`: Sistema de coordenadas cartesianas con ejes xey invertidos.
 
--   `coord_fixed()`: Cartesian coordinate system with a fixed aspect ratio.
+-   `coord_fixed()`: Sistema de coordenadas cartesianas con una relación de aspecto fija.
 
-On the other hand, non-linear coordinate systems can change the shapes: a straight line may no longer be straight.
-The closest distance between two points may no longer be a straight line.
+Por otro lado, los sistemas de coordenadas no lineales pueden cambiar las formas: una línea recta puede dejar de ser recta. Es posible que la distancia más cercana entre dos puntos ya no sea una línea recta.
 
--   `coord_map()`/`coord_quickmap()`/`coord_sf()`: Map projections.
+-   `coord_map()`/`coord_quickmap()`/`coord_sf()`: Proyecciones cartográficas.
 
--   `coord_polar()`: Polar coordinates.
+-   `coord_polar()`: Coordenadas polares.
 
--   `coord_trans()`: Apply arbitrary transformations to x and y positions, after the data has been processed by the stat.
+-   `coord_trans()`: Aplique transformaciones arbitrarias a las posiciones xey, después de que la estadística haya procesado los datos.
 
-Each coordinate system is described in more detail below.
+Cada sistema de coordenadas se describe con más detalle a continuación.
 
-## Linear coordinate systems {#sec-cartesian}
+## Sistemas de coordenadas lineales {#sec-cartesian}
 
-There are three linear coordinate systems: `coord_cartesian()`, `coord_flip()`, `coord_fixed()`.
-\index{Coordinate systems!Cartesian} \indexf{coord\_cartesian}
+Hay tres sistemas de coordenadas lineales: `coord_cartesian()`, `coord_flip()`, `coord_fixed()`. \index{Coordinate systems!Cartesian} \indexf{coord\_cartesian}
 
-### Zooming into a plot with `coord_cartesian()`
+### Acercándose a una gráfica con `coord_cartesian()`
 
-`coord_cartesian()` has arguments `xlim` and `ylim`.
-If you think back to the scales chapter, you might wonder why we need these.
-Doesn't the limits argument of the scales already allow us to control what appears on the plot?
-The key difference is how the limits work: when setting scale limits, any data outside the limits is thrown away; but when setting coordinate system limits, we still use all the data, but we only display a small region of the plot.
-Setting coordinate system limits is like looking at the plot under a magnifying glass.
-\index{Zooming}
+`coord_cartesian()` tiene argumentos `xlim` y `ylim`. Si recuerda el capítulo de las escalas, se preguntará por qué las necesitamos. ¿El argumento de los límites de la balanza no nos permite ya controlar lo que aparece en la gráfica? La diferencia clave es cómo funcionan los límites: al establecer límites de escala, cualquier dato fuera de los límites se desecha; pero al establecer los límites del sistema de coordenadas, todavía usamos todos los datos, pero solo mostramos una pequeña región del gráfico. Establecer los límites del sistema de coordenadas es como mirar el gráfico con una lupa. \index{Zooming}
 
 ```{r}
 #| label: limits-smooth
@@ -60,59 +48,52 @@ base <- ggplot(mpg, aes(displ, hwy)) +
   geom_point() + 
   geom_smooth()
 
-# Full dataset
+# Conjunto de datos completo
 base
-# Scaling to 4--6 throws away data outside that range
+# Escalar a 4-6 descarta datos fuera de ese rango
 base + scale_x_continuous(limits = c(4, 6))
-# Zooming to 4--6 keeps all the data but only shows some of it
+# Hacer zoom a 4--6 mantiene todos los datos pero solo muestra algunos de ellos
 base + coord_cartesian(xlim = c(4, 6))
 ```
 
-### Flipping the axes with `coord_flip()` {#sec-coord-flip}
+### Voltear los ejes con `coord_flip()` {#sec-coord-flip}
 
-Most statistics and geoms assume you are interested in y values conditional on x values (e.g., smooth, summary, boxplot, line): in most statistical models, the x values are assumed to be measured without error.
-If you are interested in x conditional on y (or you just want to rotate the plot 90 degrees), you can use `coord_flip()` to exchange the x and y axes.
-Compare this with just exchanging the variables mapped to x and y: \index{Rotating} \index{Coordinate systems!flipped} \indexf{coord\_flip}
+La mayoría de las estadísticas y geoms asumen que usted está interesado en los valores de y condicionados a los valores de x (por ejemplo, suave, resumen, diagrama de caja, línea): en la mayoría de los modelos estadísticos, se supone que los valores de x se miden sin errores. Si está interesado en x condicional a y (o simplemente desea rotar el gráfico 90 grados), puede usar `coord_flip()` para intercambiar los ejes x e y. Compare esto con simplemente intercambiar las variables asignadas a x e y: \index{Rotating} \index{Coordinate systems!flipped} \indexf{coord\_flip}
 
 ```{r}
 #| label: coord-flip
 #| layout-ncol: 3
 #| fig-width: 3
+
 ggplot(mpg, aes(displ, cty)) + 
   geom_point() + 
   geom_smooth()
-# Exchanging cty and displ rotates the plot 90 degrees, but the smooth 
-# is fit to the rotated data.
+# El intercambio de cty y displ gira la gráfica 90 grados, pero la fluidez
+# se ajusta a los datos rotados.
 ggplot(mpg, aes(cty, displ)) + 
   geom_point() + 
   geom_smooth()
-# coord_flip() fits the smooth to the original data, and then rotates 
-# the output
+# coord_flip() ajusta la suavidad a los datos originales y luego gira
+# la salida
 ggplot(mpg, aes(displ, cty)) + 
   geom_point() + 
   geom_smooth() + 
   coord_flip()
 ```
 
-### Equal scales with `coord_fixed()`
+### Escalas iguales con `coord_fixed()`
 
-`coord_fixed()` fixes the ratio of length on the x and y axes.
-The default `ratio` ensures that the x and y axes have equal scales: i.e., 1 cm along the x axis represents the same range of data as 1 cm along the y axis.
-The aspect ratio will also be set to ensure that the mapping is maintained regardless of the shape of the output device.
-See the documentation of `coord_fixed()` for more details.
-\index{Aspect ratio} \index{Coordinate systems!equal} \indexf{coord\_equal}
+`coord_fixed()` Fija la relación de longitud en los ejes x e y. El `ratio` predeterminado garantiza que los ejes x e y tengan escalas iguales: es decir, 1 cm a lo largo del eje x representa el mismo rango de datos que 1 cm a lo largo del eje y. La relación de aspecto también se establecerá para garantizar que el mapeo se mantenga independientemente de la forma del dispositivo de salida. Consulte la documentación de `coord_fixed()` para obtener más detalles. \index{Aspect ratio} \index{Coordinate systems!equal} \indexf{coord\_equal}
 
-## Non-linear coordinate systems {#sec-coord-non-linear}
+## Sistemas de coordenadas no lineales {#sec-coord-non-linear}
 
-Unlike linear coordinates, non-linear coordinates can change the shape of geoms.
-For example, in polar coordinates a rectangle becomes an arc; in a map projection, the shortest path between two points is not necessarily a straight line.
-The code below shows how a line and a rectangle are rendered in a few different coordinate systems.
-\index{Transformation!coordinate system} \index{Coordinate systems!non-linear}
+A diferencia de las coordenadas lineales, las coordenadas no lineales pueden cambiar la forma de las geoms. Por ejemplo, en coordenadas polares un rectángulo se convierte en un arco; En una proyección cartográfica, el camino más corto entre dos puntos no es necesariamente una línea recta. El siguiente código muestra cómo se representan una línea y un rectángulo en algunos sistemas de coordenadas diferentes. \index{Transformation!coordinate system} \index{Coordinate systems!non-linear}
 
 ```{r}
 #| label: coord-trans-ex
 #| layout-ncol: 3
 #| fig-width: 3
+
 rect <- data.frame(x = 50, y = 50)
 line <- data.frame(x = c(1, 200), y = c(100, 1))
 base <- ggplot(mapping = aes(x, y)) + 
@@ -128,26 +109,17 @@ base + coord_polar("y")
 #| label: coord-trans-ex-2
 #| layout-ncol: 3
 #| fig-width: 3
+
 base + coord_flip()
 base + coord_trans(y = "log10")
 base + coord_fixed()
 ```
 
-The transformation takes part in two steps.
-Firstly, the parameterisation of each geom is changed to be purely location-based, rather than location- and dimension-based.
-For example, a bar can be represented as an x position (a location), a height and a width (two dimensions).
-Interpreting height and width in a non-Cartesian coordinate system is hard because a rectangle may no longer have constant height and width, so we convert to a purely location-based representation, a polygon defined by the four corners.
-This effectively converts all geoms to a combination of points, lines and polygons.
-\index{Geoms!parameterisation} \index{Coordinate systems!transformation}
+La transformación se produce en dos pasos. En primer lugar, la parametrización de cada geom se cambia para que se base puramente en la ubicación, en lugar de en la ubicación y las dimensiones. Por ejemplo, una barra se puede representar como una posición x (una ubicación), una altura y un ancho (dos dimensiones). Interpretar la altura y el ancho en un sistema de coordenadas no cartesiano es difícil porque es posible que un rectángulo ya no tenga una altura y un ancho constantes, por lo que lo convertimos a una representación puramente basada en la ubicación, un polígono definido por las cuatro esquinas. Esto convierte efectivamente todas las geoms en una combinación de puntos, líneas y polígonos. \index{Geoms!parameterisation} \index{Coordinate systems!transformation}
 
-Once all geoms have a location-based representation, the next step is to transform each location into the new coordinate system.
-It is easy to transform points, because a point is still a point no matter what coordinate system you are in.
-Lines and polygons are harder, because a straight line may no longer be straight in the new coordinate system.
-To make the problem tractable we assume that all coordinate transformations are smooth, in the sense that all very short lines will still be very short straight lines in the new coordinate system.
-With this assumption in hand, we can transform lines and polygons by breaking them up into many small line segments and transforming each segment.
-This process is called munching and is illustrated below: \index{Munching}
+Una vez que todas las geoms tengan una representación basada en la ubicación, el siguiente paso es transformar cada ubicación en el nuevo sistema de coordenadas. Es fácil transformar puntos, porque un punto sigue siendo un punto sin importar en qué sistema de coordenadas se encuentre. Las líneas y los polígonos son más difíciles, porque es posible que una línea recta ya no lo sea en el nuevo sistema de coordenadas. Para que el problema sea manejable, asumimos que todas las transformaciones de coordenadas son suaves, en el sentido de que todas las líneas muy cortas seguirán siendo líneas rectas muy cortas en el nuevo sistema de coordenadas. Con esta suposición en la mano, podemos transformar líneas y polígonos dividiéndolos en muchos segmentos de línea pequeños y transformando cada segmento. Este proceso se llama masticar y se ilustra a continuación: \index{Munching}
 
-1.  We start with a line parameterised by its two endpoints:
+1.  Empezamos con una línea parametrizada por sus dos extremos:
 
     ```{r}
     df <- data.frame(r = c(0, 1), theta = c(0, 3 / 2 * pi))
@@ -156,7 +128,7 @@ This process is called munching and is illustrated below: \index{Munching}
       geom_point(size = 2, colour = "red")
     ```
 
-2.  We break it into multiple line segments, each with two endpoints.
+2.  Lo dividimos en varios segmentos de línea, cada uno con dos puntos finales.
 
     ```{r}
     interp <- function(rng, n) {
@@ -172,7 +144,7 @@ This process is called munching and is illustrated below: \index{Munching}
       geom_point(size = 2, colour = "red")
     ```
 
-3.  We transform the locations of each piece:
+3.  Transformamos las ubicaciones de cada pieza:
 
     ```{r}
     transformed <- transform(munched,
@@ -186,23 +158,19 @@ This process is called munching and is illustrated below: \index{Munching}
       coord_fixed()
     ```
 
-Internally ggplot2 uses many more segments so that the result looks smooth.
+Internamente, ggplot2 usa muchos más segmentos para que el resultado parezca fluido.
 
-### Transformations with `coord_trans()`
+### Transformaciones con `coord_trans()`
 
-Like limits, we can also transform the data in two places: at the scale level or at the coordinate system level.
-`coord_trans()` has arguments `x` and `y` which should be strings naming the transformer or transformer objects (see @sec-scale-position).
-Transforming at the scale level occurs before statistics are computed and does not change the shape of the geom.
-Transforming at the coordinate system level occurs after the statistics have been computed, and does affect the shape of the geom.
-Using both together allows us to model the data on a transformed scale and then backtransform it for interpretation: a common pattern in analysis.
-\index{Transformation!coordinate system} \index{Coordinate systems!transformed} \indexf{coord\_trans}
+Al igual que los límites, también podemos transformar los datos en dos lugares: a nivel de escala o a nivel del sistema de coordenadas. `coord_trans()` tiene argumentos `x` e `y` que deberían ser cadenas que nombren el transformador o los objetos del transformador (ver @sec-scale-position). La transformación a nivel de escala ocurre antes de que se calculen las estadísticas y no cambia la forma de la geom. La transformación a nivel del sistema de coordenadas ocurre después de que se han calculado las estadísticas y afecta la forma de la geom. Usar ambos juntos nos permite modelar los datos en una escala transformada y luego transformarlos para su interpretación: un patrón común en el análisis. \index{Transformation!coordinate system} \index{Coordinate systems!transformed} \indexf{coord\_trans}
 
 ```{r}
 #| label: backtrans
 #| warning: false
 #| layout-ncol: 3
 #| fig-width: 3
-# Linear model on original scale is poor fit
+
+# El modelo lineal en la escala original no se ajusta bien
 base <- ggplot(diamonds, aes(carat, price)) + 
   stat_bin2d() + 
   geom_smooth(method = "lm") + 
@@ -211,13 +179,13 @@ base <- ggplot(diamonds, aes(carat, price)) +
   theme(legend.position = "none")
 base
 
-# Better fit on log scale, but harder to interpret
+# Mejor ajuste en escala logarítmica, pero más difícil de interpretar
 base +
   scale_x_log10() + 
   scale_y_log10()
 
-# Fit on log scale, then backtransform to original.
-# Highlights lack of expensive diamonds with large carats
+# Ajustar a escala logarítmica y luego volver a transformar al original.
+# Destaca la falta de diamantes caros con grandes quilates
 pow10 <- scales::exp_trans(10)
 base +
   scale_x_log10() + 
@@ -225,69 +193,63 @@ base +
   coord_trans(x = pow10, y = pow10)
 ```
 
-### Polar coordinates with `coord_polar()`
+### Coordenadas polares con `coord_polar()`
 
-Using polar coordinates gives rise to pie charts and wind roses (from bar geoms), and radar charts (from line geoms).
-Polar coordinates are often used for circular data, particularly time or direction, but the perceptual properties are not good because the angle is harder to perceive for small radii than it is for large radii.
-The `theta` argument determines which position variable is mapped to angle (by default, x) and which to radius.
+El uso de coordenadas polares da lugar a gráficos circulares y rosas de los vientos (de geomas de barras) y gráficos de radar (de geomas de líneas). Las coordenadas polares se utilizan a menudo para datos circulares, particularmente tiempo o dirección, pero las propiedades de percepción no son buenas porque el ángulo es más difícil de percibir para radios pequeños que para radios grandes. El argumento `theta` determina qué variable de posición se asigna al ángulo (por defecto, x) y cuál al radio.
 
-The code below shows how we can turn a bar into a pie chart or a bullseye chart by changing the coordinate system.
-The documentation includes other examples.
-\index{Polar coordinates} \index{Coordinate systems!polar} \indexf{coord\_polar}
+El siguiente código muestra cómo podemos convertir una barra en un gráfico circular o en un gráfico de diana cambiando el sistema de coordenadas. La documentación incluye otros ejemplos. \index{Polar coordinates} \index{Coordinate systems!polar} \indexf{coord\_polar}
 
 ```{r}
 #| label: polar
 #| layout-ncol: 3
 #| fig-width: 3
+
 base <- ggplot(mtcars, aes(factor(1), fill = factor(cyl))) +
   geom_bar(width = 1) + 
   theme(legend.position = "none") + 
   scale_x_discrete(NULL, expand = c(0, 0)) +
   scale_y_continuous(NULL, expand = c(0, 0))
 
-# Stacked barchart
+# diagrama de barras apiladas
 base
 
-# Pie chart
+# Gráfico circular
 base + coord_polar(theta = "y")
 
-# The bullseye chart
+# El gráfico de diana
 base + coord_polar()
 ```
 
-### Map projections with `coord_map()`
+### Proyecciones cartográficas con `coord_map()`
 
-Maps are intrinsically displays of spherical data.
-Simply plotting raw longitudes and latitudes is misleading, so we must *project* the data.
-There are two ways to do this with ggplot2: \index{Maps!projections} \index{Coordinate systems!map projections} \indexf{coord\_map} \indexf{coord\_quickmap} \index{mapproj}
+Los mapas son intrínsecamente visualizaciones de datos esféricos. Simplemente trazar longitudes y latitudes sin procesar es engañoso, por lo que debemos *proyectar* los datos. Hay dos formas de hacer esto con ggplot2: \index{Maps!projections} \index{Coordinate systems!map projections} \indexf{coord\_map} \indexf{coord\_quickmap} \index{mapproj}
 
--   `coord_quickmap()` is a quick and dirty approximation that sets the aspect ratio to ensure that 1m of latitude and 1m of longitude are the same distance in the middle of the plot.
-    This is a reasonable place to start for smaller regions, and is very fast.
+-   `coord_quickmap()` es una aproximación rápida y sucia que establece la relación de aspecto para garantizar que 1 m de latitud y 1 m de longitud estén a la misma distancia en el medio de la gráfica. Este es un punto de partida razonable para regiones más pequeñas y es muy rápido.
 
     ```{r}
     #| label: map-nz
     #| layout-ncol: 2
     #| fig-width: 4
-    # Prepare a map of NZ
+    
+    # Preparar un mapa de Nueva Zelanda
     nzmap <- ggplot(map_data("nz"), aes(long, lat, group = group)) +
       geom_polygon(fill = "white", colour = "black") +
       xlab(NULL) + ylab(NULL)
 
-    # Plot it in cartesian coordinates
+    # Trazarlo en coordenadas cartesianas
     nzmap
-    # With the aspect ratio approximation
+    # Con la aproximación de la relación de aspecto
     nzmap + coord_quickmap()
     ```
 
--   `coord_map()` uses the **mapproj** package, <https://cran.r-project.org/package=mapproj> to do a formal map projection.
-    It takes the same arguments as `mapproj::mapproject()` for controlling the projection.
-    It is much slower than `coord_quickmap()` because it must munch the data and transform each piece.
+-   `coord_map()` utiliza el paquete **mapproj**, <https://cran.r-project.org/package=mapproj> para hacer una proyección cartográfica formal. Toma los mismos argumentos que `mapproj::mapproject()` para controlar la proyección. Es mucho más lento que `coord_quickmap()` porque debe masticar los datos y transformar cada pieza.
 
     ```{r}
     #| label: map-world
     #| layout-ncol: 3
     #| fig-width: 3
     #| dev: png
+    
     world <- map_data("world")
     worldmap <- ggplot(world, aes(long, lat, group = group)) +
       geom_path() +
@@ -295,7 +257,7 @@ There are two ways to do this with ggplot2: \index{Maps!projections} \index{Coor
       scale_x_continuous(NULL, breaks = (-4:4) * 45, labels = NULL)
 
     worldmap + coord_map()
-    # Some crazier projections
+    # Algunas proyecciones más locas
     worldmap + coord_map("ortho")
     worldmap + coord_map("stereographic")
     ```
