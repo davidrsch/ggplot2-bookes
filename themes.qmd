@@ -1,4 +1,4 @@
-# Themes {#sec-polishing}
+# Temas {#sec-polishing}
 
 ```{r}
 #| echo: false
@@ -8,31 +8,23 @@ source("common.R")
 status("drafting")
 ```
 
-## Introduction
+## Introducción
 
-In this chapter you will learn how to use the ggplot2 theme system, which allows you to exercise fine control over the non-data elements of your plot.
-The theme system does not affect how the data is rendered by geoms, or how it is transformed by scales.
-Themes don't change the perceptual properties of the plot, but they do help you make the plot aesthetically pleasing or match an existing style guide.
-Themes give you control over things like fonts, ticks, panel strips, and backgrounds.
-\index{Themes}
+En este capítulo aprenderá a utilizar el sistema de temas ggplot2, que le permite ejercer un control preciso sobre los elementos que no son datos de su gráfica. El sistema de temas no afecta la forma en que las geoms representan los datos ni cómo se transforman mediante las escalas. Los temas no cambian las propiedades de percepción de la gráfica, pero sí te ayudan a hacer que la gráfica sea estéticamente agradable o que coincida con una guía de estilo existente. Los temas te dan control sobre cosas como fuentes, ticks, franjas de paneles y fondos. \index{Themes}
 
-This separation of control into data and non-data parts is quite different from base and lattice graphics.
-In base and lattice graphics, most functions take a large number of arguments that specify both data and non-data appearance, which makes the functions complicated and harder to learn.
-ggplot2 takes a different approach: when creating the plot you determine how the data is displayed, then *after* it has been created you can edit every detail of the rendering, using the theming system.
+Esta separación del control en partes de datos y partes que no son de datos es bastante diferente de los gráficos base y reticulares. En los gráficos base y reticular, la mayoría de las funciones toman una gran cantidad de argumentos que especifican la apariencia tanto de datos como de no datos, lo que hace que las funciones sean complicadas y difíciles de aprender. ggplot2 adopta un enfoque diferente: al crear el gráfico, usted determina cómo se muestran los datos, luego, *después* de haberlos creado, puede editar cada detalle de la representación, utilizando el sistema de temas.
 
-The theming system is composed of four main components:
+El sistema de tematización se compone de cuatro componentes principales:
 
--   Theme **elements** specify the non-data elements that you can control.
-    For example, the `plot.title` element controls the appearance of the plot title; `axis.ticks.x`, the ticks on the x axis; `legend.key.height`, the height of the keys in the legend.
+-   Los **elementos** del tema especifican los elementos que no son datos que puedes controlar. Por ejemplo, el elemento `plot.title` controla la apariencia del título de la gráfica; `axis.ticks.x`, los ticks en el eje x; `legend.key.height`, la altura de las claves en la leyenda.
 
--   Each element is associated with an **element function**, which describes the visual properties of the element.
-    For example, `element_text()` sets the font size, colour and face of text elements like `plot.title`.
+-   Cada elemento está asociado con una **función del elemento**, que describe las propiedades visuales del elemento. Por ejemplo, `element_text()` establece el tamaño de fuente, el color y el aspecto de elementos de texto como `plot.title`.
 
--   The `theme()` function which allows you to override the default theme elements by calling element functions, like `theme(plot.title = element_text(colour = "red"))`.
+-   La función `theme()` que le permite anular los elementos predeterminados del tema llamando a funciones de elementos, como `theme(plot.title = element_text(colour = "red"))`.
 
--   Complete **themes**, like `theme_grey()` set all of the theme elements to values designed to work together harmoniously.
+-   **Temas** completos, como `theme_grey()`, configuran todos los elementos del tema con valores diseñados para trabajar juntos armoniosamente.
 
-For example, imagine you've made the following plot of your data.
+Por ejemplo, imagina que has hecho el siguiente gráfico de tus datos.
 
 ```{r}
 #| label: motivation-1
@@ -42,38 +34,35 @@ base <- ggplot(mpg, aes(cty, hwy, color = factor(cyl))) +
 base
 ```
 
-It's served its purpose for you: you've learned that `cty` and `hwy` are highly correlated, both are tightly coupled with `cyl`, and that `hwy` is always greater than `cty` (and the difference increases as `cty` increases).
-Now you want to share the plot with others, perhaps by publishing it in a paper.
-That requires some changes.
-First, you need to make sure the plot can stand alone by:
+Ha cumplido su propósito para usted: ha aprendido que `cty` y `hwy` están altamente correlacionados, ambos están estrechamente acoplados con `cyl` y que `hwy` siempre es mayor que `cty` (y la diferencia aumenta a medida que `cty` aumenta). Ahora quieres compartir la gráfica con otros, tal vez publicándola en un periódico. Eso requiere algunos cambios. Primero, debes asegurarte de que la gráfica pueda funcionar por sí sola mediante:
 
--   Improving the axes and legend labels.
--   Adding a title for the plot.
--   Tweaking the colour scale.
+-   Mejora de los ejes y etiquetas de leyenda.
+-   Agregar un título para la gráfica.
+-   Ajustar la escala de colores.
 
-Fortunately, you know how to do that already because you've read @sec-titles and @sec-scale-colour:
+Afortunadamente, ya sabes cómo hacerlo porque has leído @sec-titles y @sec-scale-color:
 
 ```{r}
 #| label: motivation-2
 labelled <- base +
   labs(
-    x = "City mileage/gallon",
-    y = "Highway mileage/gallon",
-    colour = "Cylinders",
-    title = "Highway and city mileage are highly correlated"
+    x = "Kilometraje en ciudad/galón",
+    y = "Kilometraje en carretera/galón",
+    colour = "Cilindros",
+    title = "El kilometraje en carretera y en ciudad están altamente correlacionados"
   ) +
   scale_colour_brewer(type = "seq", palette = "Spectral")
 labelled
 ```
 
-Next, you need to make sure the plot matches the style guidelines of your journal:
+A continuación, debes asegurarte de que la gráfica coincida con las pautas de estilo de tu revista:
 
--   The background should be white, not pale grey.
--   The legend should be placed inside the plot if there's room.
--   Major gridlines should be a pale grey and minor gridlines should be removed.
--   The plot title should be 12pt bold text.
+-   El fondo debe ser blanco, no gris pálido.
+-   La leyenda debe colocarse dentro de la gráfica si hay espacio.
+-   Las líneas de división principales deben ser de color gris pálido y las líneas de división menores deben eliminarse.
+-   El título de la gráfica debe ser texto en negrita de 12 puntos.
 
-In this chapter, you'll learn how to use the theming system to make those changes, as shown below:
+En este capítulo, aprenderá cómo utilizar el sistema de temas para realizar esos cambios, como se muestra a continuación:
 
 ```{r}
 #| label: motivation-3
@@ -95,42 +84,27 @@ styled <- labelled +
 styled
 ```
 
-Finally, the journal wants the figure as a 600 dpi TIFF file.
-You'll learn the fine details of `ggsave()` in @sec-saving.
+Finalmente, la revista quiere la figura en un archivo TIFF de 600 ppp. Aprenderá los detalles finos de `ggsave()` en @sec-served.
 
-## Complete themes {#sec-themes}
+## Temas completos {#sec-themes}
 
-ggplot2 comes with a number of built-in themes.
-The most important is `theme_grey()`, the signature ggplot2 theme with a light grey background and white gridlines.
-The theme is designed to put the data forward while supporting comparisons, following the advice of [@tufte:2006; @brewer:1994; @carr:2002; @carr:1994; @carr:1999].
-We can still see the gridlines to aid in the judgement of position [@cleveland:1993a], but they have little visual impact and we can easily 'tune' them out.
-The grey background gives the plot a similar typographic colour to the text, ensuring that the graphics fit in with the flow of a document without jumping out with a bright white background.
-Finally, the grey background creates a continuous field of colour which ensures that the plot is perceived as a single visual entity.
-\index{Themes!built-in} \indexf{theme\_grey}
+ggplot2 viene con varios temas integrados. El más importante es `theme_grey()`, el tema característico de ggplot2 con un fondo gris claro y líneas de cuadrícula blancas. El tema está diseñado para presentar los datos y al mismo tiempo respaldar las comparaciones, siguiendo el consejo de [@tufte:2006; @cervecero: 1994; @carr:2002; @carr:1994; @carr:1999]. Todavía podemos ver las líneas de la cuadrícula para ayudarnos a juzgar la posición [@cleveland:1993a], pero tienen poco impacto visual y podemos "desconectarnos" fácilmente de ellas. El fondo gris le da a la gráfica un color tipográfico similar al del texto, asegurando que los gráficos encajen con el flujo de un documento sin saltar con un fondo blanco brillante. Finalmente, el fondo gris crea un campo continuo de color que asegura que la gráfica se perciba como una única entidad visual. \index{Themes!built-in} \indexf{theme\_grey}
 
-There are seven other themes built in to ggplot2 1.1.0:
+Hay otros siete temas integrados en ggplot2 1.1.0:
 
--   `theme_bw()`: a variation on `theme_grey()` that uses a white background and thin grey grid lines.
-    \indexf{theme\_bw}
+-   `theme_bw()`: una variación de `theme_grey()` que utiliza un fondo blanco y finas líneas de cuadrícula grises. \indexf{theme\_bw}
 
--   `theme_linedraw()`: a theme with only black lines of various widths on white backgrounds, reminiscent of a line drawing.
-    \indexf{theme\_linedraw}
+-   `theme_linedraw()`: un tema con sólo líneas negras de varios anchos sobre fondos blancos, que recuerda a un dibujo lineal. \indexf{theme\_linedraw}
 
--   `theme_light()`: similar to `theme_linedraw()` but with light grey lines and axes, to direct more attention towards the data.
-    \indexf{theme\_light}
+-   `theme_light()`: similar a `theme_linedraw()` pero con líneas y ejes de color gris claro, para dirigir más atención hacia los datos. \indexf{theme\_light}
 
--   `theme_dark()`: the dark cousin of `theme_light()`, with similar line sizes but a dark background.
-    Useful to make thin coloured lines pop out.
-    \indexf{theme\_dark}
+-   `theme_dark()`: el primo oscuro de `theme_light()`, con tamaños de línea similares pero con un fondo oscuro. Útil para hacer resaltar líneas finas de colores. \indexf{theme\_dark}
 
--   `theme_minimal()`: a minimalistic theme with no background annotations.
-    \indexf{theme\_minimal}
+-   `theme_minimal()`: un tema minimalista sin anotaciones de fondo. \indexf{theme\_minimal}
 
--   `theme_classic()`: a classic-looking theme, with x and y axis lines and no gridlines.
-    \indexf{theme\_classic}
+-   `theme_classic()`: un tema de aspecto clásico, con líneas de eje x e y y sin líneas de cuadrícula. \indexf{theme\_classic}
 
--   `theme_void()`: a completely empty theme.
-    \indexf{theme\_void}
+-   `theme_void()`: un tema completamente vacío. \indexf{theme\_void}
 
 ```{r}
 #| label: built-in
@@ -158,17 +132,11 @@ base + theme_classic() + ggtitle("theme_classic()")
 base + theme_void() + ggtitle("theme_void()")
 ```
 
-All themes have a `base_size` parameter which controls the base font size.
-The base font size is the size that the axis titles use: the plot title is usually bigger (1.2x), and the tick and strip labels are smaller (0.8x).
-If you want to control these sizes separately, you'll need to modify the individual elements as described below.
+Todos los temas tienen un parámetro `base_size` que controla el tamaño de fuente base. El tamaño de fuente base es el tamaño que utilizan los títulos de los ejes: el título de la gráfica suele ser más grande (1,2x) y las etiquetas de marca y tira son más pequeñas (0,8x). Si desea controlar estos tamaños por separado, deberá modificar los elementos individuales como se describe a continuación.
 
-As well as applying themes a plot at a time, you can change the default theme with `theme_set()`.
-For example, if you really hate the default grey background, run `theme_set(theme_bw())` to use a white background for all plots.
-\indexf{theme\_set}
+Además de aplicar temas en un argumento a la vez, puedes cambiar el tema predeterminado con `theme_set()`. Por ejemplo, si realmente odias el fondo gris predeterminado, ejecuta `theme_set(theme_bw())` para usar un fondo blanco para todos los gráficos. \indexf{theme\_set}
 
-You're not limited to the themes built-in to ggplot2.
-Other packages, like ggthemes by Jeffrey Arnold, add even more.
-Here are a few of my favourites from ggthemes: \index{ggtheme}
+No estás limitado a los temas integrados en ggplot2. Otros paquetes, como ggthemes de Jeffrey Arnold, añaden aún más. Estos son algunos de mis favoritos de ggthemes: \index{ggtheme}
 
 ```{r}
 #| label: ggtheme
@@ -182,62 +150,48 @@ base + theme_solarized() + ggtitle("theme_solarized()")
 base + theme_excel() + ggtitle("theme_excel()") # ;)
 ```
 
-The complete themes are a great place to start but don't give you a lot of control.
-To modify individual elements, you need to use `theme()` to override the default setting for an element with an element function.
+Los temas completos son un excelente lugar para comenzar, pero no te dan mucho control. Para modificar elementos individuales, necesita usar `theme()` para anular la configuración predeterminada para un elemento con una función de elemento.
 
-### Exercises
+### Ejercicios
 
-1.  Try out all the themes in ggthemes.
-    Which do you like the best?
+1.  Pruebe todos los temas en ggthemes. ¿Cuál te gusta más?
 
-2.  What aspects of the default theme do you like?
-    What don't you like?\
-    What would you change?
+2.  ¿Qué aspectos del tema predeterminado te gustan? ¿Qué no te gusta?\
+    ¿Qué cambiarías?
 
-3.  Look at the plots in your favourite scientific journal.
-    What theme do they most resemble?
-    What are the main differences?
+3.  Mira los argumentos de tu revista científica favorita. ¿A qué tema se parecen más? ¿Cuáles son las principales diferencias?
 
-## Modifying theme components
+## Modificar componentes del tema
 
-To modify an individual theme component you use code like `plot + theme(element.name = element_function())`.
-In this section you'll learn about the basic element functions, and then in the next section, you'll see all the elements that you can modify.
-\indexf{theme}
+Para modificar un componente de tema individual, utiliza un código como `plot + theme(element.name = element_function())`. En esta sección aprenderá sobre las funciones básicas de los elementos y luego, en la siguiente sección, verá todos los elementos que puede modificar. \indexf{theme}
 
-There are four basic types of built-in element functions: text, lines, rectangles, and blank.
-Each element function has a set of parameters that control the appearance:
+Hay cuatro tipos básicos de funciones de elementos integradas: texto, líneas, rectángulos y espacios en blanco. Cada elemento función tiene un conjunto de parámetros que controlan la apariencia:
 
--   `element_text()` draws labels and headings.
-    You can control the font `family`, `face`, `colour`, `size` (in points), `hjust`, `vjust`, `angle` (in degrees) and `lineheight` (as ratio of `fontcase`).
-    More details on the parameters can be found in `vignette("ggplot2-specs")`.
-    Setting the font face is particularly challenging.
-    \index{Themes!labels} \indexf{element\_text}
+-   `element_text()` Dibuja etiquetas y títulos. Puede controlar la fuente `family`, `face`, `colour`, `size` (en puntos), `hjust`, `vjust`, `angle` (en grados) y `lineheight` (como proporción de `fontcase`). Se pueden encontrar más detalles sobre los parámetros en `vignette("ggplot2-specs")`. Configurar la fuente es particularmente desafiante. \index{Themes!labels} \indexf{element\_text}
 
     ```{r}
     #| label: element_text
     #| layout-ncol: 3
     #| fig-width: 3
-    base_t <- base + labs(title = "This is a ggplot") + xlab(NULL) + ylab(NULL)
+    base_t <- base + labs(title = "Este es un ggplot") + xlab(NULL) + ylab(NULL)
     base_t + theme(plot.title = element_text(size = 16))
     base_t + theme(plot.title = element_text(face = "bold", colour = "red"))
     base_t + theme(plot.title = element_text(hjust = 1))
     ```
 
-    You can control the margins around the text with the `margin` argument and `margin()` function.
-    `margin()` has four arguments: the amount of space (in points) to add to the top, right, bottom and left sides of the text.
-    Any elements not specified default to 0.
+    Puede controlar los márgenes alrededor del texto con el argumento `margin` y la función `margin()`. `margin()` tiene cuatro argumentos: la cantidad de espacio (en puntos) que se agregará a los lados superior, derecho, inferior e izquierdo del texto. Cualquier elemento no especificado tiene el valor predeterminado 0.
 
     ```{r}
     #| label: element_text-margin
     #| layout-ncol: 3
     #| fig-width: 3
-    # The margins here look asymmetric because there are also plot margins
+    # Los márgenes aquí parecen asimétricos porque también hay márgenes de gráfica.
     base_t + theme(plot.title = element_text(margin = margin()))
     base_t + theme(plot.title = element_text(margin = margin(t = 10, b = 10)))
     base_t + theme(axis.title.y = element_text(margin = margin(r = 10)))
     ```
 
--   `element_line()` draws lines parameterised by `colour`, `linewidth` and `linetype`: \indexf{element\_line} \index{Themes!lines}
+-   `element_line()` dibuja líneas parametrizadas por `colour`, `linewidth` y `linetype`: \indexf{element\_line} \index{Themes!lines}
 
     ```{r}
     #| label: element_line
@@ -248,7 +202,7 @@ Each element function has a set of parameters that control the appearance:
     base + theme(panel.grid.major = element_line(linetype = "dotted"))
     ```
 
--   `element_rect()` draws rectangles, mostly used for backgrounds, parameterised by `fill` colour and border `colour`, `linewidth` and `linetype`.\
+-   `element_rect()` Dibuja rectángulos, utilizados principalmente para fondos, parametrizados por `fill` color y borde `colour`, `linewidth` y `linetype`.\
     \index{Background} \index{Themes!background} \indexf{theme\_rect}
 
     ```{r}
@@ -260,11 +214,7 @@ Each element function has a set of parameters that control the appearance:
     base + theme(panel.background = element_rect(fill = "linen"))
     ```
 
--   `element_blank()` draws nothing.
-    Use this if you don't want anything drawn, and no space allocated for that element.
-    The following example uses `element_blank()` to progressively suppress the appearance of elements we're not interested in.
-    Notice how the plot automatically reclaims the space previously used by these elements: if you don't want this to happen (perhaps because they need to line up with other plots on the page), use `colour = NA, fill = NA` to create invisible elements that still take up space.
-    \indexf{element\_blank}
+-   `element_blank()` no dibuja nada. Utilízalo si no quieres que se dibuje nada y que no se asigne espacio para ese elemento. El siguiente ejemplo utiliza `element_blank()` para suprimir progresivamente la apariencia de elementos que no nos interesan. Observe cómo la gráfica recupera automáticamente el espacio utilizado previamente por estos elementos: si no desea que esto suceda (tal vez porque necesita alinearse con otros gráficos en la página), use `colour = NA, fill = NA` para crear elementos invisibles que aún ocupan espacio. \indexf{element\_blank}
 
     ```{r}
     #| label: element_blank
@@ -287,12 +237,9 @@ Each element function has a set of parameters that control the appearance:
     last_plot() + theme(axis.line = element_line(colour = "grey50"))
     ```
 
--   A few other settings take grid units.
-    Create them with `unit(1, "cm")` or `unit(0.25, "in")`.
+-   Algunas otras configuraciones toman unidades de cuadrícula. Créelos con `unit(1, "cm")` o `unit(0.25, "in")`.
 
-To modify theme elements for all future plots, use `theme_update()`.
-It returns the previous theme settings, so you can easily restore the original parameters once you're done.
-\index{Themes!updating} \indexf{theme\_set}
+Para modificar los elementos del tema para todas las gráficas futuras, use `theme_update()`. Devuelve la configuración del tema anterior, por lo que puedes restaurar fácilmente los parámetros originales una vez que hayas terminado. \index{Themes!updating} \indexf{theme\_set}
 
 ```{r}
 #| label: theme-update
@@ -309,30 +256,23 @@ theme_set(old_theme)
 base
 ```
 
-## Theme elements {#sec-theme-elements}
+## Elementos temáticos {#sec-theme-elements}
 
-There are around 40 unique elements that control the appearance of the plot.
-They can be roughly grouped into five categories: plot, axis, legend, panel and facet.
-The following sections describe each in turn.
-\index{Themes!elements}
+Hay alrededor de 40 elementos únicos que controlan la apariencia de la gráfica. Se pueden agrupar a grandes rasgos en cinco categorías: gráfica, eje, leyenda, panel y faceta. Las siguientes secciones describen cada uno de ellos por separado. \index{Themes!elements}
 
-### Plot elements
+### Elementos de la gráfica
 
 \index{Themes!plot}
 
-Some elements affect the plot as a whole:
+Algunos elementos afectan la gráfica en su conjunto:
 
-| Element         | Setter           | Description         |
-|-----------------|------------------|---------------------|
-| plot.background | `element_rect()` | plot background     |
-| plot.title      | `element_text()` | plot title          |
-| plot.margin     | `margin()`       | margins around plot |
+| Elemento        | Setter           | Descripción                      |
+|-----------------|------------------|----------------------------------|
+| plot.background | `element_rect()` | fondo de la gráfica              |
+| plot.title      | `element_text()` | título de la gráfica             |
+| plot.margin     | `margin()`       | márgenes alrededor de la gráfica |
 
-`plot.background` draws a rectangle that underlies everything else on the plot.
-By default, ggplot2 uses a white background which ensures that the plot is usable wherever it might end up (e.g. even if you save as a png and put on a slide with a black background).
-When exporting plots to use in other systems, you might want to make the background transparent with `fill = NA`.
-Similarly, if you're embedding a plot in a system that already has margins you might want to eliminate the built-in margins.
-Note that a small margin is still necessary if you want to draw a border around the plot.
+`plot.background` dibuja un rectángulo que subyace a todo lo demás en el gráfico. De forma predeterminada, ggplot2 usa un fondo blanco que garantiza que el gráfico se pueda utilizar dondequiera que termine (por ejemplo, incluso si lo guarda como png y lo coloca en una diapositiva con un fondo negro). Al exportar gráficos para utilizarlos en otros sistemas, es posible que desee hacer que el fondo sea transparente con `fill = NA`. De manera similar, si está incrustando un gráfico en un sistema que ya tiene márgenes, es posible que desee eliminar los márgenes integrados. Tenga en cuenta que aún es necesario un pequeño margen si desea dibujar un borde alrededor del gráfico.
 
 ```{r}
 #| label: plot
@@ -346,26 +286,25 @@ base + theme(
 base + theme(plot.background = element_rect(fill = "lightblue"))
 ```
 
-### Axis elements {#sec-theme-axis}
+### Elementos del eje {#sec-theme-axis}
 
 \index{Themes!axis} \index{Axis!styling}
 
-The axis elements control the appearance of the axes:
+Los elementos de eje controlan la apariencia de los ejes:
 
-| Element           | Setter           | Description                                      |
-|-------------------|------------------|--------------------------------------------------|
-| axis.line         | `element_line()` | line parallel to axis (hidden in default themes) |
-| axis.text         | `element_text()` | tick labels                                      |
-| axis.text.x       | `element_text()` | x-axis tick labels                               |
-| axis.text.y       | `element_text()` | y-axis tick labels                               |
-| axis.title        | `element_text()` | axis titles                                      |
-| axis.title.x      | `element_text()` | x-axis title                                     |
-| axis.title.y      | `element_text()` | y-axis title                                     |
-| axis.ticks        | `element_line()` | axis tick marks                                  |
-| axis.ticks.length | `unit()`         | length of tick marks                             |
+| Elemento           | Setter           | Descripción                                      |
+|-----------------|-----------------|----------------------------------------------------------|
+| axis.line         | `element_line()` | Línea paralela al eje (oculta en temas predeterminados) |
+| axis.text         | `element_text()` | etiquetas de marca                                       |
+| axis.text.x       | `element_text()` | etiquetas de marca del eje x                             |
+| axis.text.y       | `element_text()` | etiquetas de marca del eje y                             |
+| axis.title        | `element_text()` | títulos de eje                                           |
+| axis.title.x      | `element_text()` | título del eje x                                         |
+| axis.title.y      | `element_text()` | título del eje y                                         |
+| axis.ticks        | `element_line()` | marcas de eje                                            |
+| axis.ticks.length | `unit()`         | longitud de las marcas de graduación             |
 
-Note that `axis.text` (and `axis.title`) comes in three forms: `axis.text`, `axis.text.x`, and `axis.text.y`.
-Use the first form if you want to modify the properties of both axes at once: any properties that you don't explicitly set in `axis.text.x` and `axis.text.y` will be inherited from `axis.text`.
+Tenga en cuenta que `axis.text` (y `axis.title`) viene en tres formas: `axis.text`, `axis.text.x` y `axis.text.y`. Utilice la primera forma si desea modificar las propiedades de ambos ejes a la vez: cualquier propiedad que no establezca explícitamente en `axis.text.x` y `axis.text.y` se heredará de `axis.text`.
 
 ```{r}
 #| label: axis
@@ -374,16 +313,15 @@ Use the first form if you want to modify the properties of both axes at once: an
 df <- data.frame(x = 1:3, y = 1:3)
 base <- ggplot(df, aes(x, y)) + geom_point()
 
-# Accentuate the axes
+# Acentuar los ejes
 base + theme(axis.line = element_line(colour = "grey50", linewidth = 1))
-# Style both x and y axis labels
+# Aplicar estilo a las etiquetas de los ejes x e y
 base + theme(axis.text = element_text(color = "blue", size = 12))
-# Useful for long labels
+# Útil para etiquetas largas
 base + theme(axis.text.x = element_text(angle = -90, vjust = 0.5))
 ```
 
-The most common adjustment is to rotate the x-axis labels to avoid long overlapping labels.
-If you do this, note negative angles tend to look best and you should set `hjust = 0` and `vjust = 1`:
+El ajuste más común es rotar las etiquetas del eje x para evitar etiquetas superpuestas durante mucho tiempo. Si hace esto, tenga en cuenta que los ángulos negativos tienden a verse mejor y debe establecer `hjust = 0` y `vjust = 1`:
 
 ```{r}
 #| label: axis-labels
@@ -401,27 +339,26 @@ base +
   ylab(NULL)
 ```
 
-### Legend elements
+### Elementos de leyenda
 
 \index{Themes!legend} \index{Legend!styling}
 
-The legend elements control the appearance of all legends.
-You can also modify the appearance of individual legends by modifying the same elements in `guide_legend()` or `guide_colourbar()`.
+Los elementos de leyenda controlan la apariencia de todas las leyendas. También puede modificar la apariencia de leyendas individuales modificando los mismos elementos en `guide_legend()` o `guide_colourbar()`.
 
-| Element            | Setter           | Description                                  |
-|--------------------|------------------|----------------------------------------------|
-| legend.background  | `element_rect()` | legend background                            |
-| legend.key         | `element_rect()` | background of legend keys                    |
-| legend.key.size    | `unit()`         | legend key size                              |
-| legend.key.height  | `unit()`         | legend key height                            |
-| legend.key.width   | `unit()`         | legend key width                             |
-| legend.margin      | `unit()`         | legend margin                                |
-| legend.text        | `element_text()` | legend labels                                |
-| legend.text.align  | 0--1             | legend label alignment (0 = right, 1 = left) |
-| legend.title       | `element_text()` | legend name                                  |
-| legend.title.align | 0--1             | legend name alignment (0 = right, 1 = left)  |
+| Elemento            | Setter           | Descripción                                  |
+|-----------------|-----------------|--------------------------------------------------------------------|
+| legend.background  | `element_rect()` | fondo de leyenda                                               |
+| legend.key         | `element_rect()` | fondo de claves de leyenda                                     |
+| legend.key.size    | `unit()`         | tamaño de clave de leyenda                                     |
+| legend.key.height  | `unit()`         | altura de la clave de leyenda                                  |
+| legend.key.width   | `unit()`         | ancho de clave de leyenda                                      |
+| legend.margin      | `unit()`         | margen de leyenda                                              |
+| legend.text        | `element_text()` | etiquetas de leyenda                                           |
+| legend.text.align  | 0--1             | alineación de la etiqueta de la leyenda (0 = right, 1 = left) |
+| legend.title       | `element_text()` | nombre de la leyenda                                           |
+| legend.title.align | 0--1             | alineación del nombre de la leyenda (0 = right, 1 = left) |
 
-These options are illustrated below:
+Estas opciones se ilustran a continuación:
 
 ```{r}
 #| label: legend
@@ -448,80 +385,78 @@ base + theme(
 )
 ```
 
-There are four other properties that control how legends are laid out in the context of the plot (`legend.position`, `legend.direction`, `legend.justification`, `legend.box`).
-They are described in @sec-legend-layout.
+Hay otras cuatro propiedades que controlan cómo se disponen las leyendas en el contexto de la gráfica (`legend.position`, `legend.direction`, `legend.justification`, `legend.box`). Se describen en @sec-legend-layout.
 
-### Panel elements
+### Elementos del panel
 
 \index{Themes!panel} \index{Aspect ratio}
 
-Panel elements control the appearance of the plotting panels:
+Los elementos del panel controlan la apariencia de los paneles de trazado:
 
-| Element            | Setter           | Description                   |
+| Elemento           | Setter           | Descripción                   |
 |--------------------|------------------|-------------------------------|
-| panel.background   | `element_rect()` | panel background (under data) |
-| panel.border       | `element_rect()` | panel border (over data)      |
-| panel.grid.major   | `element_line()` | major grid lines              |
-| panel.grid.major.x | `element_line()` | vertical major grid lines     |
-| panel.grid.major.y | `element_line()` | horizontal major grid lines   |
-| panel.grid.minor   | `element_line()` | minor grid lines              |
-| panel.grid.minor.x | `element_line()` | vertical minor grid lines     |
-| panel.grid.minor.y | `element_line()` | horizontal minor grid lines   |
-| aspect.ratio       | numeric          | plot aspect ratio             |
+| panel.background   | `element_rect()` | fondo del panel (bajo datos)                   |
+| panel.border       | `element_rect()` | borde del panel (sobre datos)                  |
+| panel.grid.major   | `element_line()` | líneas principales de la cuadrícula    |
+| panel.grid.major.x | `element_line()` | líneas verticales principales de la cuadrícula |
+| panel.grid.major.y | `element_line()` | líneas de cuadrícula principales horizontales  |
+| panel.grid.minor   | `element_line()` | líneas de cuadrícula menores                   |
+| panel.grid.minor.x | `element_line()` | líneas de cuadrícula menores verticales    |
+| panel.grid.minor.y | `element_line()` | líneas de cuadrícula menores horizontales  |
+| aspect.ratio       | numeric          | relación de aspecto de la gráfica               |
 
-The main difference between `panel.background` and `panel.border` is that the background is drawn underneath the data, and the border is drawn on top of it.
-For that reason, you'll always need to assign `fill = NA` when overriding `panel.border`.
+La principal diferencia entre `panel.background` y `panel.border` es que el fondo se dibuja debajo de los datos y el borde se dibuja encima. Por esa razón, siempre necesitarás asignar `fill = NA` al anular `panel.border`.
 
 ```{r}
 #| label: panel
 #| layout-ncol: 3
 #| fig-width: 3
 base <- ggplot(df, aes(x, y)) + geom_point()
-# Modify background
+# Modificar fondo
 base + theme(panel.background = element_rect(fill = "lightblue"))
 
-# Tweak major grid lines
+# Modificar las principales líneas de la cuadrícula
 base + theme(
   panel.grid.major = element_line(color = "gray60", linewidth = 0.8)
 )
-# Just in one direction  
+# Solo en una dirección
 base + theme(
   panel.grid.major.x = element_line(color = "gray60", linewidth = 0.8)
 )
 ```
 
-Note that aspect ratio controls the aspect ratio of the *panel*, not the overall plot:
+Tenga en cuenta que la relación de aspecto controla la relación de aspecto del *panel*, no la gráfica general:
 
 ```{r}
 #| label: aspect-ratio
 #| layout-ncol: 3
 #| fig-width: 3
 base2 <- base + theme(plot.background = element_rect(colour = "grey50"))
-# Wide screen
+# pantalla ancha
 base2 + theme(aspect.ratio = 9 / 16)
-# Long and skinny
+# Largo y flaco
 base2 + theme(aspect.ratio = 2 / 1)
-# Square
+# Cuadrado
 base2 + theme(aspect.ratio = 1)
 ```
 
-### Faceting elements
+### Elementos facetados
 
 \index{Themes!facets} \index{Faceting!styling}
 
-The following theme elements are associated with faceted ggplots:
+Los siguientes elementos temáticos están asociados con ggplots facetados:
 
-| Element          | Setter           | Description                        |
-|------------------|------------------|------------------------------------|
-| strip.background | `element_rect()` | background of panel strips         |
-| strip.text       | `element_text()` | strip text                         |
-| strip.text.x     | `element_text()` | horizontal strip text              |
-| strip.text.y     | `element_text()` | vertical strip text                |
-| panel.spacing    | `unit()`         | margin between facets              |
-| panel.spacing.x  | `unit()`         | margin between facets (vertical)   |
-| panel.spacing.y  | `unit()`         | margin between facets (horizontal) |
+| Element          | Setter           | Descripción                       |
+|------------------|------------------|-----------------------------------|
+| strip.background | `element_rect()` | fondo de tiras de paneles         |
+| strip.text       | `element_text()` | tira de texto                     |
+| strip.text.x     | `element_text()` | texto de tira horizontal          |
+| strip.text.y     | `element_text()` | texto de tira vertical            |
+| panel.spacing    | `unit()`         | margen entre facetas              |
+| panel.spacing.x  | `unit()`         | margen entre facetas (vertical)   |
+| panel.spacing.y  | `unit()`         | margen entre facetas (horizontal) |
 
-Element `strip.text.x` affects both `facet_wrap()` or `facet_grid()`; `strip.text.y` only affects `facet_grid()`.
+El elemento `strip.text.x` afecta tanto a `facet_wrap()` como a `facet_grid()`; `strip.text.y` solo afecta `facet_grid()`.
 
 ```{r}
 #| label: faceting
@@ -542,31 +477,25 @@ base_f + theme(
 )
 ```
 
-### Exercises
+### Ejercicios
 
-1.  Create the ugliest plot possible!
-    (Contributed by Andrew D. Steen, University of Tennessee - Knoxville)
+1.  ¡Crea la gráfica más fea posible! (Aportado por Andrew D. Steen, Universidad de Tennessee - Knoxville)
 
-2.  `theme_dark()` makes the inside of the plot dark, but not the outside.
-    Change the plot background to black, and then update the text settings so you can still read the labels.
+2.  `theme_dark()` oscurece el interior de la gráfica, pero no el exterior. Cambie el fondo del trazado a negro y luego actualice la configuración del texto para que aún pueda leer las etiquetas.
 
-3.  Make an elegant theme that uses "linen" as the background colour and a serif font for the text.
+3.  Crea un tema elegante que utilice `lino` como color de fondo y una fuente serif para el texto.
 
-4.  Systematically explore the effects of `hjust` when you have a multiline title.
-    Why doesn't `vjust` do anything?
+4.  Explora sistemáticamente los efectos de `hjust` cuando tienes un título de varias líneas. ¿Por qué `vjust` no hace nada?
 
-## Saving your output {#sec-saving}
+## Guardando su salida {#sec-saving}
 
-When saving a plot to use in another program, you have two basic choices of output: raster or vector: \index{Exporting} \index{Saving output}
+Al guardar un trazado para usarlo en otro programa, tiene dos opciones básicas de salida: ráster o vectorial: \index{Exporting} \index{Saving output}
 
--   Vector graphics describe a plot as sequence of operations: draw a line from $(x_1, y_1)$ to $(x_2, y_2)$, draw a circle at $(x_3, x_4)$ with radius $r$.
-    This means that they are effectively 'infinitely' zoomable; there is no loss of detail.
-    The most useful vector graphic formats are pdf and svg.
+-   Los gráficos vectoriales describen una gráfica como una secuencia de operaciones: dibuje una línea desde $(x_1, y_1)$ hasta $(x_2, y_2)$, dibuje un círculo en $(x_3, x_4)$ con radio $r$. Esto significa que efectivamente se pueden ampliar 'infinitamente'; no hay pérdida de detalle. Los formatos de gráficos vectoriales más útiles son pdf y svg.
 
--   Raster graphics are stored as an array of pixel colours and have a fixed optimal viewing size.
-    The most useful raster graphic format is png.
+- Los gráficos rasterizados se almacenan como una variedad de colores de píxeles y tienen un tamaño de visualización óptimo fijo. El formato de gráfico rasterizado más útil es png.
 
-The figure below illustrates the basic differences in these formats for a circle.
+La siguiente figura ilustra las diferencias básicas en estos formatos para un círculo.
 
 ```{r}
 #| label: vector-raster
@@ -576,43 +505,33 @@ The figure below illustrates the basic differences in these formats for a circle
 knitr::include_graphics("diagrams/vector-raster.png", dpi = 300, auto_pdf = TRUE)
 ```
 
-Unless there is a compelling reason not to, use vector graphics: they look better in more places.
-There are two main reasons to use raster graphics:
+A menos que haya una razón convincente para no hacerlo, utilice gráficos vectoriales: se ven mejor en más lugares. Hay dos razones principales para utilizar gráficos rasterizados:
 
--   You have a plot (e.g. a scatterplot) with thousands of graphical objects (i.e. points).
-    A vector version will be large and slow to render.
+-   Tiene un diagrama (por ejemplo, un diagrama de dispersión) con miles de objetos gráficos (es decir, puntos). Una versión vectorial será grande y lenta de renderizar.
 
--   You want to embed the graphic in MS Office.
-    MS has poor support for vector graphics (except for their own DrawingXML format which is not currently easy to make from R), so raster graphics are easier.
+-   Quieres incrustar el gráfico en MS Office. MS tiene un soporte deficiente para gráficos vectoriales (a excepción de su propio formato DrawingXML, que actualmente no es fácil de crear desde R), por lo que los gráficos rasterizados son más fáciles.
 
-There are two ways to save output from ggplot2.
-You can use the standard R approach where you open a graphics device, generate the plot, then close the device: \indexf{pdf}
+Hay dos formas de guardar la salida de ggplot2. Puede utilizar el enfoque estándar de R en el que abre un dispositivo gráfico, genera el gráfico y luego cierra el dispositivo: \indexf{pdf}
 
-``` r
+```{r}
 pdf("output.pdf", width = 6, height = 6)
 ggplot(mpg, aes(displ, cty)) + geom_point()
 dev.off()
 ```
 
-This works for all packages, but is verbose.
-ggplot2 provides a convenient shorthand with `ggsave()`:
+Esto funciona para todos los paquetes, pero es detallado. ggplot2 proporciona una abreviatura conveniente con `ggsave()`:
 
-``` r
+```{r}
 ggplot(mpg, aes(displ, cty)) + geom_point()
 ggsave("output.pdf")
 ```
 
-`ggsave()` is optimised for interactive use: you can use it after you've drawn a plot.
-It has the following important arguments: \indexf{ggsave}
+`ggsave()` está optimizado para uso interactivo: puedes usarlo después de haber dibujado un diagrama. Tiene los siguientes argumentos importantes: \indexf{ggsave}
 
--   The first argument, `path`, specifies the path where the image should be saved.
-    The file extension will be used to automatically select the correct graphics device.
-    `ggsave()` can produce `.eps`, `.pdf`, `.svg`, `.wmf`, `.png`, `.jpg`, `.bmp`, and `.tiff`.
+-   El primer argumento, `path`, especifica la ruta donde se debe guardar la imagen. La extensión de archivo se utilizará para seleccionar automáticamente el dispositivo gráfico correcto. `ggsave()` puede producir `.eps`, `.pdf`, `.svg`, `.wmf`, `.png`, `.jpg`, `.bmp`, y `.tiff`.
 
--   `width` and `height` control the output size, specified in inches.
-    If left blank, they'll use the size of the on-screen graphics device.
+-   `width` y `height` controlar el tamaño de salida, especificado en pulgadas. Si se deja en blanco, utilizarán el tamaño del dispositivo gráfico en pantalla.
 
--   For raster graphics (i.e. `.png`, `.jpg`), the `dpi` argument controls the resolution of the plot.
-    It defaults to 300, which is appropriate for most printers, but you may want to use 600 for particularly high-resolution output, or 96 for on-screen (e.g., web) display.
+-   Para gráficos rasterizados (es decir, `.png`, `.jpg`), el argumento `dpi` controla la resolución del gráfico. El valor predeterminado es 300, que es apropiado para la mayoría de las impresoras, pero es posible que desee utilizar 600 para resultados de resolución particularmente alta o 96 para visualización en pantalla (por ejemplo, web).
 
-See `?ggsave` for more details.
+Consulte `?ggsave` para obtener más detalles.
