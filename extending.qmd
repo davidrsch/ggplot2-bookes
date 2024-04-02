@@ -1,4 +1,4 @@
-# Advanced topics {#sec-advanced-topics .unnumbered}
+# Temas avanzados {#sec-advanced-topics .unnumbered}
 
 ```{r}
 #| echo: false
@@ -7,9 +7,4 @@
 source("common.R")
 ```
 
-As you become more fluent in ggplot2, you may find yourself wanting to use it in more advanced ways.
-You may want to write your own functions that create plots in a reusable fashion, or you may want to write your own packages that extend ggplot2.
-If this describes you, then the chapters in this part of the book are designed to get you started.
-In @sec-programming we discuss programming techniques you can use to create flexible and reusable ggplot2 visualisations.
-This is followed by @sec-internals which dives into the mechanics of what ggplot2 does when creating a plot, and @sec-extensions which builds upon this discussion to talk about how ggplot2 extensions are written.
-Finally, in order to make these ideas a little more concrete, @sec-spring1 presents a worked example of developing a ggplot2 extension.
+A medida que adquiera más fluidez en ggplot2, es posible que desee utilizarlo de formas más avanzadas. Es posible que desee escribir sus propias funciones que creen gráficos de forma reutilizable, o puede que desee escribir sus propios paquetes que extiendan ggplot2. Si esto lo describe a usted, entonces los capítulos de esta parte del libro están diseñados para ayudarlo a comenzar. En @sec-programming analizamos técnicas de programación que puede utilizar para crear visualizaciones de ggplot2 flexibles y reutilizables. A esto le sigue @sec-internals, que profundiza en la mecánica de lo que hace ggplot2 al crear un gráfico, y @sec-extensions, que se basa en esta discusión para hablar sobre cómo se escriben las extensiones de ggplot2. Finalmente, para concretar un poco más estas ideas, @sec-spring1 presenta un ejemplo práctico del desarrollo de una extensión ggplot2.
