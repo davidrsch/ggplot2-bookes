@@ -1,4 +1,4 @@
-# Programming with ggplot2 {#sec-programming}
+# Programar con ggplot2 {#sec-programming}
 
 ```{r}
 #| echo: false
@@ -8,36 +8,25 @@ source("common.R")
 status("drafting")
 ```
 
-## Introduction
+## Introductción
 
-A major requirement of a good data analysis is flexibility.
-If your data changes, or you discover something that makes you rethink your basic assumptions, you need to be able to easily change many plots at once.
-The main inhibitor of flexibility is code duplication.
-If you have the same plotting statement repeated over and over again, you'll have to make the same change in many different places.
-Often just the thought of making all those changes is exhausting!
-This chapter will help you overcome that problem by showing you how to program with ggplot2.
-\index{Programming}
+Un requisito importante para un buen análisis de datos es la flexibilidad. Si sus datos cambian o descubre algo que le hace reconsiderar sus suposiciones básicas, debe poder cambiar fácilmente muchos gráficos a la vez. El principal inhibidor de la flexibilidad es la duplicación de código. Si tienes la misma frase argumental repetida una y otra vez, tendrás que hacer el mismo cambio en muchos lugares diferentes. ¡A menudo la sola idea de hacer todos esos cambios es agotadora! Este capítulo le ayudará a superar ese problema mostrándole cómo programar con ggplot2. \index{Programming}
 
-To make your code more flexible, you need to reduce duplicated code by writing functions.
-When you notice you're doing the same thing over and over again, think about how you might generalise it and turn it into a function.
-If you're not that familiar with how functions work in R, you might want to brush up your knowledge at <https://adv-r.hadley.nz/functions.html>.
+Para que su código sea más flexible, debe reducir el código duplicado escribiendo funciones. Cuando notes que estás haciendo lo mismo una y otra vez, piensa en cómo podrías generalizarlo y convertirlo en una función. Si no está muy familiarizado con cómo funcionan las funciones en R, es posible que desee mejorar sus conocimientos en <https://adv-r.hadley.nz/functions.html>.
 
-In this chapter we'll show how to write functions that create:
+En este capítulo mostraremos cómo escribir funciones que crean:
 
--   A single ggplot2 component.
--   Multiple ggplot2 components.
--   A complete plot.
+-   Un único componente ggplot2.
+-   Múltiples componentes de ggplot2.
+-   Una trama completa.
 
-And then we'll finish off with a brief illustration of how you can apply functional programming techniques to ggplot2 objects.
+Y luego terminaremos con una breve ilustración de cómo se pueden aplicar técnicas de programación funcional a objetos ggplot2.
 
-You might also find the [cowplot](https://github.com/wilkelab/cowplot) and [ggthemes](https://github.com/jrnold/ggthemes) packages helpful.
-As well as providing reusable components that help you directly, you can also read the source code of the packages to figure out how they work.
+También puede que le resulten útiles los paquetes [cowplot](https://github.com/wilkelab/cowplot) y [ggthemes](https://github.com/jrnold/ggthemes). Además de proporcionar componentes reutilizables que le ayudarán directamente, también puede leer el código fuente de los paquetes para descubrir cómo funcionan.
 
-## Single components
+## Componentes individuales
 
-Each component of a ggplot plot is an object.
-Most of the time you create the component and immediately add it to a plot, but you don't have to.
-Instead, you can save any component to a variable (giving it a name), and then add it to multiple plots:
+Cada componente de un gráfico ggplot es un objeto. La mayoría de las veces usted crea el componente y lo agrega inmediatamente a un gráfico, pero no es necesario. En su lugar, puede guardar cualquier componente en una variable (dándole un nombre) y luego agregarlo a varios gráficos:
 
 ```{r}
 #| label: layer9
@@ -57,10 +46,7 @@ ggplot(mpg, aes(displ, hwy)) +
   bestfit
 ```
 
-That's a great way to reduce simple types of duplication (it's much better than copying-and-pasting!), but requires that the component be exactly the same each time.
-If you need more flexibility, you can wrap these reusable snippets in a function.
-For example, we could extend our `bestfit` object to a more general function for adding lines of best fit to a plot.
-The following code creates a `geom_lm()` with three parameters: the model `formula`, the line `colour` and the `linewidth`:
+Esta es una excelente manera de reducir los tipos simples de duplicación (¡es mucho mejor que copiar y pegar!), pero requiere que el componente sea exactamente el mismo cada vez. Si necesita más flexibilidad, puede envolver estos fragmentos reutilizables en una función. Por ejemplo, podríamos extender nuestro objeto `bestfit` a una función más general para agregar líneas de mejor ajuste a un gráfico. El siguiente código crea un `geom_lm()` con tres parámetros: el modelo `formula`, la línea `colour` y el `linewidth`:
 
 ```{r}
 #| label: geom-lm
@@ -79,33 +65,23 @@ ggplot(mpg, aes(displ, 1 / hwy)) +
   geom_lm(y ~ poly(x, 2), linewidth = 1, colour = "red")
 ```
 
-Pay close attention to the use of "`...`".
-When included in the function definition "`...`" allows a function to accept arbitrary additional arguments.
-Inside the function, you can then use "`...`" to pass those arguments on to another function.
-Here we pass "`...`" onto `geom_smooth()` so the user can still modify all the other arguments we haven't explicitly overridden.
-When you write your own component functions, it's a good idea to always use "`...`" in this way.
-\indexc{...}
+Preste mucha atención al uso de "`...`". Cuando se incluye en la definición de función "`...`" permite que una función acepte argumentos adicionales arbitrarios. Dentro de la función, puedes usar "`...`" para pasar esos argumentos a otra función. Aquí pasamos "`...`" a `geom_smooth()` para que el usuario aún pueda modificar todos los demás argumentos que no hemos anulado explícitamente. Cuando escribes tus propias funciones de componentes, es una buena idea usar siempre "`...`" de esta manera. \indexc{...}
 
-Finally, note that you can only *add* components to a plot; you can't modify or remove existing objects.
+Finalmente, tenga en cuenta que sólo puede *agregar* componentes a un gráfico; no puede modificar ni eliminar objetos existentes.
 
-### Exercises
+### Ejercicios
 
-1.  Create an object that represents a pink histogram with 100 bins.
+1.  Cree un objeto que represente un histograma rosa con 100 contenedores.
 
-2.  Create an object that represents a fill scale with the Blues ColorBrewer palette.
+2.  Cree un objeto que represente una escala de relleno con la paleta Blues ColorBrewer.
 
-3.  Read the source code for `theme_grey()`.
-    What are its arguments?
-    How does it work?
+3.  Lea el código fuente de `theme_grey()`. ¿Cuáles son sus argumentos? ¿Como funciona?
 
-4.  Create `scale_colour_wesanderson()`.
-    It should have a parameter to pick the palette from the wesanderson package, and create either a continuous or discrete scale.
+4.  Cree `scale_colour_wesanderson()`. Debería tener un parámetro para elegir la paleta del paquete wesanderson y crear una escala continua o discreta.
 
-## Multiple components
+## Múltiples componentes
 
-It's not always possible to achieve your goals with a single component.
-Fortunately, ggplot2 has a convenient way of adding multiple components to a plot in one step with a list.
-The following function adds two layers: one to show the mean, and one to show its 95% confidence interval:
+No siempre es posible lograr tus objetivos con un solo componente. Afortunadamente, ggplot2 tiene una manera conveniente de agregar múltiples componentes a un gráfico en un solo paso con una lista. La siguiente función agrega dos capas: una para mostrar la media y otra para mostrar su intervalo de confianza del 95%:
 
 ```{r}
 #| label: geom-mean-1
@@ -122,8 +98,7 @@ ggplot(mpg, aes(class, cty)) + geom_mean()
 ggplot(mpg, aes(drv, cty)) + geom_mean()
 ```
 
-If the list contains any `NULL` elements, they're ignored.
-This makes it easy to conditionally add components:
+Si la lista contiene elementos `NULL`, se ignoran. Esto facilita la adición condicional de componentes:
 
 ```{r}
 #| label: geom-mean-2
@@ -142,38 +117,29 @@ ggplot(mpg, aes(drv, cty)) + geom_mean()
 ggplot(mpg, aes(drv, cty)) + geom_mean(se = FALSE)
 ```
 
-### Plot components
+### Componentes de la trama
 
-You're not just limited to adding layers in this way.
-You can also include any of the following object types in the list:
+No estás limitado sólo a agregar capas de esta manera. También puede incluir cualquiera de los siguientes tipos de objetos en la lista:
 
--   A data.frame, which will override the default dataset associated with the plot.
-    (If you add a data frame by itself, you'll need to use `%+%`, but this is not necessary if the data frame is in a list.)
+-   Un marco de datos, que anulará el conjunto de datos predeterminado asociado con el gráfico. (Si agrega un marco de datos por sí solo, necesitará usar `%+%`, pero esto no es necesario si el marco de datos está en una lista).
 
--   An `aes()` object, which will be combined with the existing default aesthetic mapping.
+-   Un objeto `aes()`, que se combinará con el mapeo estético predeterminado existente.
 
--   Scales, which override existing scales, with a warning if they've already been set by the user.
+-   Escalas, que anulan las escalas existentes, con una advertencia si ya han sido configuradas por el usuario.
 
--   Coordinate systems and faceting specification, which override the existing settings.
+-   Sistemas de coordenadas y especificación de facetas, que anulan la configuración existente.
 
--   Theme components, which override the specified components.
+-   Componentes del tema, que anulan los componentes especificados.
 
-### Annotation
+### Anotación
 
-It's often useful to add standard annotations to a plot.
-In this case, your function will also set the data in the layer function, rather than inheriting it from the plot.
-There are two other options that you should set when you do this.
-These ensure that the layer is self-contained: \index{Annotation!functions}
+A menudo resulta útil agregar anotaciones estándar a un gráfico. En este caso, su función también establecerá los datos en la función de capa, en lugar de heredarlos del gráfico. Hay otras dos opciones que debes configurar al hacer esto. Estos garantizan que la capa sea autónoma: \index{Annotation!functions}
 
--   `inherit.aes = FALSE` prevents the layer from inheriting aesthetics from the parent plot.
-    This ensures your annotation works regardless of what else is on the plot.
-    \indexc{inherit.aes}
+-   `inherit.aes = FALSE` evita que la capa herede la estética del trazado principal. Esto garantiza que su anotación funcione independientemente de lo que haya en el gráfico. \indexc{inherit.aes}
 
--   `show.legend = FALSE` ensures that your annotation won't appear in the legend.
-    \indexc{show.legend}
+-   `show.legend = FALSE` garantiza que su anotación no aparecerá en la leyenda. \indexc{show.legend}
 
-One example of this technique is the `borders()` function built into ggplot2.
-It's designed to add map borders from one of the datasets in the maps package: \indexf{borders}
+Un ejemplo de esta técnica es la función `borders()` integrada en ggplot2. Está diseñado para agregar bordes de mapas desde uno de los conjuntos de datos del paquete de mapas: \indexf{borders}
 
 ```{r}
 borders <- function(database = "world", regions = ".", fill = NA, 
@@ -187,13 +153,11 @@ borders <- function(database = "world", regions = ".", fill = NA,
 }
 ```
 
-### Additional arguments
+### Argumentos adicionales
 
-If you want to pass additional arguments to the components in your function, `...` is no good: there's no way to direct different arguments to different components.
-Instead, you'll need to think about how you want your function to work, balancing the benefits of having one function that does it all vs. the cost of having a complex function that's harder to understand.
-\indexc{...}
+Si desea pasar argumentos adicionales a los componentes de su función, `...` no sirve: no hay forma de dirigir diferentes argumentos a diferentes componentes. En su lugar, deberá pensar en cómo desea que funcione su función, equilibrando los beneficios de tener una función que lo haga todo con el costo de tener una función compleja que sea más difícil de entender. \indexc{...}
 
-To get you started, here's one approach using `modifyList()` and `do.call()`: \indexf{modifyList} \indexf{do.call}
+Para comenzar, aquí hay un enfoque que utiliza `modifyList()` y `do.call()`: \indexf{modifyList} \indexf{do.call}
 
 ```{r}
 #| layout-ncol: 2
@@ -227,30 +191,21 @@ ggplot(mpg, aes(class, cty)) +
   )
 ```
 
-If you need more complex behaviour, it might be easier to create a custom geom or stat.
-You can learn about that in the extending ggplot2 vignette included with the package.
-Read it by running `vignette("extending-ggplot2")`.
+Si necesita un comportamiento más complejo, podría ser más fácil crear una geom o estadística personalizada. Puede obtener más información sobre esto en la viñeta extensible de ggplot2 incluida con el paquete. Léelo corriendo `vignette("extending-ggplot2")`.
 
-### Exercises
+### Ejercicios
 
-1.  To make the best use of space, many examples in this book hide the axes labels and legend.
-    we've just copied-and-pasted the same code into multiple places, but it would make more sense to create a reusable function.
-    What would that function look like?
+1.  Para aprovechar al máximo el espacio, muchos ejemplos de este libro ocultan las etiquetas y la leyenda de los ejes. Acabamos de copiar y pegar el mismo código en varios lugares, pero tendría más sentido crear una función reutilizable. ¿Cómo sería esa función?
 
-2.  Extend the `borders()` function to also add `coord_quickmap()` to the plot.
+2.  Extienda la función `borders()` para agregar también `coord_quickmap()` al gráfico.
 
-3.  Look through your own code.
-    What combinations of geoms or scales do you use all the time?
-    How could you extract the pattern into a reusable function?
+3.  Revise su propio código. ¿Qué combinaciones de geoms o escalas usas todo el tiempo? ¿Cómo podrías extraer el patrón en una función reutilizable?
 
-## Plot functions {#sec-functions}
+## Funciones de trazado {#sec-functions}
 
-Creating small reusable components is most in line with the ggplot2 spirit: you can recombine them flexibly to create whatever plot you want.
-But sometimes you're creating the same plot over and over again, and you don't need that flexibility.
-Instead of creating components, you might want to write a function that takes data and parameters and returns a complete plot.
-\index{Plot functions}
+La creación de pequeños componentes reutilizables está más en línea con el espíritu de ggplot2: puedes recombinarlos de manera flexible para crear cualquier trama que desees. Pero a veces estás creando la misma trama una y otra vez y no necesitas esa flexibilidad. En lugar de crear componentes, es posible que desee escribir una función que tome datos y parámetros y devuelva un gráfico completo. \index{Plot functions}
 
-For example, you could wrap up the complete code needed to make a piechart:
+Por ejemplo, podrías resumir el código completo necesario para hacer un gráfico circular:
 
 ```{r}
 piechart <- function(data, mapping) {
@@ -263,14 +218,9 @@ piechart <- function(data, mapping) {
 piechart(mpg, aes(factor(1), fill = class))
 ```
 
-This is much less flexible than the component-based approach, but equally, it's much more concise.
-Note that we were careful to return the plot object, rather than printing it.
-That makes it possible to add on other ggplot2 components.
+Esto es mucho menos flexible que el enfoque basado en componentes, pero igualmente es mucho más conciso. Tenga en cuenta que tuvimos cuidado de devolver el objeto de la trama, en lugar de imprimirlo. Eso hace posible agregar otros componentes de ggplot2.
 
-You can take a similar approach to drawing parallel coordinates plots (PCPs).
-PCPs require a transformation of the data, so we recommend writing two functions: one that does the transformation and one that generates the plot.
-Keeping these two pieces separate makes life much easier if you later want to reuse the same transformation for a different visualisation.
-\index{Parallel coordinate plots}
+Puede adoptar un enfoque similar para dibujar gráficos de coordenadas paralelas (PCP). Los PCP requieren una transformación de los datos, por lo que recomendamos escribir dos funciones: una que haga la transformación y otra que genere el gráfico. Mantener estas dos piezas separadas hace la vida mucho más fácil si luego deseas reutilizar la misma transformación para una visualización diferente. \index{Parallel coordinate plots}
 
 ```{r}
 #| label: pcp_data
@@ -279,19 +229,19 @@ Keeping these two pieces separate makes life much easier if you later want to re
 pcp_data <- function(df) {
   is_numeric <- vapply(df, is.numeric, logical(1))
 
-  # Rescale numeric columns
+  # Cambiar la escala de columnas numéricas
   rescale01 <- function(x) {
     rng <- range(x, na.rm = TRUE)
     (x - rng[1]) / (rng[2] - rng[1])
   }
   df[is_numeric] <- lapply(df[is_numeric], rescale01)
   
-  # Add row identifier
+  # Agregar identificador de fila
   df$.row <- rownames(df)
   
-  # Treat numerics as value (aka measure) variables
-  # gather_ is the standard-evaluation version of gather, and
-  # is usually easier to program with.
+  # Trate los números como variables de valor (como medidas)
+  # gather_ es la versión estadandar de evaluación de gather
+  # y es más fácil de utilizar para programar
   tidyr::gather_(df, "variable", "value", names(df)[is_numeric])
 }
 pcp <- function(df, ...) {
@@ -302,14 +252,11 @@ pcp(mpg)
 pcp(mpg, aes(colour = drv))
 ```
 
-### Indirectly referring to variables
+### Refiriéndose indirectamente a variables.
 
-The `piechart()` function above is a little unappealing because it requires the user to know the exact `aes()` specification that generates a pie chart.
-It would be more convenient if the user could simply specify the name of the variable to plot.
-To do that you'll need to learn a bit more about how `aes()` works.
+La función `piechart()` anterior es un poco poco atractiva porque requiere que el usuario conozca la especificación exacta `aes()` que genera un gráfico circular. Sería más conveniente si el usuario pudiera simplemente especificar el nombre de la variable a trazar. Para hacer eso necesitarás aprender un poco más sobre cómo funciona `aes()`.
 
-`aes()` uses tidy-evaluation: rather than looking at the values of its arguments, it looks at their expressions.
-This makes programming difficult because when you want it to refer to a variable provided in an argument it instead uses the name of the argument:
+`aes()` usa evaluación ordenada: en lugar de mirar los valores de sus argumentos, mira sus expresiones. Esto dificulta la programación porque cuando desea que se refiera a una variable proporcionada en un argumento, utiliza el nombre del argumento:
 
 ```{r}
 my_function <- function(x_var) {
@@ -318,8 +265,7 @@ my_function <- function(x_var) {
 my_function(abc)
 ```
 
-We resolve this using the standard technique for programming with tidy-evaluation: embracing.
-Embracing tells gglot2 to look "inside" the argument use its value, not its literal name:
+Esto lo resolvemos utilizando la técnica estándar de programación con tidy-evaluación: abrazar. Abrazar le dice a gglot2 que mire "dentro" del argumento y use su valor, no su nombre literal:
 
 ```{r}
 my_function <- function(x_var) {
@@ -328,7 +274,7 @@ my_function <- function(x_var) {
 my_function(abc)
 ```
 
-This makes it easy to update our piechart function:
+Esto facilita la actualización de nuestra función de gráfico circular:
 
 ```{r}
 piechart <- function(data, var) {
@@ -341,22 +287,15 @@ piechart <- function(data, var) {
 mpg |> piechart(class)
 ```
 
-### Exercises
+### Ejercicios
 
-1.  Create a `distribution()` function specially designed for visualising continuous distributions.
-    Allow the user to supply a dataset and the name of a variable to visualise.
-    Let them choose between histograms, frequency polygons, and density plots.
-    What other arguments might you want to include?
+1.  Cree una función `distribution()` especialmente diseñada para visualizar distribuciones continuas. Permita que el usuario proporcione un conjunto de datos y el nombre de una variable para visualizar. Permítales elegir entre histogramas, polígonos de frecuencia y gráficos de densidad. ¿Qué otros argumentos le gustaría incluir?
 
-2.  What additional arguments should `pcp()` take?
-    What are the downsides of how `...` is used in the current code?
+2.  ¿Qué argumentos adicionales debería tomar `pcp()`? ¿Cuáles son las desventajas de cómo se usa `...` en el código actual?
 
-## Functional programming
+## Programación funcional
 
-Since ggplot2 objects are just regular R objects, you can put them in a list.
-This means you can apply all of R's great functional programming tools.
-For example, if you wanted to add different geoms to the same base plot, you could put them in a list and use `lapply()`.
-\index{Functional programming} \indexf{lapply}
+Dado que los objetos ggplot2 son simplemente objetos R normales, puedes ponerlos en una lista. Esto significa que puede aplicar todas las excelentes herramientas de programación funcional de R. Por ejemplo, si quisieras agregar diferentes geoms al mismo gráfico base, podrías ponerlas en una lista y usar `lapply()`. \index{Functional programming} \indexf{lapply}
 
 ```{r}
 #| layout-ncol: 3
@@ -371,11 +310,11 @@ p <- ggplot(mpg, aes(displ, hwy))
 lapply(geoms, function(g) p + g)
 ```
 
-If you're not familiar with functional programming, read through <https://adv-r.hadley.nz/fp.html> and think about how you might apply the techniques to your duplicated plotting code.
+Si no está familiarizado con la programación funcional, lea <https://adv-r.hadley.nz/fp.html> y piense en cómo podría aplicar las técnicas a su código de trazado duplicado.
 
-### Exercises
+### Ejercicios
 
-1.  How could you add a `geom_point()` layer to each element of the following list?
+1.  ¿Cómo podrías agregar una capa `geom_point()` a cada elemento de la siguiente lista?
 
     ```{r}
     #| eval: false
@@ -386,8 +325,7 @@ If you're not familiar with functional programming, read through <https://adv-r.
     )
     ```
 
-2.  What does the following function do?
-    What's a better name for it?
+2.  ¿Qué hace la siguiente función? ¿Cuál es un mejor nombre para ello?
 
     ```{r}
     #| eval: false
