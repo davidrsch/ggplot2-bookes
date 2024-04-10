@@ -1,4 +1,4 @@
-# Internals of ggplot2 {#sec-internals}
+# Internos de ggplot2 {#sec-internals}
 
 ```{r}
 #| echo: false
@@ -14,22 +14,13 @@ source("internals_ggbuild.R")
 source("internals_gggtable.R")
 ```
 
-Throughout this book we have described ggplot2 from the perspective of a user rather than a developer.
-From the user point of view, the important thing is to understand how the interface to ggplot2 works.
-To make a data visualisation the user needs to know how functions like `ggplot()` and `geom_point()` can be used to *specify* a plot, but very few users need to understand how ggplot2 translates this plot specification into an image.
-For a ggplot2 developer who hopes to design extensions, however, this understanding is paramount.
+A lo largo de este libro hemos descrito ggplot2 desde la perspectiva de un usuario más que de un desarrollador. Desde el punto de vista del usuario, lo importante es entender cómo funciona la interfaz de ggplot2. Para realizar una visualización de datos, el usuario necesita saber cómo se pueden usar funciones como `ggplot()` y `geom_point()` para *especificar* un gráfico, pero muy pocos usuarios necesitan comprender cómo ggplot2 traduce esta especificación del gráfico en una imagen. . Sin embargo, para un desarrollador de ggplot2 que espera diseñar extensiones, esta comprensión es primordial.
 
-When making the jump from user to developer, it is common to encounter frustrations because the nature of the ggplot2 *interface* is very different to the structure of the underlying *machinery* that makes it work.
-As extending ggplot2 becomes more common, so too does the frustration related to understanding how it all fits together.
-This chapter is dedicated to providing a description of how ggplot2 works "behind the curtains".
-We focus on the design of the system rather than technical details of its implementation, and the goal is to provide a conceptual understanding of how the parts fit together.
-We begin with a general overview of the process that unfolds when a ggplot object is plotted, and then dive into details, describing how the data flows through this whole process and ends up as visual elements in your plot.
+Al dar el salto de usuario a desarrollador, es común encontrar frustraciones porque la naturaleza de la *interfaz* ggplot2 es muy diferente a la estructura de la *maquinaria* subyacente que la hace funcionar. A medida que extender ggplot2 se vuelve más común, también lo hace la frustración relacionada con comprender cómo encaja todo. Este capítulo está dedicado a proporcionar una descripción de cómo funciona ggplot2 "detrás de las cortinas". Nos centramos en el diseño del sistema más que en los detalles técnicos de su implementación, y el objetivo es proporcionar una comprensión conceptual de cómo encajan las piezas. Comenzamos con una descripción general del proceso que se desarrolla cuando se traza un objeto ggplot y luego profundizamos en los detalles, describiendo cómo los datos fluyen a través de todo este proceso y terminan como elementos visuales en su trama.
 
-## The `plot()` method {#sec-plot-method}
+## El método `plot()` {#sec-plot-method}
 
-To understand the machinery underpinning ggplot2, it is important to recognise that almost everything related to the plot drawing happens when you print the ggplot object, not when you construct it.
-For instance, in the code below, the object `p` is an abstract specification of the plot data, the layers, etc.
-It does not construct the image itself:
+Para comprender la maquinaria que sustenta ggplot2, es importante reconocer que casi todo lo relacionado con el dibujo de la trama ocurre cuando imprimes el objeto ggplot, no cuando lo construyes. Por ejemplo, en el código siguiente, el objeto `p` es una especificación abstracta de los datos de la trama, las capas, etc. No construye la imagen en sí:
 
 ```{r}
 p <- ggplot(mpg, aes(displ, hwy, color = drv)) + 
@@ -39,12 +30,9 @@ p <- ggplot(mpg, aes(displ, hwy, color = drv)) +
   ggtitle("A plot for expository purposes")
 ```
 
-ggplot2 is designed this way to allow the user to add new elements to a plot without needing to recalculate anything.
-One implication of this is that if you want to understand the mechanics of ggplot2, you have to follow your plot as it goes down the `plot()`[^internals-1] rabbit hole.
-You can inspect the print method for ggplot objects by typing `ggplot2:::plot.ggplot` at the console, but for this chapter we will work with a simplified version.
-Stripped to its bare essentials, the ggplot2 plot method has the same structure as the following `ggprint()` function:
+ggplot2 está diseñado de esta manera para permitir al usuario agregar nuevos elementos a un gráfico sin necesidad de volver a calcular nada. Una implicación de esto es que si quieres entender la mecánica de ggplot2, tienes que seguir tu trama a medida que avanza por la madriguera del conejo `plot()`[^internals-1]. Puede inspeccionar el método de impresión para objetos ggplot escribiendo `ggplot2:::plot.ggplot` en la consola, pero para este capítulo trabajaremos con una versión simplificada. Reducido a lo esencial, el método de trazado ggplot2 tiene la misma estructura que la siguiente función `ggprint()`:
 
-[^internals-1]: You usually don't call this `plot()` method directly as it is invoked by the print method and thus called whenever a ggplot object is printed.
+[^internals-1]: Por lo general, no se llama a este método `plot()` directamente, ya que lo invoca el método print y, por lo tanto, se llama cada vez que se imprime un objeto ggplot.
 
 ```{r}
 ggprint <- function(x) {
@@ -56,51 +44,37 @@ ggprint <- function(x) {
 }
 ```
 
-This function does not handle every possible use case, but it is sufficient to draw the plot specified above:
+Esta función no maneja todos los casos de uso posibles, pero es suficiente para dibujar el gráfico especificado anteriormente:
 
 ```{r}
 ggprint(p) 
 ```
 
-The code in our simplified print method reveals four distinct steps:
+El código de nuestro método de impresión simplificado revela cuatro pasos distintos:
 
--   First, it calls `ggplot_build()` where the data for each layer is prepared and organised into a standardised format suitable for plotting.
+-   Primero, llama a `ggplot_build()` donde los datos de cada capa se preparan y organizan en un formato estandarizado adecuado para trazar.
 
--   Second, the prepared data is passed to the `ggplot_gtable()` and turns it into graphic elements stored in a gtable (we'll come back to what that is later).
+-   En segundo lugar, los datos preparados se pasan a `ggplot_gtable()` y los convierte en elementos gráficos almacenados en una gtable (volveremos a eso más adelante).
 
--   Third, the gtable object is converted to an image with the assistance of the grid package.
+-   En tercer lugar, el objeto gtable se convierte en una imagen con la ayuda del paquete grid.
 
--   Fourth, the original ggplot object is invisibly returned to the user.
+-   Cuarto, el objeto ggplot original se devuelve de forma invisible al usuario.
 
-One thing that this process reveals is that ggplot2 itself does none of the low-level drawing: its responsibility ends when the `gtable` object has been created.
-Nor does the gtable package (which implements the gtable class) do any drawing.
-All drawing is performed by the grid package together with the active graphics device.
-This is an important point, as it means ggplot2 -- or any extension to ggplot2 -- does not concern itself with the nitty gritty of creating the visual output.
-Rather, its job is to convert user data to one or more graphical primitives such as polygons, lines, points, etc and then hand responsibility over to the grid package.
+Una cosa que este proceso revela es que ggplot2 no realiza ningún dibujo de bajo nivel: su responsabilidad termina cuando se ha creado el objeto `gtable`. El paquete gtable (que implementa la clase gtable) tampoco realiza ningún dibujo. Todo el dibujo lo realiza el paquete grid junto con el dispositivo gráfico activo. Este es un punto importante, ya que significa que ggplot2, o cualquier extensión de ggplot2, no se preocupa por el meollo de la creación de la salida visual. Más bien, su trabajo es convertir los datos del usuario a una o más primitivas gráficas como polígonos, líneas, puntos, etc. y luego entregar la responsabilidad al paquete grid.
 
-Although it is not strictly correct to do so, we will refer to this conversion into graphical primitives as the **rendering process**.
-The next two sections follow the data down the rendering rabbit hole through the build step (@sec-ggplotbuild) and the gtable step (@sec-ggplotgtable) whereupon -- rather like Alice in Lewis Carroll's novel -- it finally arrives in the grid wonderland as a collection of graphical primitives.
+Aunque no es estrictamente correcto hacerlo, nos referiremos a esta conversión a primitivas gráficas como **proceso de renderizado**. Las siguientes dos secciones siguen los datos a través de la madriguera del conejo de renderizado a través del paso de compilación (@sec-ggplotbuild) y el paso de gtable (@sec-ggplotgtable) después de lo cual, algo así como Alicia en la novela de Lewis Carroll, finalmente llega a la cuadrícula. El país de las maravillas como una colección de primitivos gráficos.
 
-## The build step {#sec-ggplotbuild}
+## El paso de construcción {#sec-ggplotbuild}
 
 <!-- As may be apparent from the section above, the main actor in the rendering process is the layer data, and the rendering process is really a long progression of steps to convert the data from the format supplied by the user, to a format that fits with the graphic primitives needed to create the desired visual elements. This also means that to gain an understanding of the mechanics of ggplot2 we must understand how data flows through the mechanics and how it transforms along the way. -->
 
-`ggplot_build()`, as discussed above, takes the declarative representation constructed with the public API and augments it by preparing the data for conversion to graphic primitives.
+`ggplot_build()`, como se analizó anteriormente, toma la representación declarativa construida con la API pública y la aumenta preparando los datos para su conversión a primitivas gráficas.
 
-### Data preparation
+### Preparación de datos
 
-The first part of the processing is to get the data associated with each layer and get it into a predictable format.
-A layer can either provide data in one of three ways: it can supply its own (e.g., if the `data` argument to a geom is a data frame), it can inherit the global data supplied to `ggplot()`, or else it might provide a function that returns a data frame when applied to the global data.
-In all three cases the result is a data frame that is passed to the plot layout, which orchestrates coordinate systems and facets.
-When this happens the data is first passed to the plot coordinate system which may change it (but usually doesn't), and then to the facet which inspects the data to figure out how many panels the plot should have and how they should be organised.
-During this process the data associated with each layer will be augmented with a `PANEL` column.
-This column will (must) be kept throughout the rendering process and is used to link each data row to a specific facet panel in the final plot.
+La primera parte del procesamiento es obtener los datos asociados con cada capa y ponerlos en un formato predecible. Una capa puede proporcionar datos de una de tres maneras: puede proporcionar los suyos propios (por ejemplo, si el argumento `data` de una geom es un marco de datos), puede heredar los datos globales proporcionados a `ggplot()`, o de lo contrario, podría proporcionar una función que devuelva un marco de datos cuando se aplica a los datos globales. En los tres casos, el resultado es un marco de datos que se pasa al diseño del trazado, que organiza sistemas de coordenadas y facetas. Cuando esto sucede, los datos se pasan primero al sistema de coordenadas de la trama, que puede cambiarlos (pero generalmente no lo hace), y luego a la faceta que inspecciona los datos para determinar cuántos paneles debe tener la trama y cómo deben organizarse. . Durante este proceso, los datos asociados con cada capa se aumentarán con una columna `PANEL`. Esta columna (debe) mantenerse durante todo el proceso de renderizado y se utiliza para vincular cada fila de datos a un panel de facetas específico en el gráfico final.
 
-The last part of the data preparation is to convert the layer data into calculated aesthetic values.
-This involves evaluating all aesthetic expressions from `aes()` on the layer data.
-Further, if not given explicitly, the `group` aesthetic is calculated from the interaction of all non-continuous aesthetics.
-The `group` aesthetic is, like `PANEL` a special column that must be kept throughout the processing.
-As an example, the plot `p` created earlier contains only the one layer specified by `geom_point()` and at the end of the data preparation process the first 10 rows of the data associated with this layer look like this:
+La última parte de la preparación de datos es convertir los datos de la capa en valores estéticos calculados. Esto implica evaluar todas las expresiones estéticas de `aes()` en los datos de la capa. Además, si no se da explícitamente, la estética `group` se calcula a partir de la interacción de todas las estéticas no continuas. La estética del `group` es, como `PANEL`, una columna especial que debe mantenerse durante todo el procesamiento. Como ejemplo, el gráfico `p` creado anteriormente contiene solo la capa especificada por `geom_point()` y al final del proceso de preparación de datos, las primeras 10 filas de los datos asociados con esta capa se ven así:
 
 ```{r}
 #| echo: false
@@ -108,55 +82,38 @@ data_prepped <- ggbuild(p)$prepared
 head(data_prepped[[1]], n = 10)
 ```
 
-### Data transformation
+### Transformación de datos
 
-Once the layer data has been extracted and converted to a predictable format it undergoes a series of transformations until it has the format expected by the layer geometry.
+Una vez que los datos de la capa se han extraído y convertido a un formato predecible, se someten a una serie de transformaciones hasta que tienen el formato esperado por la geometría de la capa.
 
-The first step is to apply any scale transformations to the columns in the data.
-It is at this stage of the process that any argument to `trans` in a scale has an effect, and all subsequent rendering will take place in this transformed space.
-This is the reason why setting a position transform in the scale has a different effect than setting it in the coordinate system.
-If the transformation is specified in the scale it is applied *before* any other calculations, but if it is specified in the coordinate system the transformation is applied *after* those calculations.
-For instance, our original plot `p` involves no scale transformations so the layer data remain untouched at this stage.
-The first three rows are shown below:
+El primer paso es aplicar cualquier transformación de escala a las columnas de los datos. Es en esta etapa del proceso que cualquier argumento a favor de `trans` en una escala tiene efecto, y toda la representación posterior tendrá lugar en este espacio transformado. Esta es la razón por la que establecer una transformación de posición en la escala tiene un efecto diferente que establecerla en el sistema de coordenadas. Si la transformación se especifica en la escala, se aplica *antes* de cualquier otro cálculo, pero si se especifica en el sistema de coordenadas, la transformación se aplica *después* de esos cálculos. Por ejemplo, nuestro gráfico original `p` no implica transformaciones de escala, por lo que los datos de la capa permanecen intactos en esta etapa. Las primeras tres filas se muestran a continuación:
 
 ```{r}
 #| echo: false
 ggbuild(p)$transformed[[1]] %>% head(n = 3)
 ```
 
-In contrast, if our plot object is `p + scale_x_log10()` and we inspect the layer data at this point in processing, we see that the `x` variable has been transformed appropriately:
+Por el contrario, si nuestro objeto de trazado es `p + scale_x_log10()` e inspeccionamos los datos de la capa en este punto del procesamiento, vemos que la variable `x` se ha transformado apropiadamente:
 
 ```{r}
 #| echo: false
 ggbuild(p + scale_x_log10())$transformed[[1]] %>% head(n = 3)
 ```
 
-The second step in the process is to map the position aesthetics using the position scales, which unfolds differently depending on the kind of scale involved.
-For continuous position scales -- such as those used in our example -- the out of bounds function specified in the `oob` argument (@sec-oob) is applied at this point, and `NA` values in the layer data are removed.
-This makes little difference for `p`, but if we were plotting `p + xlim(2, 8)` instead the `oob` function -- `scales::censor()` in this case -- would replace `x` values below 2 with `NA` as illustrated below:
+El segundo paso del proceso es mapear la estética de la posición utilizando las escalas de posición, que se despliegan de manera diferente según el tipo de escala involucrada. Para escalas de posición continuas, como las utilizadas en nuestro ejemplo, la función fuera de límites especificada en el argumento `oob` (@sec-oob) se aplica en este punto y los valores `NA` en los datos de la capa se eliminan. . Esto hace poca diferencia para `p`, pero si estuviéramos graficando `p + xlim(2, 8)` en lugar de ello, la función `oob` -- `scales::censor()` en este caso -- reemplazaría a `x` valores por debajo de 2 con `NA` como se ilustra a continuación:
 
 ```{r}
 #| echo: false
 ggbuild(p + xlim(2, 8))$positioned[[1]] %>% head(n = 3)
 ```
 
-For discrete positions the change is more radical, because the values are matched to the `limits` values or the `breaks` specification provided by the user, and then converted to integer-valued positions.
-Finally, for binned position scales the continuous data is first cut into bins using the `breaks` argument, and the position for each bin is set to the midpoint of its range.
-The reason for performing the mapping at this stage of the process is consistency: no matter what type of position scale is used, it will look continuous to the stat and geom computations.
-This is important because otherwise computations such as dodging and jitter would fail for discrete scales.
+Para posiciones discretas, el cambio es más radical, porque los valores coinciden con los valores de `llimits` o la especificación de interrupciones con `breaks` proporcionada por el usuario y luego se convierten a posiciones con valores enteros. Finalmente, para escalas de posición agrupadas, los datos continuos primero se cortan en bins usando el argumento `breaks`, y la posición de cada bin se establece en el punto medio de su rango. La razón para realizar el mapeo en esta etapa del proceso es la coherencia: no importa qué tipo de escala de posición se utilice, parecerá continua para los cálculos de estadísticas y geom. Esto es importante porque, de lo contrario, los cálculos como la esquiva y la fluctuación fallarían en escalas discretas.
 
-At the third stage in this transformation the data is handed to the layer stat where any statistical transformation takes place.
-The procedure is as follows: first, the stat is allowed to inspect the data and modify its parameters, then do a one off preparation of the data.
-Next, the layer data is split by `PANEL` and `group`, and statistics are calculated before the data is reassembled.[^internals-2]
-Once the data has been reassembled in its new form it goes through another aesthetic mapping process.
-This is where any aesthetics whose computation has been delayed using `stat()` (or the old `..var..` notation) get added to the data.
-Notice that this is why `stat()` expressions -- including the formula used to specify the regression model in the `geom_smooth()` layer of our example plot `p` -- cannot refer to the original data.
-It simply doesn't exist at this point.
+En la tercera etapa de esta transformación, los datos se entregan a la capa de estadísticas donde se lleva a cabo cualquier transformación estadística. El procedimiento es el siguiente: primero, la estadística puede inspeccionar los datos y modificar sus parámetros, luego realizar una preparación única de los datos. A continuación, los datos de la capa se dividen en `PANEL` y `group`, y las estadísticas se calculan antes de volver a ensamblar los datos.[^internals-2] Una vez que los datos se han vuelto a ensamblar en su nueva forma, pasan por otro proceso de mapeo estético. Aquí es donde se agrega a los datos cualquier estética cuyo cálculo se haya retrasado usando `stat()` (o la antigua notación `..var..`). Observe que esta es la razón por la cual las expresiones `stat()`, incluida la fórmula utilizada para especificar el modelo de regresión en la capa `geom_smooth()` de nuestro gráfico de ejemplo `p`, no pueden hacer referencia a los datos originales. Simplemente no existe en este momento.
 
-[^internals-2]: It is possible for a stat to circumvent this splitting by overwriting specific `compute_*()` methods and thus do some optimisation.
+[^internals-2]: Es posible que una estadística evite esta división sobrescribiendo métodos `compute_*()` específicos y así realizar cierta optimización.
 
-As an example consider the second layer in our plot, which produces the linear regressions.
-Before the stat computations have been performed the data for this layer simply contain the coordinates and the required `PANEL` and `group` columns.
+Como ejemplo, considere la segunda capa de nuestro gráfico, que produce las regresiones lineales. Antes de realizar los cálculos estadísticos, los datos de esta capa simplemente contienen las coordenadas y las columnas `PANEL` y `group` requeridas.
 
 ```{r}
 #| echo: false
@@ -165,66 +122,40 @@ bb <- ggbuild(p)
 bb$positioned[[2]] %>% head(n = 3)
 ```
 
-After the stat computations have taken place, the layer data are changed considerably:
+Una vez realizados los cálculos estadísticos, los datos de la capa cambian considerablemente:
 
 ```{r}
 #| echo: false
 bb$poststat[[2]] %>% head(n = 3)
 ```
 
-At this point the geom takes over from the stat (almost).
-The first action it takes is to inspect the data, update its parameters and possibly make a first pass modification of the data (same setup as for stat).
-This is possibly where some of the columns gets reparameterised e.g. `x`+`width` gets changed to `xmin`+`xmax`.
-After this the position adjustment gets applied, so that e.g. overlapping bars are stacked, etc.
-For our example plot `p`, it is at this step that the jittering is applied in the first layer of the plot and the `x` and `y` coordinates are perturbed:
+En este punto, la geom reemplaza a la estadística (casi). La primera acción que toma es inspeccionar los datos, actualizar sus parámetros y posiblemente realizar una modificación de primer paso de los datos (la misma configuración que para las estadísticas). Posiblemente aquí es donde algunas de las columnas se reparametrizan, p. `x`+`width` se cambia a `xmin`+`xmax`. Después de esto se aplica el ajuste de posición, de modo que p.e. las barras superpuestas se apilan, etc. Para nuestro gráfico de ejemplo `p`, es en este paso que se aplica la fluctuación en la primera capa del gráfico y las coordenadas `x` e `y` se alteran:
 
 ```{r}
 #| echo: false
 ggbuild(p)$geompos[[1]] %>% head(n = 3)
 ```
 
-Next---and perhaps surprisingly---the position scales are all reset, retrained, and applied to the layer data.
-Thinking about it, this is absolutely necessary because, for example, stacking can change the range of one of the axes dramatically.
-In some cases (e.g., in the histogram example above) one of the position aesthetics may not even be available until after the stat computations and if the scales were not retrained it would never get trained.
+A continuación, y quizás sorprendentemente, todas las escalas de posición se restablecen, se vuelven a entrenar y se aplican a los datos de la capa. Pensándolo bien, esto es absolutamente necesario porque, por ejemplo, el apilamiento puede cambiar drásticamente el rango de uno de los ejes. En algunos casos (por ejemplo, en el ejemplo de histograma anterior), es posible que una de las estéticas de posición ni siquiera esté disponible hasta después de los cálculos de estadísticas y, si las escalas no se volvieran a entrenar, nunca se entrenarían.
 
-The last part of the data transformation is to train and map all non-positional aesthetics, i.e. convert whatever discrete or continuous input that is mapped to graphical parameters such as colours, linetypes, sizes etc.
-Further, any default aesthetics from the geom are added so that the data is now in a predictable state for the geom.
-At the very last step, both the stat and the facet gets a last chance to modify the data in its final mapped form with their `finish_data()` methods before the build step is done.
-For the plot object `p`, the first few rows from final state of the layer data look like this:
+La última parte de la transformación de datos es entrenar y mapear todas las estéticas no posicionales, es decir, convertir cualquier entrada discreta o continua que esté asignada a parámetros gráficos como colores, tipos de línea, tamaños, etc. Además, se agrega cualquier estética predeterminada de geom. de modo que los datos ahora estén en un estado predecible para la geom. En el último paso, tanto la estadística como la faceta tienen una última oportunidad de modificar los datos en su forma asignada final con sus métodos `finish_data()` antes de finalizar el paso de compilación. Para el objeto de trazado `p`, las primeras filas del estado final de los datos de la capa se ven así:
 
 ```{r}
 #| echo: false
 ggbuild(p)$built$data[[1]] %>% head(n = 3)
 ```
 
-### Output
+### Salida
 
-The return value of `ggplot_build()` is a list structure with the `ggplot_built` class.
-It contains the computed data, as well as a `Layout` object holding information about the trained coordinate system and faceting.
-Further it holds a copy of the original plot object, but now with trained scales.
+El valor de retorno de `ggplot_build()` es una estructura de lista con la clase `ggplot_built`. Contiene los datos calculados, así como un objeto `Layout` que contiene información sobre el sistema de coordenadas entrenado y las facetas. Además, contiene una copia del objeto de la trama original, pero ahora con escalas entrenadas.
 
-## The gtable step {#sec-ggplotgtable}
+## El paso gtable {#sec-ggplotgtable}
 
-The purpose of `ggplot_gtable()` is to take the output of the build step and, with the help of the gtable package, turn it into an object that can be plotted using grid (we'll talk more about gtable in @sec-tabular-grid).
-At this point the main elements responsible for further computations are the geoms, the coordinate system, the facet, and the theme.
-The stats and position adjustments have all played their part already.
+El propósito de `ggplot_gtable()` es tomar el resultado del paso de compilación y, con la ayuda del paquete gtable, convertirlo en un objeto que se pueda trazar usando grid (hablaremos más sobre gtable en @sec-tabular-grid). En este punto, los principales elementos responsables de cálculos adicionales son las geomas, el sistema de coordenadas, la faceta y el tema. Las estadísticas y los ajustes de posición ya han contribuido.
 
-### Rendering the panels
+### Renderizando los paneles
 
-The first thing that happens is that the data is converted into its graphical representation.
-This happens in two steps.
-First, each layer is converted into a list of graphical objects (`grobs`).
-As with stats the conversion happens by splitting the data, first by `PANEL`, and then by `group`, with the possibility of the geom intercepting this splitting for performance reasons.
-While a lot of the data preparation has been performed already it is not uncommon that the geom does some additional transformation of the data during this step.
-A crucial part is to transform and normalise the position data.
-This is done by the coordinate system and while it often simply means that the data is normalised based on the limits of the coordinate system, it can also include radical transformations such as converting the positions into polar coordinates.
-The output of this is for each layer a list of `gList` objects corresponding to each panel in the facet layout.
-After this the facet takes over and assembles the panels.
-It does this by first collecting the grobs for each panel from the layers, along with rendering strips, backgrounds, gridlines, and axes based on the theme and combines all of this into a single gList for each panel.
-It then proceeds to arranging all these panels into a gtable based on the calculated panel layout.
-For most plots this is simple as there is only a single panel, but for e.g. plots using `facet_wrap()` it can be quite complicated.
-The output is the basis of the final gtable object.
-At this stage in the process our example plot `p` looks like this:
+Lo primero que sucede es que los datos se convierten en su representación gráfica. Esto sucede en dos pasos. Primero, cada capa se convierte en una lista de objetos gráficos (`grobs`). Al igual que con las estadísticas, la conversión se realiza dividiendo los datos, primero por `PANEL` y luego por `group`, con la posibilidad de que geom intercepte esta división por razones de rendimiento. Si bien ya se ha realizado gran parte de la preparación de datos, no es raro que geom realice alguna transformación adicional de los datos durante este paso. Una parte crucial es transformar y normalizar los datos de posición. Esto lo hace el sistema de coordenadas y, si bien a menudo significa simplemente que los datos se normalizan en función de los límites del sistema de coordenadas, también puede incluir transformaciones radicales, como convertir las posiciones en coordenadas polares. El resultado de esto es para cada capa una lista de objetos `gList` correspondientes a cada panel en el diseño de facetas. Después de esto, la faceta se hace cargo y ensambla los paneles. Para ello, primero recopila los grobs para cada panel de las capas, junto con franjas de renderizado, fondos, líneas de cuadrícula y ejes según el tema, y combina todo esto en una única gList para cada panel. Luego procede a organizar todos estos paneles en una tabla basada en el diseño del panel calculado. Para la mayoría de los gráficos, esto es simple ya que solo hay un panel, pero, por ejemplo, trazar usando `facet_wrap()` puede ser bastante complicado. La salida es la base del objeto gtable final. En esta etapa del proceso, nuestro gráfico de ejemplo `p` se ve así:
 
 ```{r}
 #| echo: false
@@ -234,16 +165,9 @@ grid::grid.newpage()
 grid::grid.draw(x$panels)
 ```
 
-### Adding guides
+### Agregar guías
 
-There are two types of guides in ggplot2: axes and legends.
-As our plot `p` illustrates at this point the axes have already been rendered and assembled together with the panels, but the legends are still missing.
-Rendering the legends is a complicated process that first trains a guide for each scale.
-Then, potentially multiple guides are merged if their mapping allows it, before the layers that contribute to the legend are asked for key grobs for each key in the legend.
-These key grobs are then assembled across layers and combined to the final legend in a process that is quite reminiscent of how layers are combined into the gtable of panels.
-In the end the output is a gtable that holds each legend box arranged and styled according to the theme and guide specifications.
-Once created the guide gtable is then added to the main gtable according to the `legend.position` theme setting.
-At this stage, our example plot is complete in most respects: the only thing missing is the title.
+Hay dos tipos de guías en ggplot2: ejes y leyendas. Como ilustra nuestro gráfico `p`, en este punto los ejes ya se han renderizado y ensamblado junto con los paneles, pero aún faltan las leyendas. Representar las leyendas es un proceso complicado en el que primero se entrena una guía para cada escala. Luego, potencialmente se fusionan varias guías si su mapeo lo permite, antes de que a las capas que contribuyen a la leyenda se les soliciten claves para cada clave de la leyenda. Estos elementos clave luego se ensamblan en capas y se combinan hasta formar la leyenda final en un proceso que recuerda bastante a cómo se combinan las capas en la tabla de paneles. Al final, el resultado es una tabla g que contiene cada cuadro de leyenda organizado y diseñado de acuerdo con el tema y las especificaciones de la guía. Una vez creada, la gtable guía se agrega a la gtable principal de acuerdo con la configuración del tema `legend.position`. En esta etapa, nuestro argumento de ejemplo está completo en la mayoría de los aspectos: lo único que falta es el título.
 
 ```{r}
 #| echo: false
@@ -253,14 +177,13 @@ grid::grid.newpage()
 grid::grid.draw(x$legend)
 ```
 
-### Adding adornment
+### Añadiendo adorno
 
-The only thing remaining is to add title, subtitle, caption, and tag as well as add background and margins, at which point the final gtable is done.
+Lo único que queda es agregar título, subtítulo, leyenda y etiqueta, así como agregar fondo y márgenes, momento en el cual la tabla final estará lista.
 
-### Output
+### Salida
 
-At this point ggplot2 is ready to hand over to grid.
-Our rendering process is more or less equivalent to the code below and the end result is, as described above, a gtable:
+En este punto, ggplot2 está listo para entregarse a grid. Nuestro proceso de renderizado es más o menos equivalente al código siguiente y el resultado final es, como se describe anteriormente, una gtable:
 
 ```{r}
 p_built <- ggplot_build(p)
@@ -269,40 +192,30 @@ p_gtable <- ggplot_gtable(p_built)
 class(p_gtable)
 ```
 
-What is less obvious is that the dimensions of the object are unpredictable and will depend on both the faceting, legend placement, and which titles are drawn.
-It is thus not advised to depend on row and column placement in your code, should you want to further modify the gtable.
-All elements of the gtable are named though, so it is still possible to reliably retrieve, e.g. the grob holding the top-left y-axis with a bit of work.
-As an illustration, the gtable for our plot `p` is shown in the code below:
+Lo que es menos obvio es que las dimensiones del objeto son impredecibles y dependerán tanto del facetado como de la ubicación de la leyenda y de los títulos que se dibujen. Por lo tanto, no se recomienda depender de la ubicación de las filas y columnas en su código, en caso de que desee modificar aún más la gtable. Sin embargo, todos los elementos de gtable tienen nombre, por lo que aún es posible recuperarlos de manera confiable, p. el grob sostiene el eje y superior izquierdo con un poco de trabajo. A modo de ilustración, la gtable para nuestro gráfico `p` se muestra en el siguiente código:
 
 ```{r}
 p_gtable
 ```
 
-The final plot, as one would hope, looks identical to the original:
+La trama final, como era de esperar, parece idéntica a la original:
 
 ```{r}
 grid::grid.newpage()
 grid::grid.draw(p_gtable)
 ```
 
-## Introducing ggproto {#sec-ggproto}
+## Presentando ggproto {#sec-ggproto}
 
-@sec-plot-method to @sec-ggplotgtable focus on the sequence of events involved in building a ggplot, but are intentionally vague as to what kind of programming objects perform this work.
+@sec-plot-method a @sec-ggplotgtable se centran en la secuencia de eventos involucrados en la construcción de un ggplot, pero son intencionalmente vagos en cuanto a qué tipo de objetos de programación realizan este trabajo.
 
-All ggplot2 objects are built using the **ggproto** system for object-oriented programming, and is unusual in that it is used only by ggplot2.
-This is something of a historical accident: ggplot2 originally used proto [@proto] for object-oriented programming, which became a problem once the need for an official extension mechanism arose due to the limitations of the proto system.
-Attempts to switch ggplot2 to other systems such as R6 [@R6] proved difficult, and creating an object-oriented system specific to the needs of ggplot2 turned out to be the least bad solution.
+Todos los objetos ggplot2 se crean utilizando el sistema **ggproto** para programación orientada a objetos, y es inusual que solo lo use ggplot2. Esto es una especie de accidente histórico: ggplot2 originalmente usaba proto [@proto] para programación orientada a objetos, lo que se convirtió en un problema una vez que surgió la necesidad de un mecanismo de extensión oficial debido a las limitaciones del sistema proto. Los intentos de cambiar ggplot2 a otros sistemas como R6 [@R6] resultaron difíciles, y crear un sistema orientado a objetos específico para las necesidades de ggplot2 resultó ser la solución menos mala.
 
-Understanding the ggproto object-oriented programming system is important if you wish to write ggplot2 extensions.
-We will encounter ggproto objects as they are used by ggplot2 in @sec-extensions and @sec-spring1.
-Like the better-known R6 system, ggproto uses reference semantics and allows inheritance and access to methods from parent classes.
-It is accompanied by a set of design principles that, while not enforced by ggproto, is essential to understanding how the system is used in ggplot2.
-To illustrate these concepts, this section introduces the core mechanics of ggproto in a simplified form.
+Comprender el sistema de programación orientado a objetos ggproto es importante si desea escribir extensiones de ggplot2. Encontraremos objetos ggproto tal como los usa ggplot2 en @sec-extensions y @sec-spring1. Al igual que el sistema R6 más conocido, ggproto utiliza semántica de referencia y permite la herencia y el acceso a métodos de las clases principales. Va acompañado de un conjunto de principios de diseño que, si bien ggproto no aplica, son esenciales para comprender cómo se utiliza el sistema en ggplot2. Para ilustrar estos conceptos, esta sección presenta la mecánica central de ggproto en una forma simplificada.
 
-### ggproto objects
+### objetos ggproto
 
-Creating a new ggproto object is done with the `ggproto()` function, which takes the name of the new class as its first argument, and another ggproto object from which the new one will inherit from as the second argument.
-For example, we could create a ggproto object---albeit one that has no useful functionality---with the following command:
+La creación de un nuevo objeto ggproto se realiza con la función `ggproto()`, que toma el nombre de la nueva clase como primer argumento, y otro objeto ggproto del cual heredará el nuevo como segundo argumento. Por ejemplo, podríamos crear un objeto ggproto (aunque no tenga ninguna funcionalidad útil) con el siguiente comando:
 
 ```{r}
 NewObject <- ggproto(
@@ -311,52 +224,45 @@ NewObject <- ggproto(
 )
 ```
 
-By convention, ggproto objects are named using "UpperCamelCase", in which each word begins with a capital letter.
-It is also conventional to omit the names of the `` `_class` `` and `` `_inherits` `` arguments, so the conventional form of this command would be as follows:
+Por convención, los objetos ggproto se denominan usando "UpperCamelCase", en el que cada palabra comienza con una letra mayúscula. También es convencional omitir los nombres de los argumentos `` `_class` `` y `` `_inherits` ``, por lo que la forma convencional de este comando sería la siguiente:
 
 ```{r}
 NewObject <- ggproto(NULL, NULL)
 ```
 
-If we print this object we see that it is indeed a ggproto object, but no other information appears.
+Si imprimimos este objeto vemos que efectivamente es un objeto ggproto, pero no aparece ninguna otra información.
 
 ```{r}
 NewObject 
 ```
 
-### Creating new classes
+### Creando nuevas clases
 
-To create a new ggproto class, the only thing that is strictly necessary is to supply a class name as the first argument to `ggproto()`.
-A minimal command that defines a new class might look like this:
+Para crear una nueva clase ggproto, lo único que es estrictamente necesario es proporcionar un nombre de clase como primer argumento de `ggproto()`. Un comando mínimo que define una nueva clase podría verse así:
 
 ```{r}
 NewClass <- ggproto("NewClass", NULL)
 ```
 
-The `NewClass` variable still refers to a ggproto object, but we can verify that it has the desired class name by printing it:
+La variable `NewClass` todavía hace referencia a un objeto ggproto, pero podemos verificar que tiene el nombre de clase deseado imprimiéndolo:
 
 ```{r}
 NewClass
 ```
 
-However, so far the only thing we have done is create an object that specifies a class.
-The `NewClass` object doesn't do anything.
-To create a ggproto class that does something useful, we need to supply a list of fields and methods when we define the class.
-In this context, "fields" are used to store data relevant to the object, and "methods" are functions that can use the data stored in the object.
-Fields and methods are constructed in the same way, and they are not treated differently from a user perspective.
+Sin embargo, hasta ahora lo único que hemos hecho es crear un objeto que especifica una clase. El objeto `NewClass` no hace nada. Para crear una clase ggproto que haga algo útil, debemos proporcionar una lista de campos y métodos cuando definimos la clase. En este contexto, los "campos" se utilizan para almacenar datos relevantes para el objeto y los "métodos" son funciones que pueden utilizar los datos almacenados en el objeto. Los campos y métodos se construyen de la misma manera y no se tratan de manera diferente desde la perspectiva del usuario.
 
-To illustrate this, we'll create a new class called `Person` that will be used to store and manipulate information about a person.
-We can do this by supplying the `ggproto()` function with name/value pairs:
+Para ilustrar esto, crearemos una nueva clase llamada `Person` que se usará para almacenar y manipular información sobre una persona. Podemos hacer esto proporcionando a la función `ggproto()` pares nombre/valor:
 
 ```{r}
 Person <- ggproto("Person", NULL,
   
-  # fields                  
+  # campos                  
   given_name = NA,
   family_name = NA,
   birth_date = NA,
   
-  # methods
+  # métodos
   full_name = function(self, family_last = TRUE) {
     if(family_last == TRUE) {
       return(paste(self$given_name, self$family_name))
@@ -373,37 +279,27 @@ Person <- ggproto("Person", NULL,
 )
 ```
 
-The `Person` class is now associated with three fields, corresponding to `given_name` and `family_name` of a person as well as their `birth_date`.
-It also possesses three methods: the `full_name()` method is a function that constructs the full name of the person, using the convention of placing the given name first and the family name second, the `age()` method calculates the age of the person in years, and the `description()` method prints out a short description of the person.
+La clase `Person` ahora está asociada con tres campos, correspondientes a `given_name` y `family_name` de una persona, así como su `birth_date`. También posee tres métodos: el método `full_name()` es una función que construye el nombre completo de la persona, usando la convención de colocar el nombre de pila primero y el apellido segundo, el método `age()` calcula la edad de la persona en años, y el método `description()` imprime una breve descripción de la persona.
 
-Printing the object shows the fields and methods with which it is associated:
+Al imprimir el objeto se muestran los campos y métodos a los que está asociado:
 
 ```{r}
 Person
 ```
 
-The `Person` ggproto object is essentially a template for the class, and we can use to create specific records of individual people (discussed in @sec-ggproto-instances).
-If you are familiar with other object-oriented programming systems you might have been expecting something a little different: often new classes are defined with a dedicated constructor function.
-One quirk of ggproto is that `ggproto()` doesn't do this: rather, the class constructor is itself an object.
+El objeto ggproto `Person` es esencialmente una plantilla para la clase, y podemos usarlo para crear registros específicos de personas individuales (discutido en @sec-ggproto-instances). Si está familiarizado con otros sistemas de programación orientados a objetos, es posible que esperara algo un poco diferente: a menudo las nuevas clases se definen con una función constructora dedicada. Una peculiaridad de ggproto es que `ggproto()` no hace esto: más bien, el constructor de la clase es en sí mismo un objeto.
 
-Another thing to note when defining methods is the use of `self` as their first argument.
-This is a special argument used to give the method access to the fields and methods associated with the ggproto object (see @sec-ggproto-subclass for an example).
-The special status of this argument is evident when printing a ggproto method:
+Otra cosa a tener en cuenta al definir métodos es el uso de `self` como primer argumento. Este es un argumento especial que se utiliza para darle al método acceso a los campos y métodos asociados con el objeto ggproto (consulte @sec-ggproto-subclass para ver un ejemplo). El estatus especial de este argumento es evidente al imprimir un método ggproto:
 
 ```{r}
 Person$full_name
 ```
 
-This output may seem a little surprising: when we defined `full_name()` earlier we only provided the code listed as the "inner function".
-What has happened is that `ggproto()` automatically enclosed my function within a wrapper function that calls my code as the inner function, while ensuring that an appropriate definition of `self` is used.
-When the method is printed, the console displays both the wrapper function (typically of little interest) and the inner function.
-Output in this format appears in @sec-extensions and @sec-spring1.
+Este resultado puede parecer un poco sorprendente: cuando definimos `full_name()` anteriormente solo proporcionamos el código listado como "función interna". Lo que sucedió es que `ggproto()` automáticamente incluyó mi función dentro de una función contenedora que llama a mi código como función interna, al tiempo que garantiza que se use una definición apropiada de `self`. Cuando se imprime el método, la consola muestra tanto la función contenedora (normalmente de poco interés) como la función interna. La salida en este formato aparece en @sec-extensions y @sec-spring1.
 
-### Creating new instances {#sec-ggproto-instances}
+### Creando nuevas instancias {#sec-ggproto-instances}
 
-Now that we have defined the `Person` class, we can create instances of the class.
-This is done by passing a ggproto object as the second argument to `ggproto()`, and not specifying a new class name in the first argument.
-For instance, we can create new objects `Thomas` and `Danielle` that are both instances of the `Person` class as follows:
+Ahora que hemos definido la clase `Person`, podemos crear instancias de la clase. Esto se hace pasando un objeto ggproto como segundo argumento a `ggproto()` y sin especificar un nuevo nombre de clase en el primer argumento. Por ejemplo, podemos crear nuevos objetos `Thomas` y `Danielle` que sean instancias de la clase `Person` de la siguiente manera:
 
 ```{r}
 Thomas <- ggproto(NULL, Person,
@@ -419,8 +315,7 @@ Danielle <- ggproto(NULL, Person,
 )
 ```
 
-Specifying `NULL` as the first argument instructs `ggproto()` not to define a new class, but instead create a new instance of the class specified in the second argument.
-Because `Thomas` and `Danielle` are both instances of the `Person` class, they automatically inherit its `age()`, `full_name()` and `description()` methods:
+Al especificar `NULL` como primer argumento, se le indica a `ggproto()` que no defina una nueva clase, sino que cree una nueva instancia de la clase especificada en el segundo argumento. Debido a que `Thomas` y `Danielle` son instancias de la clase `Person`, heredan automáticamente sus métodos `age()`, `full_name()` y `description()`:
 
 ```{r}
 Thomas$description()
@@ -428,26 +323,21 @@ Thomas$description()
 Danielle$description()
 ```
 
-### Creating subclasses {#sec-ggproto-subclass}
+### Creando subclases {#sec-ggproto-subclass}
 
-In the previous example we created `Person` as an entirely new class.
-In practice you will almost never need to do this: instead, you will likely be creating a subclass using an existing ggproto object.
-You can do this by specifying the name of the subclass and the object from which it should inherit in the call to `ggproto()`:
+En el ejemplo anterior creamos `Person` como una clase completamente nueva. En la práctica, casi nunca necesitarás hacer esto: en su lugar, probablemente crearás una subclase usando un objeto ggproto existente. Puede hacer esto especificando el nombre de la subclase y el objeto del cual debe heredar en la llamada a `ggproto()`:
 
 ```{r}
-# define the subclass
+# definir la subclase
 NewSubClass <- ggproto("NewSubClass", Person)
 
-# verify that this works
+# verificar que esto funcione
 NewSubClass
 ```
 
-The output shown above illustrates that `NewSubClass` now provides its own class, and that it inherits all the fields and methods from the `Person` object we created earlier.
-However, this new subclass does not add any new functionality.
+El resultado que se muestra arriba ilustra que `NewSubClass` ahora proporciona su propia clase y que hereda todos los campos y métodos del objeto `Persona` que creamos anteriormente. Sin embargo, esta nueva subclase no agrega ninguna funcionalidad nueva.
 
-When creating a subclass, we often want to add new fields or methods and overwrite some of the existing ones.
-For example, suppose we want to define `Royalty` as a subclass of `Person`, and add fields corresponding to the `rank` of the royal in question, and the `territory` over which they ruled.
-Because royalty are often referred to by title and territory rather than in terms of a first and last name, we will also need to change the way that the `full_name()` method is defined:
+Al crear una subclase, a menudo queremos agregar nuevos campos o métodos y sobrescribir algunos de los existentes. Por ejemplo, supongamos que queremos definir `Royalty` como una subclase de `Person` y agregar campos correspondientes al `rank` de la realeza en cuestión y el `territory` sobre el que gobernaban. Debido a que a menudo se hace referencia a la realeza por título y territorio en lugar de en términos de nombre y apellido, también necesitaremos cambiar la forma en que se define el método `full_name()`:
 
 ```{r}
 Royalty <- ggproto("Royalty", Person,
@@ -459,10 +349,9 @@ Royalty <- ggproto("Royalty", Person,
 )
 ```
 
-The `Royalty` object now defines a subclass of person that inherits some fields (`given_name`, `family_name`, `birth_date`) from the `Person` class, and supplies other fields (`rank`, `territory`).
-It inherits the `age()` and `description()` methods from `Person`, but it overwrites the `full_name()` method.
+El objeto `Royalty` ahora define una subclase de persona que hereda algunos campos (`given_name`, `family_name`, `birth_date`) de la clase `Person` y proporciona otros campos (`rank`, `territory`). Hereda los métodos `age()` y `description()` de `Person`, pero sobrescribe el método `full_name()`.
 
-We can now create a new instance of the `Royalty` subclass:
+Ahora podemos crear una nueva instancia de la subclase `Royalty`:
 
 ```{r}
 Victoria <- ggproto(NULL, Royalty,
@@ -474,23 +363,19 @@ Victoria <- ggproto(NULL, Royalty,
 )
 ```
 
-So when we call the `full_name()` method for `Victoria`, the output uses the method specified in the `Royalty` class instead of the one defined in the `Person` class:
+Entonces, cuando llamamos al método `full_name()` para `Victoria`, la salida usa el método especificado en la clase `Royalty` en lugar del definido en la clase `Persona`:
 
 ```{r}
 Victoria$full_name()
 ```
 
-It is worth noting what happens when we call the `description()` method.
-This method is inherited from `Person`, but the definition of this method invokes `self$full_name()`.
-Even though `description()` is defined in `Person`, in this context `self` still refers to `Victoria`, who is still `Royalty`.
-What this means is that the output of the inherited `description()` method uses the `full_name()` method defined for the subclass:
+Vale la pena señalar lo que sucede cuando llamamos al método `description()`. Este método se hereda de `Person`, pero la definición de este método invoca `self$full_name()`. Aunque `description()` está definida en `Person`, en este contexto `self` todavía se refiere a `Victoria`, que sigue siendo `Royalty`. Lo que esto significa es que la salida del método heredado `description()` utiliza el método `full_name()` definido para la subclase:
 
 ```{r}
 Victoria$description()
 ```
 
-Creating subclasses sometimes requires us to access the parent class and its methods, which we can do with the help of the `ggproto_parent()` function.
-For example we can define a `Police` subclass that includes a `rank` field in the same way that the `Royalty` subclass does, but only uses this rank as part of the `description()` method:
+La creación de subclases a veces requiere que accedamos a la clase principal y sus métodos, lo que podemos hacer con la ayuda de la función `ggproto_parent()`. Por ejemplo, podemos definir una subclase `Police` que incluya un campo `rank` de la misma manera que lo hace la subclase `Royalty`, pero solo usa este rango como parte del método `description()`:
 
 ```{r}
 Police <- ggproto("Police", Person,
@@ -504,9 +389,7 @@ Police <- ggproto("Police", Person,
 )
 ```
 
-In this example, the `description()` method for the `Police` subclass is defined in a way that explicitly refers to the `description()` method for the `Person` parent class.
-By using `ggproto_parent(Person, self)` in this fashion, we are able to refer to the method inside the parent class, while still retaining the appropriate local definition of `self`.
-As before, we'll create a specific instance and verify that this works as expected:
+En este ejemplo, el método `description()` para la subclase `Police` se define de una manera que se refiere explícitamente al método `description()` para la clase principal `Person`. Al usar `ggproto_parent(Person, self)` de esta manera, podemos hacer referencia al método dentro de la clase principal, manteniendo la definición local apropiada de `self`. Como antes, crearemos una instancia específica y verificaremos que funcione como se esperaba:
 
 ```{r}
 John <- ggproto(NULL, Police,
@@ -521,34 +404,17 @@ John$full_name()
 John$description()
 ```
 
-For reasons that we'll discuss below, the use of `ggproto_parent()` is not that prevalent in the ggplot2 source code.
+Por razones que discutiremos a continuación, el uso de `ggproto_parent()` no es tan frecuente en el código fuente de ggplot2.
 
-### Style guide for ggproto {#sec-ggproto-style}
+### Guía de estilo para ggproto {#sec-ggproto-style}
 
-Because ggproto is a minimal class system designed to accommodate ggplot2 and nothing else, it important to recognise that ggproto is used in ggplot2 in a very specific way.
-It exists to support the ggplot2 extension system, and you are unlikely to encounter ggproto in any context other than writing ggplot2 extension.
-With that in mind it is useful to understand how ggplot2 uses ggproto:
+Debido a que ggproto es un sistema de clases mínimo diseñado para acomodar ggplot2 y nada más, es importante reconocer que ggproto se usa en ggplot2 de una manera muy específica. Existe para admitir el sistema de extensión ggplot2 y es poco probable que encuentre ggproto en cualquier otro contexto que no sea escribir la extensión ggplot2. Teniendo esto en cuenta, es útil comprender cómo ggplot2 usa ggproto:
 
--   **ggproto classes are used selectively**.
-    The use of ggproto in ggplot2 is not all-encompassing.
-    Only select functionality is based on ggproto and it is neither expected nor advised to create entirely new ggproto classes in your extensions.
-    As an extension developer, you will never create entirely ggproto objects but rather subclass one of the main ggproto classes provided by ggplot2.
-    @sec-extensions and @sec-spring1 will go into detail on how to do this.
+-   **las clases ggproto se usan selectivamente**. El uso de ggproto en ggplot2 no lo abarca todo. Solo la funcionalidad seleccionada se basa en ggproto y no se espera ni se recomienda crear clases de ggproto completamente nuevas en sus extensiones. Como desarrollador de extensiones, nunca creará objetos ggproto completos, sino que creará una subclase de una de las clases principales de ggproto proporcionadas por ggplot2. @sec-extensions y @sec-spring1 detallarán cómo hacer esto.
 
--   **ggproto classes are stateless**.
-    Except for a few internal classes that are used to orchestrate the rendering, ggproto classes in ggplot2 are assumed to be "stateless".
-    What this means is ggplot2 expects that after they are constructed, they will not change.
-    This breaks a common expectation for reference-based classes (where methods often can safely change the state of the object), but it is not safe to do so with ggplot2.
-    If your code violates this principle and changes the state of a Stat or Geom during the rendering, plotting a saved ggplot object will affect *all* instances of that Stat or Geom (even those used in other plots) because they all point to the same ggproto parent object.
-    With this in mind, there are only two occasions when you should specify the state of a ggproto object in ggplot2.
-    First, you can specify the state when creating the object: this is okay because this state should be shared between all instances anyway.
-    Second, you can specify state via a params object managed elsewhere.
-    As you'll see later (see @sec-new-stats and @sec-new-geoms), most ggproto classes have a `setup_params()` method where data can be inspected and specific properties calculated and stored.
+-   **las clases ggproto no tienen estado**. Excepto por unas pocas clases internas que se utilizan para orquestar la representación, se supone que las clases ggproto en ggplot2 son "sin estado". Lo que esto significa es que ggplot2 espera que una vez construidos, no cambien. Esto rompe una expectativa común para las clases basadas en referencias (donde los métodos a menudo pueden cambiar de forma segura el estado del objeto), pero no es seguro hacerlo con ggplot2. Si su código viola este principio y cambia el estado de una Stat o Geom durante el renderizado, trazar un objeto ggplot guardado afectará *todas* las instancias de esa Stat o Geom (incluso aquellas utilizadas en otros gráficos) porque todas apuntan al mismo objeto padre ggproto. Teniendo esto en cuenta, sólo hay dos ocasiones en las que debes especificar el estado de un objeto ggproto en ggplot2. Primero, puede especificar el estado al crear el objeto: esto está bien porque este estado debe compartirse entre todas las instancias de todos modos. En segundo lugar, puede especificar el estado mediante un objeto de parámetros administrado en otro lugar. Como verá más adelante (ver @sec-new-stats y @sec-new-geoms), la mayoría de las clases de ggproto tienen un método `setup_params()` donde se pueden inspeccionar datos y calcular y almacenar propiedades específicas.
 
--   **ggproto classes have simple inheritance**.
-    Because ggproto class instances are stateless, it is relatively safe to call methods that are defined inside other classes, instead of inheriting explicitly from the class.
-    This is the reason why the `ggproto_parent()` function is rarely called within the ggplot2 source code.
-    As an example, the `setup_params()` method in `GeomErrorbar` is defined as:
+-   **las clases ggproto tienen herencia simple**. Debido a que las instancias de la clase ggproto no tienen estado, es relativamente seguro llamar a métodos definidos dentro de otras clases, en lugar de heredar explícitamente de la clase. Esta es la razón por la cual la función `ggproto_parent()` rara vez se llama dentro del código fuente de ggplot2. Como ejemplo, el método `setup_params()` en `GeomErrorbar` se define como:
 
     ```{r}
     #| eval: false
@@ -561,4 +427,4 @@ With that in mind it is useful to understand how ggplot2 uses ggproto:
     )
     ```
 
-    This pattern is often easier to read than using `ggproto_parent()` and because ggproto objects are stateless it is just as safe.
+    Este patrón suele ser más fácil de leer que usar `ggproto_parent()` y como los objetos ggproto no tienen estado, es igual de seguro.
