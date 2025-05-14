@@ -251,8 +251,10 @@ Las escalas manuales son solo una lista de valores válidos que se asignan a val
 Las escalas manuales aparecieron antes, en @sec-manual-color y @sec-scale-shape. En este ejemplo, mostraremos un uso creativo de `scale_colour_manual()` para mostrar múltiples variables en el mismo gráfico y mostrar una leyenda útil. En la mayoría de los sistemas de trazado, colorearías las líneas y luego agregarías una leyenda: \index{Data!longitudinal}
 
 ```{r}
-#| label: huron
+#| label: fig-huron
+
 huron <- data.frame(year = 1875:1972, level = as.numeric(LakeHuron))
+
 ggplot(huron, aes(year)) +
   geom_line(aes(y = level + 5), colour = "red") +
   geom_line(aes(y = level - 5), colour = "blue")
@@ -261,7 +263,8 @@ ggplot(huron, aes(year)) +
 Eso no funciona en ggplot porque no hay forma de agregar una leyenda manualmente. En su lugar, asigne etiquetas informativas a las líneas:
 
 ```{r}
-#| label: huron2
+#| label: fig-huron2
+
 ggplot(huron, aes(year)) +
   geom_line(aes(y = level + 5, colour = "above")) +
   geom_line(aes(y = level - 5, colour = "below"))
@@ -270,7 +273,8 @@ ggplot(huron, aes(year)) +
 Y luego dile a la escala cómo asignar etiquetas a colores:
 
 ```{r}
-#| label: huron3
+#| label: fig-huron3
+
 ggplot(huron, aes(year)) +
   geom_line(aes(y = level + 5, colour = "above")) +
   geom_line(aes(y = level - 5, colour = "below")) +

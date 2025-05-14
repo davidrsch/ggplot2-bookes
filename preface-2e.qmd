@@ -1,3 +1,7 @@
+---
+engine: knitr
+---
+
 # Prefacio a la segunda edición. {.unnumbered}
 
 Bienvenidos a la segunda edición de "ggplot2: gráficos elegantes para análisis de datos". Estoy muy emocionado de tener un libro actualizado que muestra las últimas y mejores características de ggplot2, así como las grandes cosas que han estado sucediendo en R y en la comunidad de ggplot2 durante los últimos cinco años. La comunidad ggplot2 es vibrante: la lista de correo de ggplot2 tiene más de 7000 miembros y hay una comunidad Stack Overflow muy activa, con casi 10,000 preguntas etiquetadas con ggplot2. Si bien la mayor parte de mi esfuerzo de desarrollo ya no se centra en ggplot2 (más sobre esto a continuación), nunca ha habido un mejor momento para aprenderlo y usarlo.
@@ -42,7 +46,7 @@ Muchos otros han contribuido durante la (¡ahora bastante larga!) vida útil de 
 
 ```{block2}
 #| type: flushright
-#| html.tag: p
+#| html_tag: p
 Hadley Wickham  
 September 2015
 ```
