@@ -29,26 +29,32 @@ is_latex <- function() {
 }
 
 status <- function(type) {
-  status <- switch(type,
-                   polishing = "should be readable but is currently undergoing final polishing",
-                   restructuring = "is undergoing heavy restructuring and may be confusing or incomplete",
-                   drafting = "is currently a dumping ground for ideas, and we don't recommend reading it",
-                   complete = "is largely complete and just needs final proof reading",
-                   stop("Invalid `type`", call. = FALSE)
+  status <- switch(
+    type,
+    polishing = "should be readable but is currently undergoing final polishing",
+    restructuring = "is undergoing heavy restructuring and may be confusing or incomplete",
+    drafting = "is currently a dumping ground for ideas, and we don't recommend reading it",
+    complete = "is largely complete and just needs final proof reading",
+    stop("Invalid `type`", call. = FALSE)
   )
 
-  class <- switch(type,
-                  polishing = "note",
-                  restructuring = "important",
-                  drafting = "important",
-                  complete = "note"
+  class <- switch(
+    type,
+    polishing = "note",
+    restructuring = "important",
+    drafting = "important",
+    complete = "note"
   )
 
   callout <- paste0(
     "\n",
-    "::: {.callout-", class, "} \n",
+    "::: {.callout-",
+    class,
+    "} \n",
     "You are reading the work-in-progress third edition of the ggplot2 book. ",
-    "This chapter ", status, ". \n",
+    "This chapter ",
+    status,
+    ". \n",
     "::: \n"
   )
 
@@ -81,8 +87,7 @@ plot_hook_bookdown <- function(x, options) {
 }
 
 begin_figure <- function(x, options) {
-  if (!knitr_first_plot(options))
-    return("")
+  if (!knitr_first_plot(options)) return("")
 
   paste0(
     "\\begin{figure}[H]\n",
@@ -90,14 +95,17 @@ begin_figure <- function(x, options) {
   )
 }
 end_figure <- function(x, options) {
-  if (!knitr_last_plot(options))
-    return("")
+  if (!knitr_last_plot(options)) return("")
 
   paste0(
     if (!is.null(options$fig.cap)) {
       paste0(
-        '  \\caption{', options$fig.cap, '}\n',
-        '  \\label{fig:', options$label, '}\n'
+        '  \\caption{',
+        options$fig.cap,
+        '}\n',
+        '  \\label{fig:',
+        options$label,
+        '}\n'
       )
     },
     "\\end{figure}\n"
@@ -115,11 +123,14 @@ include_graphics <- function(x, options) {
     opts_str <- ""
   }
 
-  paste0("  \\includegraphics",
-         opts_str,
-         "{", tools::file_path_sans_ext(x), "}",
-         if (options$fig.cur != options$fig.num) "%",
-         "\n"
+  paste0(
+    "  \\includegraphics",
+    opts_str,
+    "{",
+    tools::file_path_sans_ext(x),
+    "}",
+    if (options$fig.cur != options$fig.num) "%",
+    "\n"
   )
 }
 
@@ -137,12 +148,13 @@ hook_output <- knitr::knit_hooks$get("output")
 knitr::knit_hooks$set(output = function(x, options) {
   lines <- options$output.lines
   if (is.null(lines)) {
-    return(hook_output(x, options))  # pass to default hook
+    return(hook_output(x, options)) # pass to default hook
   }
 
   x <- unlist(strsplit(x, "\n"))
 
-  if (length(lines)==1) {        # first n lines
+  if (length(lines) == 1) {
+    # first n lines
     if (length(x) > lines) {
       # truncate the output, but add ....
       x <- c(head(x, lines), more)
@@ -154,4 +166,3 @@ knitr::knit_hooks$set(output = function(x, options) {
   x <- paste(c(x, ""), collapse = "\n")
   hook_output(x, options)
 })
-
