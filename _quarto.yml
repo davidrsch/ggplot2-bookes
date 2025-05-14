@@ -88,5 +88,4 @@ format:
     callout-appearance: simple
     lang: es
 
-editor: visual
-
+editor: source
