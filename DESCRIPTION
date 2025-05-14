@@ -11,8 +11,14 @@ URL: https://github.com/hadley/ggplot2-book
 Depends: 
     R (>= 3.1.0)
 Imports:
+    babynames,
+    bookdown,
+    bslib,
     colorBlindness,
+    conflicted,
+    desc,
     directlabels,
+    downlit,
     dplyr,
     ggforce,
     gghighlight,
@@ -24,6 +30,7 @@ Imports:
     ggthemes,
     hexbin,
     Hmisc,
+    jsonlite,
     mapproj,
     maps,
     munsell,
@@ -33,18 +40,10 @@ Imports:
     rmapshaper,
     scico,
     seriation,
+    sessioninfo,
     sf,
     stars,
     tidygraph,
     tidyr,
     wesanderson
-Suggests:
-    babynames,
-    bookdown,
-    bslib,
-    conflicted,
-    desc,
-    downlit,
-    jsonlite,
-    sessioninfo
 Encoding: UTF-8
