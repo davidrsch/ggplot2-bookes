@@ -84,7 +84,8 @@ format:
       - cosmo
     code-link: true
     author-meta: "Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen"
-    include-in-header: "ga_script.html"
+    include-in-header:
+      - file: ga_script.html
     callout-appearance: simple
     lang: es
 
