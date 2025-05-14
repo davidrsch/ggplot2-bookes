@@ -19,6 +19,7 @@ jobs:
           sudo apt-get install libgdal-dev
           sudo apt-get install libgeos-dev
           sudo apt-get install libproj-dev
+          sudo apt-get install libfontconfig1-dev
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
