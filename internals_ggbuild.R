@@ -9,9 +9,7 @@
 #
 # Lines that marked with # ****** are those that have been modified or inserted
 
-
 ggbuild <- function(plot) {
-
   all_steps <- list() # ******
 
   plot <- ggplot2:::plot_clone(plot) # ******
@@ -48,9 +46,8 @@ ggbuild <- function(plot) {
   # Record the data at the end of the "preparation" stage
   all_steps$prepared <- data # ******
 
-
   # Transform all scales
-  data <- lapply(data, ggplot2:::scales_transform_df, scales = scales) # ******
+  data <- lapply(data, scales$transform_df, scales = scales) # ******
 
   # Record the layer data after scale transformation applied
   all_steps$transformed <- data # ******
@@ -74,7 +71,7 @@ ggbuild <- function(plot) {
   all_steps$poststat <- data # ******
 
   # Make sure missing (but required) aesthetics are added
-  ggplot2:::scales_add_missing(plot, c("x", "y"), plot$plot_env) # ******
+  scales$add_missing(plot, c("x", "y"), plot$plot_env) # ******
 
   # Reparameterise geoms from (e.g.) y and width to ymin and ymax
   data <- by_layer(function(l, d) l$compute_geom_1(d))
@@ -96,8 +93,8 @@ ggbuild <- function(plot) {
   # Train and map non-position scales
   npscales <- scales$non_position_scales()
   if (npscales$n() > 0) {
-    lapply(data, ggplot2:::scales_train_df, scales = npscales) # ******
-    data <- lapply(data, ggplot2:::scales_map_df, scales = npscales) # ******
+    lapply(data, npscales$train_df, scales = npscales) # ******
+    data <- lapply(data, npscales$map_df, scales = npscales) # ******
   }
 
   # Fill in defaults etc.
@@ -109,13 +106,12 @@ ggbuild <- function(plot) {
   # Let Layout modify data before rendering
   data <- layout$finish_data(data)
 
-
   # Record the data at the end of the "preparation" stage
-  all_steps$built <-  structure(                        # ******
-    list(data = data, layout = layout, plot = plot),    # ******
-    class = "ggplot_built"                              # ******
-  )                                                     # ******
+  all_steps$built <- structure(
+    # ******
+    list(data = data, layout = layout, plot = plot), # ******
+    class = "ggplot_built" # ******
+  ) # ******
 
   return(all_steps) # ******
 }
-

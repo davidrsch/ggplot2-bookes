@@ -8,7 +8,7 @@ source("common.R")
 status("polishing")
 ```
 
-Además de la posición y el color, existen otras estéticas que ggplot2 puede utilizar para representar datos. En este capítulo veremos escalas de tamaño (@sec-scale-size), escalas de forma (@sec-scale-shape), escalas de ancho de línea (@sec-scale-linewidth) y escalas de tipo de línea (@sec-scale-linetype), que utilizan características visuales distintas de la ubicación y el color para representar valores de datos. Además, hablaremos de escalas manuales (@sec-scale-manual) y escalas de identidad (@sec-scale-identity): estas no necesariamente utilizan características visuales diferentes, pero construyen mapeos de datos de una manera inusual.
+Además de la posición y el color, ggplot2 puede utilizar otras funciones estéticas para representar datos. En este capítulo, analizaremos las escalas de tamaño (@sec-scale-size), de forma (@sec-scale-shape), de ancho de línea (@sec-scale-linewidth) y de tipo de línea (@sec-scale-linetype), que utilizan características visuales distintas a la ubicación y el color para representar los valores de los datos. Además, hablaremos de las escalas manuales (@sec-scale-manual) y de identidad (@sec-scale-identity): estas no utilizan necesariamente características visuales diferentes, pero construyen asignaciones de datos de una forma inusual.
 
 ## Tamaño {#sec-scale-size}
 
@@ -27,7 +27,7 @@ planets <- data.frame(
 planets$name <- with(planets, factor(name, name))
 ```
 
-La estética del tamaño se utiliza normalmente para escalar puntos y texto. La escala predeterminada para la estética del tamaño es `scale_size()` en la que un aumento lineal en la variable se asigna a un aumento lineal en el área (no el radio) de la geom. La escala en función del área es un valor predeterminado sensato, ya que la percepción humana del tamaño se imita más estrechamente con la escala de área que con la escala de radio. De forma predeterminada, el valor más pequeño de los datos (más precisamente en los límites de escala) se asigna a un tamaño de 1 y el más grande se asigna a un tamaño de 6. El argumento `range` le permite escalar el tamaño de las geomas:
+La estética de tamaño se usa típicamente para escalar puntos y texto. La escala predeterminada para la estética de tamaño es `scale_size()`, donde un aumento lineal en la variable se asigna a un aumento lineal en el área (no en el radio) del geom. Escalar en función del área es una opción predeterminada sensata, ya que la percepción humana del tamaño se asemeja más al escalar el área que al escalar el radio. Por defecto, el valor más pequeño de los datos (más precisamente, en los límites de escala) se asigna a un tamaño de 1 y el más grande a un tamaño de 6. El argumento `range` permite escalar el tamaño de los geoms:
 
 ```{r}
 #| layout-ncol: 2
@@ -45,13 +45,13 @@ Hay varias escalas de tamaño que vale la pena mencionar brevemente:
 
 -   `scale_radius()` asigna el valor de los datos al radio en lugar de al área (@sec-radius-scaling).
 
--   `scale_size_binned()` es una escala de tamaño que se comporta como `scale_size()` pero asigna valores continuos a categorías de tamaño discretas, análogas a las escalas de posición y color agrupadas analizadas en @sec-binned-position y @sec-binned-color respectivamente. Las leyendas asociadas con esta escala se analizan en @sec-guide-bins.
+-   `scale_size_binned()` es una escala de tamaño que se comporta como `scale_size()`, pero asigna valores continuos a categorías de tamaño discretas, de forma análoga a las escalas de posición y color agrupadas que se describen en @sec-binned-position y @sec-binned-colour, respectivamente. Las leyendas asociadas con esta escala se describen en @sec-guide-bins.
 
 -   `scale_size_date()` y `scale_size_datetime()` están diseñados para manejar datos de fechas, de forma análoga a las escalas de fechas analizadas en @sec-date-scales.
 
 ### Escalas de tamaño de radio {#sec-radius-scaling}
 
-Hay situaciones en las que el escalado de área no es deseable y para tales situaciones se proporciona la función `scale_radius()`. Para ilustrar cuándo es apropiado `scale_radius()`, considere un conjunto de datos que contiene datos astronómicos que incluyen el radio de diferentes planetas:
+Existen situaciones en las que el escalado de área no es deseable, y para ello se proporciona la función `scale_radius()`. Para ilustrar cuándo `scale_radius()` es apropiada, considere un conjunto de datos que contiene datos astronómicos que incluyen el radio de diferentes planetas:
 
 ```{r}
 planets
@@ -77,7 +77,7 @@ A la izquierda es difícil distinguir Júpiter de Saturno, a pesar de que la dif
 
 ### Escalas de tamaño agrupadas {#sec-guide-bins}
 
-Las escalas de tamaño agrupadas funcionan de manera similar a las escalas agrupadas para la estética del color y la posición (@sec-binned-color y @sec-binned-position). Una diferencia es cómo se muestran las leyendas. La leyenda predeterminada para una escala de tamaño agrupada, y todas las escalas agrupadas, excepto la estética de posición y color, se rige por `guide_bins()`. Por ejemplo, en los datos `mpg` podríamos usar `scale_size_binned()` para crear una versión agrupada de la variable continua `hwy`:
+Las escalas de tamaño agrupadas funcionan de forma similar a las escalas agrupadas para la estética de color y posición (@sec-binned-colour y @sec-binned-position). Una diferencia radica en cómo se muestran las leyendas. La leyenda predeterminada para una escala de tamaño agrupada, y para todas las escalas agrupada, excepto la estética de posición y color, se rige por `guide_bins()`. Por ejemplo, en los datos `mpg`, podríamos usar `scale_size_binned()` para crear una versión agrupada de la variable continua `hwy`:
 
 ```{r}
 base <- ggplot(mpg, aes(displ, manufacturer, size = hwy)) +
@@ -233,13 +233,13 @@ linetypes <- function(n) {
   return(types[seq_len(n)])
 }
 
-base + scale_linetype(palette = linetypes)
+base + discrete_scale("linetype", palette = linetypes)
 ```
 
-Tenga en cuenta que las últimas cuatro líneas están en blanco, porque la función `linetypes()` definida anteriormente devuelve `NA` cuando el número de categorías excede 9. La función `scale_linetype()` contiene un argumento `na.value` usado para especificar qué Se traza un tipo de línea para estos valores. De forma predeterminada, esto produce una línea en blanco, pero puede anular esto configurando `na.value = "dotted"`:
+Tenga en cuenta que las últimas cuatro líneas están en blanco, porque la función `linetypes()` definida anteriormente devuelve `NA` cuando el número de categorías excede 9. La función `discrete_scale()` contiene un argumento `na.value` usado para especificar qué Se traza un tipo de línea para estos valores. De forma predeterminada, esto produce una línea en blanco, pero puede anular esto configurando `na.value = "dotted"`:
 
 ```{r}
-base + scale_linetype(palette = linetypes, na.value = "dotted")
+base + discrete_scale(palette = linetypes, na.value = "dotted")
 ```
 
 Los tipos de línea válidos se pueden configurar utilizando una cadena de caracteres legible por humanos: `"blank"` para una línea de color blanco, `"solid"` para una línea de color negro, `"dashed"` para una línea discontinua, `"dotted"` para una línea de puntos, `"dotdash"` para una línea que alterna entre discontinua y puntos, `"longdash"` para una línea discontinua con fragmentos más largos, y`"twodash"` para una línea que alterna entre discontinua con fragmentos cortos y largos.
