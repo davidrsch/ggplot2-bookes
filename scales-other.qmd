@@ -239,7 +239,7 @@ base + discrete_scale("linetype", palette = linetypes)
 Tenga en cuenta que las últimas cuatro líneas están en blanco, porque la función `linetypes()` definida anteriormente devuelve `NA` cuando el número de categorías excede 9. La función `discrete_scale()` contiene un argumento `na.value` usado para especificar qué Se traza un tipo de línea para estos valores. De forma predeterminada, esto produce una línea en blanco, pero puede anular esto configurando `na.value = "dotted"`:
 
 ```{r}
-base + discrete_scale(palette = linetypes, na.value = "dotted")
+base + discrete_scale("linetype", palette = linetypes, na.value = "dotted")
 ```
 
 Los tipos de línea válidos se pueden configurar utilizando una cadena de caracteres legible por humanos: `"blank"` para una línea de color blanco, `"solid"` para una línea de color negro, `"dashed"` para una línea discontinua, `"dotted"` para una línea de puntos, `"dotdash"` para una línea que alterna entre discontinua y puntos, `"longdash"` para una línea discontinua con fragmentos más largos, y`"twodash"` para una línea que alterna entre discontinua con fragmentos cortos y largos.
