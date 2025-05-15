@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen">
+<title>2&nbsp; Primeros pasos – ggplot2: Gráficos elegantes para análisis de datos (3e)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./toolbox.html" rel="next">
+<link href="./introduction.html" rel="prev">
+<link href="./cover.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6e4858b4921ffe5a9c7d897cee0e5447.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./start.html">Empezando</a></li><li class="breadcrumb-item"><a href="./getting-started.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Primeros pasos</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ggplot2: Gráficos elegantes para análisis de datos (3e)</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+<li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/ggplot2-book/">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/ggplot2-bookes">
+            Traducción
+            </a>
+          </li>
+      </ul>
+</div>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">¡Bienvenidos!</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-3e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la tercera edición</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-2e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la segunda edición.</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./start.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Empezando</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Primeros pasos</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./toolbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Layers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./individual-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Geomas individuales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./collective-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geomas colectivas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statistical-summaries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Resúmenes estadísticos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mapas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Redes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Anotaciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./arranging-plots.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Organizar gráficas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./scales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scales</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-position.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Escalas de posición y ejes.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-colour.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Escalas de colores y leyendas.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-other.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Otra estéticas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./mastery.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">La Gramática</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Construya una gráfica capa por capa</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-guides.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Escalas y guías</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./coord.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Sistemas coordinados</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./facet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Facetado</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./themes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Temas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./extending.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temas avanzados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Programar con ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./internals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Internos de ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./extensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Extendiendo ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ext-springs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Un caso de estudio</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+<li><a href="#introducci%C3%B3n" id="toc-introducción" class="nav-link active" data-scroll-target="#introducci%C3%B3n"><span class="header-section-number">2.1</span> Introducción</a></li>
+  <li>
+<a href="#sec-fuel-economy-data" id="toc-sec-fuel-economy-data" class="nav-link" data-scroll-target="#sec-fuel-economy-data"><span class="header-section-number">2.2</span> Datos de economía de combustible</a>
+  <ul class="collapse">
+<li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios"><span class="header-section-number">2.2.1</span> Ejercicios</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-basic-use" id="toc-sec-basic-use" class="nav-link" data-scroll-target="#sec-basic-use"><span class="header-section-number">2.3</span> Componentes clave</a>
+  <ul class="collapse">
+<li><a href="#ejercicios-1" id="toc-ejercicios-1" class="nav-link" data-scroll-target="#ejercicios-1"><span class="header-section-number">2.3.1</span> Ejercicios</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-aesthetics" id="toc-sec-aesthetics" class="nav-link" data-scroll-target="#sec-aesthetics"><span class="header-section-number">2.4</span> Color, tamaño, forma y otros atributos estéticos</a>
+  <ul class="collapse">
+<li><a href="#ejercicios-2" id="toc-ejercicios-2" class="nav-link" data-scroll-target="#ejercicios-2"><span class="header-section-number">2.4.1</span> Ejercicios</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-qplot-faceting" id="toc-sec-qplot-faceting" class="nav-link" data-scroll-target="#sec-qplot-faceting"><span class="header-section-number">2.5</span> Facetado</a>
+  <ul class="collapse">
+<li><a href="#ejercicios-3" id="toc-ejercicios-3" class="nav-link" data-scroll-target="#ejercicios-3"><span class="header-section-number">2.5.1</span> Ejercicios</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-plot-geoms" id="toc-sec-plot-geoms" class="nav-link" data-scroll-target="#sec-plot-geoms"><span class="header-section-number">2.6</span> Trazar geomas</a>
+  <ul class="collapse">
+<li><a href="#sec-smooth" id="toc-sec-smooth" class="nav-link" data-scroll-target="#sec-smooth"><span class="header-section-number">2.6.1</span> Agregar un suavizado a una gráfica</a></li>
+  <li><a href="#sec-boxplot" id="toc-sec-boxplot" class="nav-link" data-scroll-target="#sec-boxplot"><span class="header-section-number">2.6.2</span> Diagramas de caja y puntos nerviosos</a></li>
+  <li><a href="#sec-distribution" id="toc-sec-distribution" class="nav-link" data-scroll-target="#sec-distribution"><span class="header-section-number">2.6.3</span> Histogramas y polígonos de frecuencia.</a></li>
+  <li><a href="#sec-bar" id="toc-sec-bar" class="nav-link" data-scroll-target="#sec-bar"><span class="header-section-number">2.6.4</span> Gráfica de barras</a></li>
+  <li><a href="#sec-line" id="toc-sec-line" class="nav-link" data-scroll-target="#sec-line"><span class="header-section-number">2.6.5</span> Series de tiempo con gráficos de líneas y rutas</a></li>
+  <li><a href="#ejercicios-4" id="toc-ejercicios-4" class="nav-link" data-scroll-target="#ejercicios-4"><span class="header-section-number">2.6.6</span> Ejercicios</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-axes" id="toc-sec-axes" class="nav-link" data-scroll-target="#sec-axes"><span class="header-section-number">2.7</span> Modificando los ejes</a></li>
+  <li><a href="#sec-output" id="toc-sec-output" class="nav-link" data-scroll-target="#sec-output"><span class="header-section-number">2.8</span> Salida</a></li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./start.html">Empezando</a></li><li class="breadcrumb-item"><a href="./getting-started.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Primeros pasos</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-getting-started" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Primeros pasos</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>You are reading the work-in-progress third edition of the ggplot2 book. This chapter is currently a dumping ground for ideas, and we don’t recommend reading it.</p>
+</div>
+</div>
+</div>
+<section id="introducción" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="introducción">
+<span class="header-section-number">2.1</span> Introducción</h2>
+<p>El objetivo de este capítulo es enseñarle cómo producir gráficos útiles con ggplot2 lo más rápido posible. Aprenderá los conceptos básicos de <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> junto con algunas “recetas” útiles para crear los gráficos más importantes. <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code> te permite crear gráficos complejos con sólo unas pocas líneas de código porque se basa en una rica teoría subyacente, la gramática de los gráficos. Aquí nos saltaremos la teoría y nos centraremos en la práctica, y en capítulos posteriores aprenderá a utilizar todo el poder expresivo de la gramática.</p>
+<p>En este capítulo aprenderás:</p>
+<ul>
+<li><p>Acerca del conjunto de datos <code>mpg</code> incluido con ggplot2, <a href="#sec-fuel-economy-data" class="quarto-xref"><span>Sección 2.2</span></a>.</p></li>
+<li><p>Los tres componentes clave de cada gráfica: datos, estética y geoms, <a href="#sec-basic-use" class="quarto-xref"><span>Sección 2.3</span></a>.</p></li>
+<li><p>Cómo agregar variables adicionales a una gráfica con estética, <a href="#sec-aesthetics" class="quarto-xref"><span>Sección 2.4</span></a>.</p></li>
+<li><p>Cómo mostrar variables categóricas adicionales en un gráfico utilizando pequeños múltiplos creados mediante facetado, <a href="#sec-qplot-faceting" class="quarto-xref"><span>Sección 2.5</span></a>.</p></li>
+<li><p>Una variedad de geoms diferentes que puedes usar para crear diferentes tipos de gráficos, <a href="#sec-plot-geoms" class="quarto-xref"><span>Sección 2.6</span></a>.</p></li>
+<li><p>Cómo modificar los ejes, <a href="#sec-axes" class="quarto-xref"><span>Sección 2.7</span></a>.</p></li>
+<li><p>Cosas que puedes hacer con un objeto de trazado además de mostrarlo, como guardarlo en el disco, <a href="#sec-output" class="quarto-xref"><span>Sección 2.8</span></a>.</p></li>
+</ul></section><section id="sec-fuel-economy-data" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="sec-fuel-economy-data">
+<span class="header-section-number">2.2</span> Datos de economía de combustible</h2>
+<p>En este capítulo, usaremos principalmente un conjunto de datos incluido con ggplot2: <code>mpg</code>. Incluye información sobre la economía de combustible de modelos de automóviles populares en 1999 y 2008, recopilada por la Agencia de Protección Ambiental de EE. UU., <a href="http://fueleconomy.gov" class="uri">http://fueleconomy.gov</a>. Puede acceder a los datos cargando ggplot2: </p>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="va">mpg</span></span>
+<span><span class="co">#&gt; # A tibble: 234 × 11</span></span>
+<span><span class="co">#&gt;   manufacturer model displ  year   cyl trans      drv     cty   hwy fl    class </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;        &lt;chr&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;      &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt; &lt;chr&gt; </span></span>
+<span><span class="co">#&gt; 1 audi         a4      1.8  1999     4 auto(l5)   f        18    29 p     compa…</span></span>
+<span><span class="co">#&gt; 2 audi         a4      1.8  1999     4 manual(m5) f        21    29 p     compa…</span></span>
+<span><span class="co">#&gt; 3 audi         a4      2    2008     4 manual(m6) f        20    31 p     compa…</span></span>
+<span><span class="co">#&gt; 4 audi         a4      2    2008     4 auto(av)   f        21    30 p     compa…</span></span>
+<span><span class="co">#&gt; 5 audi         a4      2.8  1999     6 auto(l5)   f        16    26 p     compa…</span></span>
+<span><span class="co">#&gt; 6 audi         a4      2.8  1999     6 manual(m5) f        18    26 p     compa…</span></span>
+<span><span class="co">#&gt; # ℹ 228 more rows</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La mayoría de las variables se explican por sí solas:</p>
+<ul>
+<li><p><code>cty</code> y <code>hwy</code> registran millas por galón (mpg) para conducción en ciudad y carretera.</p></li>
+<li><p><code>displ</code> es la cilindrada del motor en litros.</p></li>
+<li><p><code>drv</code> es la transmisión: rueda delantera (f), rueda trasera (r) o cuatro ruedas (4).</p></li>
+<li><p><code>model</code> es el modelo de coche. Son 38 modelos, seleccionados porque tuvieron una nueva edición cada año entre 1999 y 2008.</p></li>
+<li><p><code>class</code> es una variable categórica que describe el “tipo” de coche: biplaza, SUV, compacto, etc.</p></li>
+</ul>
+<p>Este conjunto de datos sugiere muchas preguntas interesantes. ¿Cómo se relacionan el tamaño del motor y la economía de combustible? ¿Algunos fabricantes se preocupan más por el ahorro de combustible que otros? ¿Ha mejorado la economía de combustible en los últimos diez años? Intentaremos responder algunas de estas preguntas y, en el proceso, aprenderemos cómo crear algunos gráficos básicos con ggplot2.</p>
+<section id="ejercicios" class="level3" data-number="2.2.1"><h3 data-number="2.2.1" class="anchored" data-anchor-id="ejercicios">
+<span class="header-section-number">2.2.1</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Enumere cinco funciones que podría utilizar para obtener más información sobre el conjunto de datos <code>mpg</code>.</p></li>
+<li><p>¿Cómo puede saber qué otros conjuntos de datos se incluyen con ggplot2?</p></li>
+<li><p>Aparte de EE. UU., la mayoría de los países utilizan el consumo de combustible (combustible consumido en una distancia fija) en lugar de la economía de combustible (distancia recorrida con una cantidad fija de combustible). ¿Cómo se podrían convertir <code>cty</code> y <code>hwy</code> al estándar europeo de l/100 km?</p></li>
+<li><p>¿Qué fabricante tiene más modelos en este conjunto de datos? ¿Qué modelo tiene más variaciones? ¿Cambia su respuesta si elimina la especificación redundante del tren motriz (por ejemplo, “pathfinder 4wd”, “a4 quattro”) del nombre del modelo?</p></li>
+</ol></section></section><section id="sec-basic-use" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="sec-basic-use">
+<span class="header-section-number">2.3</span> Componentes clave</h2>
+<p>Cada gráfico de ggplot2 tiene tres componentes clave:</p>
+<ol type="1">
+<li><p><strong>datos</strong>,</p></li>
+<li><p>Un conjunto de <strong>mapeos estéticos</strong> entre variables en los datos y propiedades visuales, y</p></li>
+<li><p>Al menos una capa que describa cómo representar cada observación. Las capas generalmente se crean con una función <strong>geom</strong>.</p></li>
+</ol>
+<p>He aquí un ejemplo sencillo: </p>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">displ</span>, y <span class="op">=</span> <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="getting-started_files/figure-html/qscatter-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Esto produce un diagrama de dispersión definido por:</p>
+<ol type="1">
+<li>Datos: <code>mpg</code>.</li>
+<li>Mapeo estético: tamaño del motor asignado a la posición x, economía de combustible a la posición y.</li>
+<li>Capa: puntos.</li>
+</ol>
+<p>Preste atención a la estructura de esta llamada a función: los datos y las asignaciones estéticas se proporcionan en <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot()</a></code>, luego las capas se agregan con <code>+</code>. Este es un patrón importante y, a medida que aprenda más sobre ggplot2, construirá gráficos cada vez más sofisticados agregando más tipos de componentes.</p>
+<p>Casi todos los gráficos asignan una variable a <code>x</code> e <code>y</code>, por lo que nombrar estas estéticas es tedioso, por lo que los dos primeros argumentos sin nombre de <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> se asignarán a <code>x</code> e <code>y</code>. Esto significa que el siguiente código es idéntico al ejemplo anterior:</p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Nos apegaremos a ese estilo a lo largo del libro, así que no olvide que los dos primeros argumentos de <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code> son <code>x</code> e <code>y</code>. Tenga en cuenta que hemos puesto cada comando en una nueva línea. Recomendamos hacer esto en su propio código, para que sea fácil escanear una especificación de trazado y ver exactamente lo que hay allí. En este capítulo, a veces usaremos solo una línea por gráfico, porque hace que sea más fácil ver las diferencias entre las variaciones del argumento.</p>
+<p>El gráfico muestra una fuerte correlación: a medida que aumenta el tamaño del motor, empeora la economía de combustible. También hay algunos valores atípicos interesantes: algunos automóviles con motores grandes obtienen una economía de combustible mayor que el promedio. ¿Qué tipo de coches crees que son?</p>
+<section id="ejercicios-1" class="level3" data-number="2.3.1"><h3 data-number="2.3.1" class="anchored" data-anchor-id="ejercicios-1">
+<span class="header-section-number">2.3.1</span> Ejercicios</h3>
+<ol type="1">
+<li><p>¿Cómo describirías la relación entre <code>cty</code> y <code>hwy</code>? ¿Tiene alguna inquietud acerca de sacar conclusiones de esa gráfica?</p></li>
+<li><p>¿Qué muestra <code>ggplot(mpg, aes(modelo, fabricante)) + geom_point()</code>? ¿Es útil? ¿Cómo podrías modificar los datos para hacerlos más informativos?</p></li>
+<li>
+<p>Describe los datos, los mapeos estéticos y las capas utilizadas para cada uno de los siguientes gráficos. Tendrás que adivinar un poco porque aún no has visto todos los conjuntos de datos y funciones, ¡pero usa tu sentido común! Vea si puede predecir cómo se verá la gráfica antes de ejecutar el código.</p>
+<ol type="1">
+<li><code>ggplot(mpg, aes(cty, hwy)) + geom_point()</code></li>
+<li><code>ggplot(diamonds, aes(carat, price)) + geom_point()</code></li>
+<li><code>ggplot(economics, aes(date, unemploy)) + geom_line()</code></li>
+<li><code>ggplot(mpg, aes(cty)) + geom_histogram()</code></li>
+</ol>
+</li>
+</ol></section></section><section id="sec-aesthetics" class="level2" data-number="2.4"><h2 data-number="2.4" class="anchored" data-anchor-id="sec-aesthetics">
+<span class="header-section-number">2.4</span> Color, tamaño, forma y otros atributos estéticos</h2>
+<p>Para agregar variables adicionales a una gráfica, podemos usar otras estéticas como color, forma y tamaño (NB: si bien usamos la ortografía británica en este libro, ggplot2 también acepta la ortografía estadounidense). Estos funcionan de la misma manera que la estética <code>x</code> e <code>y</code>, y se agregan a la llamada a <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>: </p>
+<ul>
+<li><code>aes(displ, hwy, colour = class)</code></li>
+<li><code>aes(displ, hwy, shape = drv)</code></li>
+<li><code>aes(displ, hwy, size = cyl)</code></li>
+</ul>
+<p>ggplot2 se encarga de los detalles de convertir datos (p.&nbsp;ej., ‘f’, ‘r’, ‘4’) en estética (p.&nbsp;ej., ‘rojo’, ‘amarillo’, ‘verde’) con una <strong>escala</strong>. Hay una escala para cada mapeo estético en una gráfica. La escala también se encarga de crear una guía, un eje o leyenda, que permite leer el trazado, convirtiendo nuevamente los valores estéticos en valores de datos. Por ahora, nos quedaremos con las escalas predeterminadas proporcionadas por ggplot2. Aprenderá cómo anularlos en <span class="quarto-unresolved-ref">?sec-scale-color</span>.</p>
+<p>Para aprender más sobre esas variables atípicas en el diagrama de dispersión anterior, podríamos asignar la variable de clase al color:</p>
+<div class="cell">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="va">class</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="getting-started_files/figure-html/qplot-aesthetics-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Esto le da a cada punto un color único correspondiente a su clase. La leyenda nos permite leer los valores de los datos del color, mostrándonos que el grupo de coches con un consumo de combustible inusualmente alto para su tamaño de motor son los biplaza: coches con motores grandes, pero carrocerías ligeras.</p>
+<p>Si desea establecer una estética en un valor fijo, sin escalarla, hágalo en la capa individual fuera de <code><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes()</a></code>. Compare los dos gráficos siguientes: </p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>En el primer gráfico, el valor “azul” se escala a un color rosado y se agrega una leyenda. En el segundo gráfico, a los puntos se les da el color R azul. Esta es una técnica importante y aprenderá más sobre ella en <a href="layers.html#sec-setting-mapping" class="quarto-xref"><span>Sección 13.4.2</span></a>. Consulte <code><a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html">vignette("ggplot2-specs")</a></code> para conocer los valores necesarios para el color y otras estéticas.</p>
+<p>Diferentes tipos de atributos estéticos funcionan mejor con diferentes tipos de variables. Por ejemplo, el color y la forma funcionan bien con variables categóricas, mientras que el tamaño funciona bien con variables continuas. La cantidad de datos también marca la diferencia: si hay muchos datos, puede resultar difícil distinguir diferentes grupos. Una solución alternativa es utilizar facetado, como se describe a continuación.</p>
+<p>Cuando se utiliza la estética en una gráfica, menos suele ser más. Es difícil ver las relaciones simultáneas entre el color, la forma y el tamaño, por lo que hay que ser moderado al utilizar la estética. En lugar de intentar crear una gráfica muy compleja que muestre todo a la vez, intenta crear una serie de gráficas simples que cuenten una historia y lleven al lector de la ignorancia al conocimiento.</p>
+<section id="ejercicios-2" class="level3" data-number="2.4.1"><h3 data-number="2.4.1" class="anchored" data-anchor-id="ejercicios-2">
+<span class="header-section-number">2.4.1</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Experimente con la estética del color, la forma y el tamaño. ¿Qué sucede cuando los asignas a valores continuos? ¿Qué pasa con los valores categóricos? ¿Qué sucede cuando usas más de una estética en una gráfica?</p></li>
+<li><p>¿Qué sucede si asignas una variable continua a una forma? ¿Por qué? ¿Qué sucede si asignas <code>trans</code> a la forma? ¿Por qué?</p></li>
+<li><p>¿Cómo se relaciona el tren motriz con la economía de combustible? ¿Cómo se relaciona el tren motriz con el tamaño y la clase del motor?</p></li>
+</ol></section></section><section id="sec-qplot-faceting" class="level2" data-number="2.5"><h2 data-number="2.5" class="anchored" data-anchor-id="sec-qplot-faceting">
+<span class="header-section-number">2.5</span> Facetado</h2>
+<p>Otra técnica para mostrar variables categóricas adicionales en un gráfico es el facetado. Facetado crea tablas de gráficos dividiendo los datos en subconjuntos y mostrando el mismo gráfico para cada subconjunto. Aprenderá más sobre facetado en <a href="facet.html" class="quarto-xref"><span>Capítulo 16</span></a>, pero es una técnica tan útil que necesita conocerla de inmediato. </p>
+<p>Hay dos tipos de facetado: rejilla y envuelto. Envuelto es el más útil, por lo que lo discutiremos aquí y podrá aprender sobre el facetado de cuadrícula más adelante. Para facetar un gráfico simplemente agrega una especificación de facetado con <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap()</a></code>, que toma el nombre de una variable precedida por <code>~</code>. </p>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">class</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="getting-started_files/figure-html/facet-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Quizás se pregunte cuándo utilizar facetado y cuándo utilizar estética. Aprenderá más sobre las ventajas y desventajas relativas de cada uno en <a href="facet.html#sec-group-vs-facet" class="quarto-xref"><span>Sección 16.5</span></a>.</p>
+<section id="ejercicios-3" class="level3" data-number="2.5.1"><h3 data-number="2.5.1" class="anchored" data-anchor-id="ejercicios-3">
+<span class="header-section-number">2.5.1</span> Ejercicios</h3>
+<ol type="1">
+<li><p>¿Qué sucede si intentas facetar con una variable continua como <code>hwy</code>? ¿Qué pasa con <code>cyl</code>? ¿Cuál es la diferencia clave?</p></li>
+<li><p>Utilice facetado para explorar la relación triple entre economía de combustible, tamaño del motor y cantidad de cilindros. ¿Cómo cambia el facetado por número de cilindros su evaluación de la relación entre el tamaño del motor y la economía de combustible?</p></li>
+<li><p>Lea la documentación de <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap()</a></code>. ¿Qué argumentos puedes usar para controlar cuántas filas y columnas aparecen en el resultado?</p></li>
+<li><p>¿Qué hace el argumento <code>scales</code> de <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap()</a></code>? ¿Cuándo podrías usarlo?</p></li>
+</ol></section></section><section id="sec-plot-geoms" class="level2" data-number="2.6"><h2 data-number="2.6" class="anchored" data-anchor-id="sec-plot-geoms">
+<span class="header-section-number">2.6</span> Trazar geomas</h2>
+<p>Podrías adivinar que al sustituir <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> por una función geom diferente, obtendrías un tipo diferente de gráfico. ¡Es una gran suposición! En las siguientes secciones, aprenderá sobre algunas de las otras geoms importantes proporcionadas en ggplot2. Esta no es una lista exhaustiva, pero debería cubrir los tipos de gráfica más utilizados. Aprenderá más en <a href="individual-geoms.html" class="quarto-xref"><span>Capítulo 3</span></a> y <a href="collective-geoms.html" class="quarto-xref"><span>Capítulo 4</span></a>.</p>
+<ul>
+<li><p><code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code> ajusta un suavizador a los datos y muestra el suavizado y su error estándar.</p></li>
+<li><p><code><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot()</a></code> produce un diagrama de caja y bigotes para resumir la distribución de un conjunto de puntos.</p></li>
+<li><p><code><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram()</a></code> y <code><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_freqpoly()</a></code> mostrar la distribución de variables continuas.</p></li>
+<li><p><code><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar()</a></code> muestra la distribución de variables categóricas.</p></li>
+<li><p><code><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_path()</a></code> y <code><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line()</a></code> dibujan líneas entre los puntos de datos. Un gráfico de líneas está obligado a producir líneas que viajan de izquierda a derecha, mientras que los caminos pueden ir en cualquier dirección. Las líneas se suelen utilizar para explorar cómo cambian las cosas con el tiempo.</p></li>
+</ul>
+<section id="sec-smooth" class="level3" data-number="2.6.1"><h3 data-number="2.6.1" class="anchored" data-anchor-id="sec-smooth">
+<span class="header-section-number">2.6.1</span> Agregar un suavizado a una gráfica</h3>
+<p>Si tiene un diagrama de dispersión con mucho ruido, puede resultar difícil ver el patrón dominante. En este caso es útil agregar una línea suavizada al gráfico con <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code>: </p>
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using method = 'loess' and formula = 'y ~ x'</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="getting-started_files/figure-html/qplot-smooth-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Esto superpone el diagrama de dispersión con una curva suave, que incluye una evaluación de la incertidumbre en forma de intervalos de confianza puntuales que se muestran en gris. Si no está interesado en el intervalo de confianza, desactívelo con <code>geom_smooth(se = FALSE)</code>.</p>
+<p>Un argumento importante para <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth()</a></code> es el <code>método</code>, que le permite elegir qué tipo de modelo se utiliza para ajustarse a la curva suave:</p>
+<ul>
+<li>
+<p><code>method = "loess"</code>, el valor predeterminado para n pequeña, utiliza una regresión local suave (como se describe en <code><a href="https://rdrr.io/r/stats/loess.html">?loess</a></code>). El movimiento de la línea está controlado por el parámetro <code>span</code>, que varía de 0 (extremadamente ondulado) a 1 (no tan ondulado).</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>span <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using method = 'loess' and formula = 'y ~ x'</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>span <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using method = 'loess' and formula = 'y ~ x'</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/smooth-loess-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/smooth-loess-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Loess no funciona bien para conjuntos de datos grandes (es <span class="math inline">\(O(n^2)\)</span> en la memoria), por lo que se utiliza un algoritmo de suavizado alternativo cuando <span class="math inline">\(n\)</span> es mayor que 1000.</p>
+</li>
+<li>
+<p><code>method = "gam"</code> Se ajusta a un modelo aditivo generalizado proporcionado por el paquete <strong>mgcv</strong>. Primero debe cargar mgcv, luego usar una fórmula como <code>fórmula = y ~ s(x)</code> o <code>y ~ s(x, bs = "cs")</code> (para datos grandes). Esto es lo que usa ggplot2 cuando hay más de 1000 puntos. </p>
+<div class="cell">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">mgcv</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"gam"</span>, formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="getting-started_files/figure-html/smooth-gam-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code>method = "lm"</code> Se ajusta a un modelo lineal, dando la línea de mejor ajuste.</p>
+<div class="cell">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using formula = 'y ~ x'</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="getting-started_files/figure-html/smooth-lm-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</li>
+<li><p><code>method = "rlm"</code> funciona como <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code>, pero utiliza un algoritmo de ajuste robusto para que los valores atípicos no afecten tanto el ajuste. Es parte del paquete <strong>MASS</strong>, así que recuerda cargarlo primero. </p></li>
+</ul></section><section id="sec-boxplot" class="level3" data-number="2.6.2"><h3 data-number="2.6.2" class="anchored" data-anchor-id="sec-boxplot">
+<span class="header-section-number">2.6.2</span> Diagramas de caja y puntos nerviosos</h3>
+<p>Cuando un conjunto de datos incluye una variable categórica y una o más variables continuas, probablemente le interesará saber cómo varían los valores de las variables continuas con los niveles de la variable categórica. Digamos que estamos interesados en ver cómo varía la economía de combustible dentro de los automóviles que tienen el mismo tipo de transmisión. Podríamos comenzar con un diagrama de dispersión como este:</p>
+<div class="cell">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">drv</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="getting-started_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Debido a que hay pocos valores únicos tanto para <code>drv</code> como para <code>hwy</code>, hay mucho trazado excesivo. Muchos puntos están trazados en la misma ubicación y es difícil ver la distribución. Hay tres técnicas útiles que ayudan a aliviar el problema:</p>
+<ul>
+<li><p>El jittering, <code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code>, añade un poco de ruido aleatorio a los datos, lo que puede ayudar a evitar el trazado excesivo. </p></li>
+<li><p>Los diagramas de caja, <code><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot()</a></code>, resumen la forma de la distribución con un puñado de estadísticas resumidas. </p></li>
+<li><p>Los gráficos de violín, <code><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin()</a></code>, muestran una representación compacta de la “densidad” de la distribución, resaltando las áreas donde se encuentran más puntos. </p></li>
+</ul>
+<p>Estos se ilustran a continuación:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">drv</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">drv</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">drv</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/jitter-boxplot-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/jitter-boxplot-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/jitter-boxplot-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Cada método tiene sus fortalezas y debilidades. Los diagramas de caja resumen la mayor parte de la distribución con solo cinco números, mientras que los diagramas con fluctuaciones muestran cada punto pero solo funcionan con conjuntos de datos relativamente pequeños. Los gráficos de violín ofrecen la visualización más rica, pero se basan en el cálculo de una estimación de densidad, que puede ser difícil de interpretar.</p>
+<p>Para puntos nerviosos, <code><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter()</a></code> ofrece el mismo control sobre la estética que <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code>: <code>size</code>, <code>colour</code> y <code>shape</code>. Para <code><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot()</a></code> y <code><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin()</a></code>, puedes controlar el color del contorno <code>colour</code> o el color interno del <code>fill</code>.</p>
+</section><section id="sec-distribution" class="level3" data-number="2.6.3"><h3 data-number="2.6.3" class="anchored" data-anchor-id="sec-distribution">
+<span class="header-section-number">2.6.3</span> Histogramas y polígonos de frecuencia.</h3>
+<p>Los histogramas y los polígonos de frecuencia muestran la distribución de una única variable numérica. Proporcionan más información sobre la distribución de un solo grupo que los diagramas de caja, a costa de necesitar más espacio. </p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_freqpoly</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/dist-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/dist-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Tanto los histogramas como los polígonos de frecuencia funcionan de la misma manera: agrupan los datos y luego cuentan el número de observaciones en cada contenedor. La única diferencia es la visualización: los histogramas usan barras y los polígonos de frecuencia usan líneas.</p>
+<p>Puede controlar el ancho de los contenedores con el argumento <code>binwidth</code> (si no desea contenedores espaciados uniformemente, puede usar el argumento <code>breaks</code>). Es <strong>muy importante</strong> experimentar con el ancho del contenedor. El valor predeterminado simplemente divide sus datos en 30 contenedores, lo que probablemente no sea la mejor opción. Siempre debe probar con muchos anchos de bin y es posible que necesite varios anchos de bin para contar la historia completa de sus datos.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_freqpoly</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_freqpoly</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Una alternativa al polígono de frecuencia es el gráfico de densidad, <code><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density()</a></code>. Se requiere un poco de cuidado si se utilizan gráficos de densidad: en comparación con los polígonos de frecuencia, son más difíciles de interpretar ya que los cálculos subyacentes son más complejos. También hacen suposiciones que no son ciertas para todos los datos, a saber, que la distribución subyacente es continua, ilimitada y suave.</p>
+<p>Para comparar las distribuciones de diferentes subgrupos, puede asignar una variable categórica a relleno (para <code><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram()</a></code>) o color (para <code><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_freqpoly()</a></code>). Es más fácil comparar distribuciones usando el polígono de frecuencia porque la tarea de percepción subyacente es más sencilla. También puedes usar facetas: esto dificulta un poco las comparaciones, pero es más fácil ver la distribución de cada grupo.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, colour <span class="op">=</span> <span class="va">drv</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_freqpoly</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, fill <span class="op">=</span> <span class="va">drv</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>binwidth <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">drv</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/dist-fill-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/dist-fill-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+</section><section id="sec-bar" class="level3" data-number="2.6.4"><h3 data-number="2.6.4" class="anchored" data-anchor-id="sec-bar">
+<span class="header-section-number">2.6.4</span> Gráfica de barras</h3>
+<p>El análogo discreto del histograma es el gráfico de barras, <code><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar()</a></code>. Es fácil de usar: </p>
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">manufacturer</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="getting-started_files/figure-html/dist-bar-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>(Aprenderás cómo arreglar las etiquetas en <a href="themes.html#sec-theme-axis" class="quarto-xref"><span>Sección 17.4.2</span></a>).</p>
+<p>Los gráficos de barras pueden resultar confusos porque hay dos gráficos bastante diferentes que comúnmente se denominan gráficos de barras. El formulario anterior espera que tenga datos no resumidos y cada observación contribuye con una unidad a la altura de cada barra. La otra forma de gráfico de barras se utiliza para datos presumidos. Por ejemplo, es posible que tenga tres medicamentos con su efecto promedio:</p>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">drugs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  drug <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span>,</span>
+<span>  effect <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4.2</span>, <span class="fl">9.7</span>, <span class="fl">6.1</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para mostrar este tipo de datos, debe decirle a <code><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar()</a></code> que no ejecute la estadística predeterminada que agrupa y cuenta los datos. Sin embargo, creemos que es incluso mejor usar <code><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point()</a></code> porque los puntos ocupan menos espacio que las barras y no requieren que el eje y incluya 0.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">drugs</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">drug</span>, <span class="va">effect</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">drugs</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">drug</span>, <span class="va">effect</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+</section><section id="sec-line" class="level3" data-number="2.6.5"><h3 data-number="2.6.5" class="anchored" data-anchor-id="sec-line">
+<span class="header-section-number">2.6.5</span> Series de tiempo con gráficos de líneas y rutas</h3>
+<p>Los gráficos de líneas y rutas se utilizan normalmente para datos de series temporales. Los diagramas de líneas unen los puntos de izquierda a derecha, mientras que los diagramas de ruta los unen en el orden en que aparecen en el conjunto de datos (en otras palabras, un diagrama de líneas es un diagrama de ruta de los datos ordenados por valor de x). Los gráficos de líneas generalmente tienen el tiempo en el eje x, lo que muestra cómo una sola variable ha cambiado con el tiempo. Los gráficos de ruta muestran cómo dos variables han cambiado simultáneamente a lo largo del tiempo, con el tiempo codificado en la forma en que se conectan las observaciones.</p>
+<p>Debido a que la variable año en el conjunto de datos <code>mpg</code> solo tiene dos valores, mostraremos algunos gráficos de series temporales utilizando el conjunto de datos <code>economics</code>, que contiene datos económicos sobre los EE. UU. medidos durante los últimos 40 años. La siguiente figura muestra dos gráficos de desempleo a lo largo del tiempo, ambos producidos usando <code><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line()</a></code>. El primero muestra la tasa de desempleo mientras que el segundo muestra la mediana del número de semanas desempleadas. Ya podemos ver algunas diferencias en estas dos variables, particularmente en el último pico, donde el porcentaje de desempleo es menor que en los picos anteriores, pero la duración del desempleo es alta. </p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">economics</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">unemploy</span> <span class="op">/</span> <span class="va">pop</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">economics</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">uempmed</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/line-employment-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/line-employment-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Para examinar esta relación con mayor detalle, nos gustaría dibujar ambas series de tiempo en la misma gráfica. Podríamos dibujar un diagrama de dispersión de la tasa de desempleo versus la duración del desempleo, pero entonces ya no podríamos ver la evolución en el tiempo. La solución es unir puntos adyacentes en el tiempo con segmentos de línea, formando un trazado de <em>ruta</em>.</p>
+<p>A continuación graficamos la tasa de desempleo versus la duración del desempleo y unimos las observaciones individuales con una trayectoria. Debido a los muchos cruces de líneas, la dirección en la que fluye el tiempo no es fácil de ver en la primera gráfica. En el segundo gráfico, coloreamos los puntos para que sea más fácil ver la dirección del tiempo.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">economics</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">unemploy</span> <span class="op">/</span> <span class="va">pop</span>, <span class="va">uempmed</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_path</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">year</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html">as.POSIXlt</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">$</span><span class="va">year</span> <span class="op">+</span> <span class="fl">1900</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">economics</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">unemploy</span> <span class="op">/</span> <span class="va">pop</span>, <span class="va">uempmed</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_path</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"grey50"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="fu">year</span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/path-employ-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/path-employ-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Podemos ver que la tasa de desempleo y la duración del desempleo están altamente correlacionadas, pero en los últimos años la duración del desempleo ha aumentado en relación con la tasa de desempleo.</p>
+<p>Con datos longitudinales, a menudo desea mostrar varias series temporales en cada gráfico, donde cada serie representa a un individuo. Para hacer esto, necesita asignar la estética del <code>group</code> a una variable que codifique la membresía del grupo de cada observación. Esto se explica con más profundidad en <a href="collective-geoms.html" class="quarto-xref"><span>Capítulo 4</span></a>. </p>
+</section><section id="ejercicios-4" class="level3" data-number="2.6.6"><h3 data-number="2.6.6" class="anchored" data-anchor-id="ejercicios-4">
+<span class="header-section-number">2.6.6</span> Ejercicios</h3>
+<ol type="1">
+<li><p>¿Cuál es el problema con la gráfica creada por <code>ggplot(mpg, aes(cty, hwy)) + geom_point()</code>? ¿Cuál de las geoms descritas anteriormente es más eficaz para solucionar el problema?</p></li>
+<li>
+<p>Un desafío con <code>ggplot(mpg, aes(class, hwy)) + geom_boxplot()</code> es que el orden de <code>class</code> es alfabético, lo cual no es muy útil. ¿Cómo podrías cambiar los niveles de los factores para que sean más informativos?</p>
+<p>En lugar de reordenar el factor manualmente, puede hacerlo automáticamente según los datos: <code>ggplot(mpg, aes(reorder(class, hwy), hwy)) + geom_boxplot()</code>. ¿Qué hace <code>reordenar()</code>? Lea la documentación.</p>
+</li>
+<li><p>Explore la distribución de la variable quilates en el conjunto de datos <code>diamonds</code> . ¿Qué ancho de contenedor revela los patrones más interesantes?</p></li>
+<li><p>Explore la distribución de la variable precio en los datos de <code>diamonds</code> . ¿Cómo varía la distribución según el corte?</p></li>
+<li><p>Ahora conoces (al menos) tres formas de comparar las distribuciones de subgrupos: <code><a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">geom_violin()</a></code>, <code><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_freqpoly()</a></code> y la estética del color, o <code><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram()</a></code> y facetado. ¿Cuáles son las fortalezas y debilidades de cada enfoque? ¿Qué otros enfoques podrías probar?</p></li>
+<li><p>Lea la documentación de <code><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar()</a></code>. ¿Qué hace la estética del <code>weight</code> ?</p></li>
+<li><p>Utilizando las técnicas ya analizadas en este capítulo, piense en tres formas de visualizar una distribución categórica 2D. Pruébelos visualizando la distribución de <code>model</code> y <code>manufacturer</code>, <code>trans</code> y <code>class</code>, y <code>cyl</code> y <code>trans</code>.</p></li>
+</ol></section></section><section id="sec-axes" class="level2" data-number="2.7"><h2 data-number="2.7" class="anchored" data-anchor-id="sec-axes">
+<span class="header-section-number">2.7</span> Modificando los ejes</h2>
+<p>Aprenderá toda la gama de opciones disponibles en capítulos posteriores, pero dos familias de útiles ayudas le permitirán realizar las modificaciones más comunes. <code><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab()</a></code> y <code><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab()</a></code> modifican las etiquetas de los ejes x e y: </p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">cty</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">cty</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"city driving (mpg)"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"highway driving (mpg)"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Remove the axis labels with NULL</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">cty</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-9-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p><code><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim()</a></code> y <code><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim()</a></code> modificar los límites de los ejes: </p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">drv</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">drv</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="st">"f"</span>, <span class="st">"r"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">30</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 138 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_point()`).</span></span>
+<span>  </span>
+<span><span class="co"># For continuous scales, use NA to set only one limit</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">drv</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.25</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">30</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="getting-started_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Cambiar los límites de los ejes establece los valores fuera del rango en <code>NA</code>. Puede suprimir la advertencia asociada con <code>na.rm = TRUE</code>, pero tenga cuidado. Si su gráfico calcula estadísticas resumidas (por ejemplo, media muestral), esta conversión a <code>NA</code> ocurre <em>antes</em> de que se calculen las estadísticas resumidas y puede generar resultados no deseados en algunas situaciones.</p>
+</section><section id="sec-output" class="level2" data-number="2.8"><h2 data-number="2.8" class="anchored" data-anchor-id="sec-output">
+<span class="header-section-number">2.8</span> Salida</h2>
+<p>La mayoría de las veces crea un objeto de trazado y lo traza inmediatamente, pero también puede guardar un trazado en una variable y manipularlo:</p>
+<div class="cell">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Una vez que tengas un objeto de gráfica, hay algunas cosas que puedes hacer con él:</p>
+<ul>
+<li>
+<p>Renderizarlo en pantalla con <code><a href="https://rdrr.io/r/base/print.html">print()</a></code>. Esto sucede automáticamente cuando se ejecuta de forma interactiva, pero dentro de un bucle o función, necesitarás imprimirlo tú mismo. </p>
+<p>::: {.cell}</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>::: {.cell-output-display} <img src="getting-started_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="2100"> ::: :::</p>
+</li>
+<li>
+<p>Guárdelo en el disco con <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave()</a></code>, descrito en <a href="themes.html#sec-saving" class="quarto-xref"><span>Sección 17.5</span></a>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Save png to disk</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="st">"plot.png"</span>, <span class="va">p</span>, width <span class="op">=</span> <span class="fl">5</span>, height <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</li>
+<li>
+<p>Describe brevemente su estructura con <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>. </p>
+<div class="cell">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
+<span><span class="co">#&gt; data: manufacturer, model, displ, year, cyl, trans, drv, cty, hwy, fl,</span></span>
+<span><span class="co">#&gt;   class [234x11]</span></span>
+<span><span class="co">#&gt; mapping:  x = ~displ, y = ~hwy, colour = ~factor(cyl)</span></span>
+<span><span class="co">#&gt; faceting: &lt;ggproto object: Class FacetNull, Facet, gg&gt;</span></span>
+<span><span class="co">#&gt;     compute_layout: function</span></span>
+<span><span class="co">#&gt;     draw_back: function</span></span>
+<span><span class="co">#&gt;     draw_front: function</span></span>
+<span><span class="co">#&gt;     draw_labels: function</span></span>
+<span><span class="co">#&gt;     draw_panels: function</span></span>
+<span><span class="co">#&gt;     finish_data: function</span></span>
+<span><span class="co">#&gt;     init_scales: function</span></span>
+<span><span class="co">#&gt;     map_data: function</span></span>
+<span><span class="co">#&gt;     params: list</span></span>
+<span><span class="co">#&gt;     setup_data: function</span></span>
+<span><span class="co">#&gt;     setup_params: function</span></span>
+<span><span class="co">#&gt;     shrink: TRUE</span></span>
+<span><span class="co">#&gt;     train_scales: function</span></span>
+<span><span class="co">#&gt;     vars: function</span></span>
+<span><span class="co">#&gt;     super:  &lt;ggproto object: Class FacetNull, Facet, gg&gt;</span></span>
+<span><span class="co">#&gt; -----------------------------------</span></span>
+<span><span class="co">#&gt; geom_point: na.rm = FALSE</span></span>
+<span><span class="co">#&gt; stat_identity: na.rm = FALSE</span></span>
+<span><span class="co">#&gt; position_identity</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</li>
+</ul>
+<p>Aprenderá más sobre cómo manipular estos objetos en <a href="programming.html" class="quarto-xref"><span>Capítulo 18</span></a>.</p>
+
+
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./introduction.html" class="pagination-link" aria-label="Introducción">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./toolbox.html" class="pagination-link" aria-label="Layers">
+        <span class="nav-page-text">Layers</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>ggplot2: Gráficos elegantes para análisis de datos (3e) fue escrito por Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

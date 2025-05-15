@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen">
+<title>14&nbsp; Escalas y guías – ggplot2: Gráficos elegantes para análisis de datos (3e)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./coord.html" rel="next">
+<link href="./layers.html" rel="prev">
+<link href="./cover.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6e4858b4921ffe5a9c7d897cee0e5447.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./mastery.html">La Gramática</a></li><li class="breadcrumb-item"><a href="./scales-guides.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Escalas y guías</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ggplot2: Gráficos elegantes para análisis de datos (3e)</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+<li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/ggplot2-book/">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/ggplot2-bookes">
+            Traducción
+            </a>
+          </li>
+      </ul>
+</div>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">¡Bienvenidos!</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-3e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la tercera edición</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-2e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la segunda edición.</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./start.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Empezando</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Primeros pasos</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./toolbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Layers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./individual-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Geomas individuales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./collective-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geomas colectivas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statistical-summaries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Resúmenes estadísticos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mapas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Redes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Anotaciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./arranging-plots.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Organizar gráficas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./scales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scales</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-position.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Escalas de posición y ejes.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-colour.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Escalas de colores y leyendas.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-other.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Otra estéticas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./mastery.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">La Gramática</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Construya una gráfica capa por capa</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-guides.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Escalas y guías</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./coord.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Sistemas coordinados</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./facet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Facetado</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./themes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Temas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./extending.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temas avanzados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Programar con ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./internals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Internos de ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./extensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Extendiendo ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ext-springs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Un caso de estudio</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+<li>
+<a href="#sec-scales-guides-theory" id="toc-sec-scales-guides-theory" class="nav-link active" data-scroll-target="#sec-scales-guides-theory"><span class="header-section-number">14.1</span> Teoría de escalas y guías.</a>
+  <ul class="collapse">
+<li><a href="#sec-scale-usage" id="toc-sec-scale-usage" class="nav-link" data-scroll-target="#sec-scale-usage"><span class="header-section-number">14.1.1</span> Especificación de escala</a></li>
+  <li><a href="#esquema-de-nombres" id="toc-esquema-de-nombres" class="nav-link" data-scroll-target="#esquema-de-nombres"><span class="header-section-number">14.1.2</span> Esquema de nombres</a></li>
+  <li><a href="#tipos-de-escalas-fundamentales" id="toc-tipos-de-escalas-fundamentales" class="nav-link" data-scroll-target="#tipos-de-escalas-fundamentales"><span class="header-section-number">14.1.3</span> Tipos de escalas fundamentales</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-scale-names" id="toc-sec-scale-names" class="nav-link" data-scroll-target="#sec-scale-names"><span class="header-section-number">14.2</span> Nombres de escala</a></li>
+  <li><a href="#sec-scale-breaks" id="toc-sec-scale-breaks" class="nav-link" data-scroll-target="#sec-scale-breaks"><span class="header-section-number">14.3</span> Saltos de escala</a></li>
+  <li><a href="#sec-oob" id="toc-sec-oob" class="nav-link" data-scroll-target="#sec-oob"><span class="header-section-number">14.4</span> Límites de escala</a></li>
+  <li><a href="#sec-scale-guide" id="toc-sec-scale-guide" class="nav-link" data-scroll-target="#sec-scale-guide"><span class="header-section-number">14.5</span> Guías de escala</a></li>
+  <li><a href="#sec-scale-transformation-extras" id="toc-sec-scale-transformation-extras" class="nav-link" data-scroll-target="#sec-scale-transformation-extras"><span class="header-section-number">14.6</span> Transformación de escala</a></li>
+  <li>
+<a href="#sec-legend-merge-split" id="toc-sec-legend-merge-split" class="nav-link" data-scroll-target="#sec-legend-merge-split"><span class="header-section-number">14.7</span> Leyenda fusionándose y dividiéndose</a>
+  <ul class="collapse">
+<li><a href="#sec-sub-layers-legends" id="toc-sec-sub-layers-legends" class="nav-link" data-scroll-target="#sec-sub-layers-legends"><span class="header-section-number">14.7.1</span> Fusionando leyendas</a></li>
+  <li><a href="#dividiendo-leyendas" id="toc-dividiendo-leyendas" class="nav-link" data-scroll-target="#dividiendo-leyendas"><span class="header-section-number">14.7.2</span> Dividiendo leyendas</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-legend-glyph" id="toc-sec-legend-glyph" class="nav-link" data-scroll-target="#sec-legend-glyph"><span class="header-section-number">14.8</span> Glifos clave de leyenda</a></li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./mastery.html">La Gramática</a></li><li class="breadcrumb-item"><a href="./scales-guides.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Escalas y guías</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-scales-guides" class="quarto-section-identifier"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Escalas y guías</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>You are reading the work-in-progress third edition of the ggplot2 book. This chapter is currently a dumping ground for ideas, and we don’t recommend reading it.</p>
+</div>
+</div>
+</div>
+<!-- DN: might be worth adding a section summarising how lims/labs/guides
+span the same space as scale_*(name = , limits = , guide =), and highlighting
+how scale_* has extra scale stuff, and the helpers have extra theme stuff ??? -->
+<p>La caja de herramientas de escalas en <a href="scales-position.html" class="quarto-xref"><span>Capítulo 10</span></a> a <a href="scales-other.html" class="quarto-xref"><span>Capítulo 12</span></a> proporciona una guía extensa sobre cómo trabajar con escalas, enfocándose en resolver problemas comunes de visualización de datos. Los objetivos prácticos de la caja de herramientas significan que los temas se introducen cuando son más relevantes: por ejemplo, las transformaciones de escala se analizan en relación con las escalas de posición continua (<a href="scales-position.html#sec-scale-transformation" class="quarto-xref"><span>Sección 10.1.7</span></a>) porque esa es la situación más común en la que es posible que desee transformar una escala. Sin embargo, debido a que ggplot2 tiene como objetivo proporcionar una gramática de gráficos, no hay nada que le impida transformar otros tipos de escalas (consulte <a href="#sec-scale-transformation-extras" class="quarto-xref"><span>Sección 14.6</span></a>). Este capítulo tiene como objetivo ilustrar estos conceptos: discutiremos la teoría que sustenta las escalas y guías, y daremos ejemplos que muestran cómo los conceptos que hemos discutido específicamente para las escalas de posición o color también se aplican en otros lugares.</p>
+<section id="sec-scales-guides-theory" class="level2" data-number="14.1"><h2 data-number="14.1" class="anchored" data-anchor-id="sec-scales-guides-theory">
+<span class="header-section-number">14.1</span> Teoría de escalas y guías.</h2>
+<p>Formalmente, cada escala es una función desde una región en el espacio de datos (el dominio de la escala) hasta una región en el espacio estético (el rango de la escala). El eje o leyenda es la función inversa, conocida como guía: le permite convertir propiedades visuales nuevamente en datos. Puede que le sorprenda que los ejes y las leyendas sean el mismo tipo de cosas, pero si bien se ven muy diferentes, tienen el mismo propósito: permitirle leer las observaciones de la gráfica y mapearlas a sus valores originales. Los puntos en común entre los dos se ilustran a continuación:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 41%">
+<col style="width: 28%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Nombre del argumento</th>
+<th style="text-align: left;">Eje</th>
+<th style="text-align: left;">Leyenda</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>name</code></td>
+<td style="text-align: left;">Etiqueta</td>
+<td style="text-align: left;">Título</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>breaks</code></td>
+<td style="text-align: left;">Marcas y líneas de cuadrícula</td>
+<td style="text-align: left;">Entrada</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>labels</code></td>
+<td style="text-align: left;">Etiqueta de marca</td>
+<td style="text-align: left;">Etiqueta de entrada</td>
+</tr>
+</tbody>
+</table>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="diagrams/scale-guides.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>Componentes comunes de ejes y leyendas.</figcaption></figure>
+</div>
+</div>
+</div>
+<p>Sin embargo, las leyendas son más complicadas que los ejes y, en consecuencia, hay una serie de temas específicos de las leyendas:</p>
+<ol type="1">
+<li><p>Una leyenda puede mostrar múltiples estéticas (por ejemplo, color y forma), de múltiples capas (<a href="#sec-sub-layers-legends" class="quarto-xref"><span>Sección 14.7.1</span></a>), y el símbolo que se muestra en una leyenda varía según la geom utilizada en la capa (<span class="quarto-unresolved-ref">?sec-legend</span> -glifo)</p></li>
+<li><p>Los ejes siempre aparecen en el mismo lugar. Las leyendas pueden aparecer en diferentes lugares, por lo que necesitas alguna forma global de posicionarlas.</p></li>
+<li><p>Las leyendas tienen más detalles que se pueden modificar: ¿deberían mostrarse vertical u horizontalmente? ¿Cuántas columnas? ¿Qué tamaño deben tener las llaves? Esto se comenta en (<a href="#sec-scale-guide" class="quarto-xref"><span>Sección 14.5</span></a>)</p></li>
+</ol>
+<section id="sec-scale-usage" class="level3" data-number="14.1.1"><h3 data-number="14.1.1" class="anchored" data-anchor-id="sec-scale-usage">
+<span class="header-section-number">14.1.1</span> Especificación de escala</h3>
+<p>Una propiedad importante de ggplot2 es el principio de que cada estética de su gráfica está asociada exactamente con una escala. Por ejemplo, cuando escribes esto</p>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">class</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>ggplot2 agrega una escala predeterminada para cada estética utilizada en la gráfica:</p>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">class</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_colour_discrete</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La elección de la escala predeterminada depende de la estética y del tipo de variable. En este ejemplo, <code>hwy</code> es una variable continua asignada a la estética y, por lo que la escala predeterminada es <code>scale_y_continuous()</code>; de manera similar, <code>class</code> es discreta, por lo que cuando se asigna a la estética del color, la escala predeterminada se convierte en <code>scale_colour_discrete()</code>. Especificar estos valores predeterminados sería tedioso, por lo que ggplot2 lo hace por usted. Pero si desea anular los valores predeterminados, deberá agregar la escala usted mismo, de esta manera: </p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">class</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Una etiqueta del eje x realmente impresionante."</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Una etiqueta del eje Y increíblemente genial."</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En la práctica, normalmente usarías <code>labs()</code> para esto, lo cual se analiza en <a href="annotations.html#sec-titles" class="quarto-xref"><span>Sección 8.1</span></a>, pero conceptualmente es útil comprender que las etiquetas de los ejes y los títulos de las leyendas son ejemplos de nombres de escala: consulta <a href="#sec-scale-names" class="quarto-xref"><span>Sección 14.2</span></a>.</p>
+<p>El uso de <code>+</code> para “agregar” escalas a una gráfica es un poco engañoso porque si proporcionas dos escalas para la misma estética, la última escala tiene prioridad. En otras palabras, cuando haces <code>+</code> en una escala, en realidad no la agregas al gráfico, sino que anulas la escala existente. Esto significa que las dos especificaciones siguientes son equivalentes: </p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Etiqueta 1"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Etiqueta 2"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Scale for x is already present.</span></span>
+<span><span class="co">#&gt; Adding another scale for x, which will replace the existing scale.</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Etiqueta 2"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+
+</div>
+<p>Tenga en cuenta el mensaje cuando agrega varias escalas para la misma estética, lo que hace que sea más difícil sobrescribir accidentalmente una escala existente. Si ve esto en su propio código, debe asegurarse de agregar solo una escala a cada estética.</p>
+<p>Si está haciendo pequeños ajustes a las escalas, puede continuar usando las escalas predeterminadas, proporcionando algunos argumentos adicionales. Si desea realizar cambios más radicales, anulará las escalas predeterminadas con alternativas:</p>
+<div class="cell">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">class</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_sqrt</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_colour_brewer</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Aquí <code>scale_x_sqrt()</code> cambia la escala para la escala del eje x, y <code>scale_colour_brewer()</code> hace lo mismo para la escala de color.</p>
+</section><section id="esquema-de-nombres" class="level3" data-number="14.1.2"><h3 data-number="14.1.2" class="anchored" data-anchor-id="esquema-de-nombres">
+<span class="header-section-number">14.1.2</span> Esquema de nombres</h3>
+<p>Todas las funciones de báscula destinadas a los usuarios siguen un esquema de nomenclatura común. Probablemente ya hayas descubierto el esquema, pero para ser concretos, se compone de tres piezas separadas por “_”:</p>
+<ol type="1">
+<li><code>scale</code></li>
+<li>El nombre de la estética primaria (e.g., <code>colour</code>, <code>shape</code> o <code>x</code>)</li>
+<li>El nombre de la escala (e.g., <code>continuous</code>, <code>discrete</code>, <code>brewer</code>).</li>
+</ol>
+<p>La estructura de nombres suele ser útil, pero a veces puede resultar ambigua. Por ejemplo, queda inmediatamente claro que las funciones <code>scale_x_*()</code> se aplican a la estética x, pero se necesita un poco más de reflexión para reconocer que también gobiernan el comportamiento de otras estéticas que describen una posición horizontal (por ejemplo, la función <code>xmin</code>, <code>xmax</code> y <code>xend</code> estética). De manera similar, si bien el nombre <code>scale_colour_continuous()</code> se refiere claramente a la escala de colores asociada con variables continuas, es menos obvio que <code>scale_colour_distiller()</code> es simplemente un método diferente para crear escalas de colores para variables continuas.</p>
+</section><section id="tipos-de-escalas-fundamentales" class="level3" data-number="14.1.3"><h3 data-number="14.1.3" class="anchored" data-anchor-id="tipos-de-escalas-fundamentales">
+<span class="header-section-number">14.1.3</span> Tipos de escalas fundamentales</h3>
+<p>Es útil señalar que internamente todas las funciones de escala en ggplot2 pertenecen a uno de tres tipos fundamentales; escalas continuas, escalas discretas y escalas agrupadas. Cada tipo fundamental es manejado por una de las tres funciones constructoras de escala; <code>continuous_scale()</code>, <code>discrete_scale()</code> y <code>binned_scale()</code>. Aunque nunca debería necesitar llamar a estas funciones constructoras, proporcionan la estructura organizativa para las escalas y es útil conocerlas.</p>
+<!-- ### Exercises -->
+<!-- 1.  Simplify the following plot specifications to make them easier to  -->
+<!--     understand. -->
+<!--     ```{r, eval = FALSE} -->
+<!--     ggplot(mpg, aes(displ)) +  -->
+<!--       scale_y_continuous("Highway mpg") +  -->
+<!--       scale_x_continuous() + -->
+<!--       geom_point(aes(y = hwy)) -->
+<!--     ggplot(mpg, aes(y = displ, x = class)) +  -->
+<!--       scale_y_continuous("Displacement (l)") +  -->
+<!--       scale_x_discrete("Car type") + -->
+<!--       scale_x_discrete("Type of car") +  -->
+<!--       scale_colour_discrete() +  -->
+<!--       geom_point(aes(colour = drv)) +  -->
+<!--       scale_colour_discrete("Drive\ntrain") -->
+<!--     ``` -->
+<!-- 1.  What happens if you pair a discrete variable with a continuous scale? -->
+<!--     What happens if you pair a continuous variable with a discrete scale? -->
+</section></section><section id="sec-scale-names" class="level2" data-number="14.2"><h2 data-number="14.2" class="anchored" data-anchor-id="sec-scale-names">
+<span class="header-section-number">14.2</span> Nombres de escala</h2>
+<p>Amplíar la discusión sobre <code>labs()</code> en <a href="annotations.html#sec-titles" class="quarto-xref"><span>Sección 8.1</span></a>.</p>
+</section><section id="sec-scale-breaks" class="level2" data-number="14.3"><h2 data-number="14.3" class="anchored" data-anchor-id="sec-scale-breaks">
+<span class="header-section-number">14.3</span> Saltos de escala</h2>
+<p>Discusión sobre lo que unifica el concepto de <code>breaks</code> en escalas continuas, discretas y agrupadas: son valores de datos específicos en los que la guía necesita mostrar algo. Incluya detalles adicionales sobre las funciones de descanso.</p>
+</section><section id="sec-oob" class="level2" data-number="14.4"><h2 data-number="14.4" class="anchored" data-anchor-id="sec-oob">
+<span class="header-section-number">14.4</span> Límites de escala</h2>
+<p><a href="#sec-scales-guides-theory" class="quarto-xref"><span>Sección 14.1</span></a> introdujo el concepto de que una escala define un mapeo desde el espacio de datos al espacio estético. Los límites de escala son una extensión de esta idea: dictan la <strong>región</strong> del espacio de datos sobre la cual se define el mapeo. A nivel teórico esta región se define de forma diferente según el tipo de escala fundamental. Para escalas continuas y agrupadas, el espacio de datos es inherentemente continuo y unidimensional, por lo que los límites se pueden especificar mediante dos puntos finales. Sin embargo, para las escalas discretas, el espacio de datos no está estructurado y consta únicamente de un conjunto de categorías: como tal, los límites de una escala discreta sólo pueden especificarse enumerando el conjunto de categorías sobre las cuales se define el mapeo.</p>
+<p>Los capítulos de la caja de herramientas describen los objetivos prácticos comunes para especificar los límites: para escalas de posición, los límites se utilizan para establecer los puntos finales del eje, por ejemplo. Esto lleva naturalmente a la pregunta de qué debería hacer ggplot2 si el conjunto de datos contiene valores “fuera de límites” que quedan fuera de los límites.</p>
+<!-- DJN: this is taken from the positions "oob" section. I think it makes sense to 
+document the scales::oob functions for continuous and binned scales as part of the 
+theory chapter. The only reason we needed to talk about oob functions in position
+chapter is because of the common error with using lims() to zoom, yes? If it weren't 
+for that it would be an esoteric theory thing. -->
+<!-- DJN: give examples with different aesthetics, and show for binned as well as 
+continuous. try to cover most of the oob_* functions. might be valuable to highlight 
+oob_keep() for position scales, as a way of making limits behave like zoom -->
+<p>El comportamiento predeterminado en ggplot2 es convertir valores fuera de límites a <code>NA</code>, la lógica para esto es que si un valor de datos no es parte de la región asignada, debe tratarse como faltante. En ocasiones, esto puede provocar un comportamiento inesperado, como se ilustra en <a href="scales-position.html#sec-zooming-in" class="quarto-xref"><span>Sección 10.1.2</span></a>. Puede anular este valor predeterminado configurando el argumento <code>oob</code> de la escala, una función que se aplica a todas las observaciones fuera de los límites de la escala. El valor predeterminado es <code><a href="https://scales.r-lib.org/reference/oob.html">scales::oob_censor()</a></code> que reemplaza cualquier valor fuera de los límites con <code>NA</code>. Otra opción es <code><a href="https://scales.r-lib.org/reference/oob.html">scales::oob_squish()</a></code> que comprime todos los valores en el rango. A continuación se muestra un ejemplo que utiliza una escala de relleno:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, y <span class="op">=</span> <span class="fl">8</span><span class="op">:</span><span class="fl">13</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>                    <span class="co"># bar chart</span></span>
+<span>  <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">3.5</span>, colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="co"># for visual clarity only</span></span>
+<span></span>
+<span><span class="va">base</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_fill_gradient</span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_fill_gradient</span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span>, oob <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/oob.html">squish</a></span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>A la izquierda se muestran los colores de relleno predeterminados, que van del azul oscuro al azul claro. En el panel central, los límites de escala para la estética del relleno se reducen de modo que los valores de las tres barras más a la derecha se reemplazan con <code>NA</code> y se asignan a un tono gris. En algunos casos, este es el comportamiento deseado, pero a menudo no lo es: el panel derecho soluciona este problema modificando la función <code>oob</code> de forma adecuada.</p>
+</section><section id="sec-scale-guide" class="level2" data-number="14.5"><h2 data-number="14.5" class="anchored" data-anchor-id="sec-scale-guide">
+<span class="header-section-number">14.5</span> Guías de escala</h2>
+<p>Las guías de escala son más complejas que los nombres de escala: donde el argumento <code>name</code> (y <code>labs()</code> ) toma texto como entrada, el argumento <code>guide</code> (y <code>guides()</code>) requieren un objeto guía creado por un ** función de guía** como <code>guide_colourbar()</code> y <code>guide_legend()</code>. Estos argumentos para estas funciones ofrecen un control preciso adicional sobre la guía.</p>
+<p>La siguiente tabla resume las funciones de guía predeterminadas asociadas con diferentes tipos de báscula:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 72%">
+<col style="width: 27%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Tipo de escala</th>
+<th style="text-align: left;">Tipo de guía predeterminado</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">escalas continuas para estética de color/relleno</td>
+<td style="text-align: left;">barra de colores</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">escalas agrupadas para estética de color/relleno</td>
+<td style="text-align: left;">pasos de color</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">escalas de posición (continua, agrupada y discreta)</td>
+<td style="text-align: left;">ejes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">escalas discretas (excepto escalas de posición)</td>
+<td style="text-align: left;">leyenda</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">escalas agrupadas (excepto escalas de posición/color/relleno)</td>
+<td style="text-align: left;">contenedores</td>
+</tr>
+</tbody>
+</table>
+<p>Cada uno de estos tipos de guía apareció anteriormente en la caja de herramientas:</p>
+<ul>
+<li>
+<code>guide_colourbar()</code> se discute en <a href="scales-colour.html#sec-guide-colourbar" class="quarto-xref"><span>Sección 11.2.5</span></a>
+</li>
+<li>
+<code>guide_coloursteps()</code> se discute en <a href="scales-colour.html#sec-guide-coloursteps" class="quarto-xref"><span>Sección 11.4.2</span></a>
+</li>
+<li>
+<code>guide_axis()</code> se discute en <a href="scales-position.html#sec-guide-axis" class="quarto-xref"><span>Sección 10.3.2</span></a>
+</li>
+<li>
+<code>guide_legend()</code> se discute en <a href="scales-colour.html#sec-guide-legend" class="quarto-xref"><span>Sección 11.3.6</span></a>
+</li>
+<li>
+<code>guide_bins()</code> se discute en <a href="scales-other.html#sec-guide-bins" class="quarto-xref"><span>Sección 12.1.2</span></a>
+</li>
+</ul>
+<p>Además de la funcionalidad analizada en esas secciones, las funciones de la guía tienen muchos argumentos que son equivalentes a la configuración del tema, como el color del texto, el tamaño, la fuente, etc., pero solo se aplican a una única guía. Para obtener información sobre esas configuraciones, consulte <span class="quarto-unresolved-ref">?sec-polish</span>.</p>
+<p>Cosas nuevas: muestra ejemplos en los que se utiliza algo distinto a la guía predeterminada…</p>
+</section><section id="sec-scale-transformation-extras" class="level2" data-number="14.6"><h2 data-number="14.6" class="anchored" data-anchor-id="sec-scale-transformation-extras">
+<span class="header-section-number">14.6</span> Transformación de escala</h2>
+<p>El uso más común de las transformaciones de escala es ajustar una escala de posición continua, como se explica en <a href="scales-position.html#sec-scale-transformation" class="quarto-xref"><span>Sección 10.1.7</span></a>. Sin embargo, a veces pueden resultar útiles cuando se aplican a otras estéticas. A menudo esto es puramente una cuestión de énfasis visual. A continuación se muestra un ejemplo de esto para el gráfico de densidad de Old Faithful. La escala mapeada linealmente a la izquierda hace que sea fácil ver los picos de la distribución, mientras que la representación transformada a la derecha hace que sea más fácil ver las regiones de densidad no despreciable alrededor de esos picos: </p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">faithfuld</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">waiting</span>, <span class="va">eruptions</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_raster</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">density</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NULL</span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="cn">NULL</span>, <span class="cn">NULL</span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="va">base</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_fill_continuous</span><span class="op">(</span>trans <span class="op">=</span> <span class="st">"sqrt"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Transformar la estética del tamaño también es posible:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span>, z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, size <span class="op">=</span> <span class="va">z</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span> </span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_size</span><span class="op">(</span>trans <span class="op">=</span> <span class="st">"reverse"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>En el gráfico de la izquierda, el valor <code>z</code> se interpreta naturalmente como un “peso”: si cada punto corresponde a un grupo, el valor <code>z</code> podría ser el tamaño del grupo. En el gráfico de la derecha, la escala de tamaño se invierte y <code>z</code> se interpreta de forma más natural como una medida de “distancia”: las entidades distantes se escalan para que parezcan más pequeñas en el gráfico.</p>
+<!-- DN: This was the beginning of the binned transformation section. Tempted to omit this entirely?
+
+### Binned scales
+
+
+::: {.cell}
+
+```{.r .cell-code}
+base <- ggplot(mpg, aes(hwy)) + geom_bar()
+
+p1 <- base + scale_x_binned(breaks = seq(-50,50,10), limits = c(-50, 50))
+p2 <- base + scale_x_binned(breaks = seq(-50,50,10), limits = c(-50, 50), trans = "reverse")
+```
+:::
+
+
+Las básculas agrupadas se pueden transformar, al igual que las básculas continuas, pero se requiere cierto cuidado porque las bandejas se construyen en el espacio transformado. En algunos casos, esto puede producir resultados indeseables. En el siguiente código, tomamos una variable distribuida uniformemente y usamos `scale_x_binned()` y `geom_bar()` para construir un histograma de los datos transformados logarítmicamente. 
+
+
+::: {.cell}
+
+```{.r .cell-code}
+df <- data.frame(val = runif(10000, 1, 20000))
+ggplot(df, aes(log10(val))) + geom_bar() + scale_x_binned()
+```
+
+::: {.cell-output-display}
+![](scales-guides_files/figure-html/unnamed-chunk-10-1.png){width=2100}
+:::
+:::
+
+
+En este ejemplo, la transformación tiene lugar en los datos: la estética x se asigna al valor de `log10(val)` y no se aplica ninguna transformación de escala. Los contenedores están espaciados uniformemente en esta escala logarítmica. Alternativamente, puede especificar la transformación configurando `trans = "log10"` en la función de escala:
+
+
+::: {.cell}
+
+```{.r .cell-code}
+ggplot(df, aes(val)) + geom_bar() + scale_x_binned(trans="log10") 
+```
+
+::: {.cell-output-display}
+![](scales-guides_files/figure-html/unnamed-chunk-11-1.png){width=2100}
+:::
+:::
+
+
+Los contenedores espaciados de manera desigual se producen debido a una interacción de dos cosas: (1) las escalas agrupadas usan cortes para construir los contenedores, y (2) los cortes predeterminados para una escala transformada están especificados por la transformación y están diseñados para verse bien, pero pueden No será bueno para agrupar datos. La solución a esto es anular los descansos predeterminados: 
+
+
+::: {.cell}
+
+```{.r .cell-code}
+ggplot(df, aes(val)) + geom_bar() + 
+  scale_x_binned(trans="log10", breaks = 3^(0:9))  
+```
+
+::: {.cell-output-display}
+![](scales-guides_files/figure-html/unnamed-chunk-12-1.png){width=2100}
+:::
+:::
+
+
+-->
+</section><section id="sec-legend-merge-split" class="level2" data-number="14.7"><h2 data-number="14.7" class="anchored" data-anchor-id="sec-legend-merge-split">
+<span class="header-section-number">14.7</span> Leyenda fusionándose y dividiéndose</h2>
+<p>Siempre existe una correspondencia uno a uno entre las escalas de posición y los ejes. Pero la conexión entre las escalas sin posición y la leyenda es más compleja: una leyenda puede necesitar dibujar símbolos de múltiples capas (“fusión”), o una estética puede necesitar múltiples leyendas (“división”).</p>
+<section id="sec-sub-layers-legends" class="level3" data-number="14.7.1"><h3 data-number="14.7.1" class="anchored" data-anchor-id="sec-sub-layers-legends">
+<span class="header-section-number">14.7.1</span> Fusionando leyendas</h3>
+<p></p>
+<p>La fusión de leyendas ocurre con bastante frecuencia cuando se usa ggplot2. Por ejemplo, si ha asignado color tanto a puntos como a líneas, las claves mostrarán tanto los puntos como las líneas. Si has asignado el color de relleno, obtendrás un rectángulo. Tenga en cuenta la forma en que varía la leyenda en los gráficos siguientes:</p>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/legend-geom-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/legend-geom-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/legend-geom-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>De forma predeterminada, una capa solo aparecerá si la estética correspondiente se asigna a una variable con <code>aes()</code>. Puede anular si una capa aparece o no en la leyenda con <code>show.legend</code>: <code>FALSE</code> para evitar que una capa aparezca en la leyenda; <code>TRUE</code> lo obliga a aparecer cuando de otro modo no lo haría. Usar <code>TRUE</code> puede ser útil junto con el siguiente truco para resaltar los puntos:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">toy</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">up</span>, <span class="va">up</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, colour <span class="op">=</span> <span class="st">"grey20"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">txt</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">toy</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">up</span>, <span class="va">up</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, colour <span class="op">=</span> <span class="st">"grey20"</span>, show.legend <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">txt</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>ggplot2 intenta utilizar la menor cantidad de leyendas para transmitir con precisión la estética utilizada en la gráfica. Lo hace combinando leyendas donde la misma variable se asigna a diferentes estéticas. La siguiente figura muestra cómo funciona esto para puntos: si tanto el color como la forma se asignan a la misma variable, entonces solo es necesaria una única leyenda. </p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">toy</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">const</span>, <span class="va">up</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span><span class="cn">NULL</span>, breaks <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">txt</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>shape <span class="op">=</span> <span class="va">txt</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>shape <span class="op">=</span> <span class="va">txt</span>, colour <span class="op">=</span> <span class="va">txt</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/legend-merge-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/legend-merge-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/legend-merge-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Para que las leyendas se fusionen, deben tener el mismo “nombre”. Entonces, si cambia el nombre de una de las escalas, deberá cambiarlo para todas ellas. Una forma de hacer esto es usando la función auxiliar <code>labs()</code>:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">toy</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">const</span>, <span class="va">up</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>shape <span class="op">=</span> <span class="va">txt</span>, colour <span class="op">=</span> <span class="va">txt</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span><span class="cn">NULL</span>, breaks <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">labs</span><span class="op">(</span>shape <span class="op">=</span> <span class="st">"Split legend"</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">labs</span><span class="op">(</span>shape <span class="op">=</span> <span class="st">"Merged legend"</span>, colour <span class="op">=</span> <span class="st">"Merged legend"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-14-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-14-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+</section><section id="dividiendo-leyendas" class="level3" data-number="14.7.2"><h3 data-number="14.7.2" class="anchored" data-anchor-id="dividiendo-leyendas">
+<span class="header-section-number">14.7.2</span> Dividiendo leyendas</h3>
+<p>Dividir una leyenda es una tarea de visualización de datos mucho menos común. En general, no es recomendable asignar una estética (por ejemplo, color) a múltiples variables y, por lo tanto, de forma predeterminada, ggplot2 no le permite “dividir” la estética del color en múltiples escalas con leyendas separadas. Sin embargo, existen excepciones a esta regla general y es posible anular este comportamiento utilizando el paquete ggnewscale <span class="citation" data-cites="ggnewscale">(<a href="#ref-ggnewscale" role="doc-biblioref">Campitelli 2020</a>)</span>. El comando <code><a href="https://eliocamp.github.io/ggnewscale/reference/new_scale.html">ggnewscale::new_scale_colour()</a></code> actúa como una instrucción para ggplot2 para inicializar una nueva escala de color: los comandos de escala y guía que aparecen encima del comando <code>new_scale_colour()</code> se aplicarán a la primera escala de color, y los comandos que aparecen A continuación se aplican a la segunda escala de colores.</p>
+<p>Para ilustrar esto, el gráfico de la izquierda usa <code>geom_point()</code> para mostrar un marcador grande para cada marca de vehículo en los datos de <code>mpg</code>, con una escala de color única que se asigna al año. A la derecha, una segunda capa <code>geom_point()</code> se superpone en el gráfico mediante pequeños marcadores: esta capa está asociada a una escala de colores diferente, que se utiliza para indicar si el vehículo tiene un motor de 4 cilindros.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_colour_brewer</span><span class="op">(</span><span class="st">"year"</span>, type <span class="op">=</span> <span class="st">"qual"</span>, palette <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">base</span></span>
+<span><span class="va">base</span> <span class="op">+</span> </span>
+<span>  <span class="fu">ggnewscale</span><span class="fu">::</span><span class="fu"><a href="https://eliocamp.github.io/ggnewscale/reference/new_scale.html">new_scale_colour</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">cyl</span> <span class="op">==</span> <span class="fl">4</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1</span>, fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_colour_manual</span><span class="op">(</span><span class="st">"4 cylinder"</span>, values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"grey60"</span>, <span class="st">"black"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Detalles adicionales, incluidas funciones que se aplican a otros tipos de básculas, están disponibles en el sitio web del paquete, <a href="https://github.com/eliocamp/ggnewscale" class="uri">https://github.com/eliocamp/ggnewscale</a>.</p>
+</section></section><section id="sec-legend-glyph" class="level2" data-number="14.8"><h2 data-number="14.8" class="anchored" data-anchor-id="sec-legend-glyph">
+<span class="header-section-number">14.8</span> Glifos clave de leyenda</h2>
+<p>En la mayoría de los casos, los glifos predeterminados que se muestran en la clave de leyenda serán apropiados para la capa y la estética. Los diagramas de líneas de diferentes colores aparecerán como líneas de diferentes colores en la leyenda, los diagramas de caja aparecerán como diagramas de caja pequeños en la leyenda, y así sucesivamente. Si necesita anular este comportamiento, el argumento <code>key_glyph</code> se puede utilizar para asociar una capa particular con un tipo diferente de glifo. Por ejemplo:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">economics</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">date</span>, <span class="va">psavert</span>, color <span class="op">=</span> <span class="st">"savings"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">geom_line</span><span class="op">(</span>key_glyph <span class="op">=</span> <span class="st">"timeseries"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-guides_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Más precisamente, cada geom está asociada con una función como <code>draw_key_boxplot()</code> o <code>draw_key_path()</code> que es responsable de dibujar la clave cuando se crea la leyenda. Puede pasar directamente la función de dibujo clave deseada: por ejemplo, <code>base + geom_line(key_glyph = draw_key_timeseries)</code> también produciría el gráfico que se muestra arriba a la derecha.</p>
+<!-- ## Exercises -->
+<!-- 1.  What are the three most important arguments that apply to both  -->
+<!--     axes and legends? What do they do? Compare and contrast their -->
+<!--     operation for axes vs. legends. -->
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-ggnewscale" class="csl-entry" role="listitem">
+Campitelli, Elio. 2020. <em>ggnewscale: Multiple Fill and Colour Scales in ’ggplot2’</em>. <a href="https://CRAN.R-project.org/package=ggnewscale">https://CRAN.R-project.org/package=ggnewscale</a>.
+</div>
+</div>
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./layers.html" class="pagination-link" aria-label="Construya una gráfica capa por capa">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Construya una gráfica capa por capa</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./coord.html" class="pagination-link" aria-label="Sistemas coordinados">
+        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Sistemas coordinados</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>ggplot2: Gráficos elegantes para análisis de datos (3e) fue escrito por Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

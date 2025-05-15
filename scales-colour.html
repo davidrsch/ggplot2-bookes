@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen">
+<title>11&nbsp; Escalas de colores y leyendas. – ggplot2: Gráficos elegantes para análisis de datos (3e)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./scales-other.html" rel="next">
+<link href="./scales-position.html" rel="prev">
+<link href="./cover.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6e4858b4921ffe5a9c7d897cee0e5447.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./scales.html">Scales</a></li><li class="breadcrumb-item"><a href="./scales-colour.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Escalas de colores y leyendas.</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ggplot2: Gráficos elegantes para análisis de datos (3e)</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+<li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/ggplot2-book/">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/ggplot2-bookes">
+            Traducción
+            </a>
+          </li>
+      </ul>
+</div>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">¡Bienvenidos!</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-3e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la tercera edición</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-2e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la segunda edición.</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./start.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Empezando</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Primeros pasos</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./toolbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Layers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./individual-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Geomas individuales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./collective-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geomas colectivas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statistical-summaries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Resúmenes estadísticos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mapas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Redes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Anotaciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./arranging-plots.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Organizar gráficas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./scales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scales</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-position.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Escalas de posición y ejes.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-colour.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Escalas de colores y leyendas.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-other.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Otra estéticas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./mastery.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">La Gramática</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Construya una gráfica capa por capa</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-guides.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Escalas y guías</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./coord.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Sistemas coordinados</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./facet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Facetado</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./themes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Temas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./extending.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temas avanzados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Programar con ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./internals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Internos de ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./extensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Extendiendo ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ext-springs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Un caso de estudio</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+<li>
+<a href="#sec-colour-theory" id="toc-sec-colour-theory" class="nav-link active" data-scroll-target="#sec-colour-theory"><span class="header-section-number">11.1</span> Un poco de teoría del color.</a>
+  <ul class="collapse">
+<li><a href="#sec-colour-blindness" id="toc-sec-colour-blindness" class="nav-link" data-scroll-target="#sec-colour-blindness"><span class="header-section-number">11.1.1</span> Daltonismo</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-colour-continuous" id="toc-sec-colour-continuous" class="nav-link" data-scroll-target="#sec-colour-continuous"><span class="header-section-number">11.2</span> Escalas de color continuas</a>
+  <ul class="collapse">
+<li><a href="#sec-particular-palettes" id="toc-sec-particular-palettes" class="nav-link" data-scroll-target="#sec-particular-palettes"><span class="header-section-number">11.2.1</span> Paletas particulares</a></li>
+  <li><a href="#sec-robust-recipes" id="toc-sec-robust-recipes" class="nav-link" data-scroll-target="#sec-robust-recipes"><span class="header-section-number">11.2.2</span> Recetas robustas</a></li>
+  <li><a href="#valores-faltantes" id="toc-valores-faltantes" class="nav-link" data-scroll-target="#valores-faltantes"><span class="header-section-number">11.2.3</span> Valores faltantes</a></li>
+  <li><a href="#sec-colour-continuous-limits" id="toc-sec-colour-continuous-limits" class="nav-link" data-scroll-target="#sec-colour-continuous-limits"><span class="header-section-number">11.2.4</span> Límites, rupturas y etiquetas</a></li>
+  <li><a href="#sec-guide-colourbar" id="toc-sec-guide-colourbar" class="nav-link" data-scroll-target="#sec-guide-colourbar"><span class="header-section-number">11.2.5</span> Leyendas</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-colour-discrete" id="toc-sec-colour-discrete" class="nav-link" data-scroll-target="#sec-colour-discrete"><span class="header-section-number">11.3</span> Escalas de colores discretas</a>
+  <ul class="collapse">
+<li><a href="#b%C3%A1sculas-de-cerveza" id="toc-básculas-de-cerveza" class="nav-link" data-scroll-target="#b%C3%A1sculas-de-cerveza"><span class="header-section-number">11.3.1</span> Básculas de cerveza</a></li>
+  <li><a href="#tono-y-escalas-de-grises" id="toc-tono-y-escalas-de-grises" class="nav-link" data-scroll-target="#tono-y-escalas-de-grises"><span class="header-section-number">11.3.2</span> Tono y escalas de grises</a></li>
+  <li><a href="#b%C3%A1sculas-paletizadoras" id="toc-básculas-paletizadoras" class="nav-link" data-scroll-target="#b%C3%A1sculas-paletizadoras"><span class="header-section-number">11.3.3</span> Básculas paletizadoras</a></li>
+  <li><a href="#sec-manual-colour" id="toc-sec-manual-colour" class="nav-link" data-scroll-target="#sec-manual-colour"><span class="header-section-number">11.3.4</span> Balanzas manuales</a></li>
+  <li><a href="#sec-colour-discrete-limits" id="toc-sec-colour-discrete-limits" class="nav-link" data-scroll-target="#sec-colour-discrete-limits"><span class="header-section-number">11.3.5</span> Límites, rupturas y etiquetas</a></li>
+  <li><a href="#sec-guide-legend" id="toc-sec-guide-legend" class="nav-link" data-scroll-target="#sec-guide-legend"><span class="header-section-number">11.3.6</span> Leyendas</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-binned-colour" id="toc-sec-binned-colour" class="nav-link" data-scroll-target="#sec-binned-colour"><span class="header-section-number">11.4</span> Escalas de colores agrupadas</a>
+  <ul class="collapse">
+<li><a href="#limits-breaks-and-labels" id="toc-limits-breaks-and-labels" class="nav-link" data-scroll-target="#limits-breaks-and-labels"><span class="header-section-number">11.4.1</span> Limits, breaks, and labels</a></li>
+  <li><a href="#sec-guide-coloursteps" id="toc-sec-guide-coloursteps" class="nav-link" data-scroll-target="#sec-guide-coloursteps"><span class="header-section-number">11.4.2</span> Leyendas</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-date-colour-scales" id="toc-sec-date-colour-scales" class="nav-link" data-scroll-target="#sec-date-colour-scales"><span class="header-section-number">11.5</span> Escalas de color de fecha y hora</a></li>
+  <li><a href="#sec-scales-alpha" id="toc-sec-scales-alpha" class="nav-link" data-scroll-target="#sec-scales-alpha"><span class="header-section-number">11.6</span> Escalas alfa</a></li>
+  <li><a href="#sec-legend-layout" id="toc-sec-legend-layout" class="nav-link" data-scroll-target="#sec-legend-layout"><span class="header-section-number">11.7</span> Posición de la leyenda</a></li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./scales.html">Scales</a></li><li class="breadcrumb-item"><a href="./scales-colour.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Escalas de colores y leyendas.</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-scale-colour" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Escalas de colores y leyendas.</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>You are reading the work-in-progress third edition of the ggplot2 book. This chapter should be readable but is currently undergoing final polishing.</p>
+</div>
+</div>
+</div>
+<p>Después de la posición, la estética más utilizada es la basada en el color, y hay muchas formas de asignar valores a colores en ggplot2. Debido a que el color es complejo, el capítulo comienza con una discusión sobre la teoría del color (<span class="quarto-unresolved-ref">?sec-color-theory</span>) con especial referencia al daltonismo (<span class="quarto-unresolved-ref">?sec-color-blindness</span>). Reflejando la estructura de los capítulos anteriores, las siguientes tres secciones están dedicadas a escalas de color continuas (<span class="quarto-unresolved-ref">?sec-color-continuous</span>), escalas de colores discretas (<span class="quarto-unresolved-ref">?sec-color-discrete</span>) y escalas de colores agrupadas (<span class="quarto-unresolved-ref">?sec-binned-color</span>). ). El capítulo concluye analizando las escalas de color de fecha/hora (<span class="quarto-unresolved-ref">?sec-date-color-scales</span>), las escalas de transparencia (<a href="#sec-scales-alpha" class="quarto-xref"><span>Sección 11.6</span></a>) y la mecánica del posicionamiento de la leyenda (<a href="#sec-legend-layout" class="quarto-xref"><span>Sección 11.7</span></a>).</p>
+<p></p>
+<section id="sec-colour-theory" class="level2" data-number="11.1"><h2 data-number="11.1" class="anchored" data-anchor-id="sec-colour-theory">
+<span class="header-section-number">11.1</span> Un poco de teoría del color.</h2>
+<!-- ...as a treat -->
+<p>Antes de ver los detalles, es útil aprender un poco de teoría del color. La teoría del color es compleja porque la biología subyacente del ojo y el cerebro es compleja, y esta introducción sólo tocará algunas de las cuestiones más importantes. Una exposición excelente y más detallada está disponible en línea en <a href="http://tinyurl.com/clrdtls" class="uri">http://tinyurl.com/clrdtls</a>. </p>
+<p>A nivel físico, el color se produce por una mezcla de longitudes de onda de luz. Para caracterizar completamente un color, necesitamos conocer la mezcla completa de longitudes de onda. Afortunadamente para nosotros, el ojo humano sólo tiene tres receptores de color diferentes, por lo que podemos resumir la percepción de cualquier color en sólo tres números. Quizás esté familiarizado con la codificación RGB del espacio de color, que define un color según las intensidades de luz roja, verde y azul necesarias para producirlo. Un problema con este espacio es que no es perceptualmente uniforme: los dos colores que están separados por una unidad pueden parecer similares o muy diferentes dependiendo de dónde se encuentren en el espacio de color. Esto dificulta la creación de un mapeo de una variable continua a un conjunto de colores. Ha habido muchos intentos de crear espacios de color que sean más perceptualmente uniformes. Usaremos un intento moderno llamado espacio de color HCL, que tiene tres componentes: <strong>h</strong>ue, <strong>c</strong>hroma y <strong>l</strong>luminance: </p>
+<ul>
+<li>
+<strong>Hue</strong> varía de 0 a 360 (un ángulo) y proporciona el “color” del color (azul, rojo, naranja, etc.).</li>
+<li>
+<strong>Chroma</strong> es la “pureza” de un color, que va desde 0 (gris) hasta un máximo que varía con la luminancia.</li>
+<li>
+<strong>Luminance</strong> es la luminosidad del color, que va de 0 (negro) a 1 (blanco).</li>
+</ul>
+<p>Las tres dimensiones tienen propiedades diferentes. Los tonos están dispuestos alrededor de una rueda de colores y no se perciben como ordenados: p.e. el verde no parece “más grande” que el rojo, y el azul no parece estar “entre” el verde y el rojo. Por el contrario, tanto el croma como la luminancia se perciben como ordenados: el rosa se percibe entre el rojo y el blanco, y el gris entre el blanco y el negro.</p>
+<p>La combinación de estos tres componentes no produce una forma geométrica simple. La siguiente figura intenta mostrar la forma tridimensional del espacio. Cada corte es una luminancia (brillo) constante con tono asignado al ángulo y croma al radio. Puedes ver que el centro de cada rebanada es gris y los colores se vuelven más intensos a medida que se acercan al borde.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="diagrams/hcl-space.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption>La forma del espacio de color HCL. El tono se asigna al ángulo, el croma al radio y cada corte muestra una luminancia diferente. El espacio HCL tiene una forma bastante extraña, pero puedes ver que los colores cerca del centro de cada segmento son grises y, a medida que avanzas hacia los bordes, se vuelven más intensos. Se omiten los cortes para las luminancias 0 y 100 porque serían, respectivamente, un único punto negro y un único punto blanco.</figcaption></figure>
+</div>
+</div>
+</div>
+<section id="sec-colour-blindness" class="level3" data-number="11.1.1"><h3 data-number="11.1.1" class="anchored" data-anchor-id="sec-colour-blindness">
+<span class="header-section-number">11.1.1</span> Daltonismo</h3>
+<p>Una complicación adicional es que una minoría considerable de personas no posee el complemento habitual de receptores de color y, por tanto, puede distinguir menos colores que otros. Debido a esto, es importante considerar cómo se verá una paleta de colores para las personas con formas comunes de daltonismo. Una heurística simple es evitar los contrastes rojo-verde y verificar sus gráficos con sistemas que simulen el daltonismo. Además de las muchas herramientas en línea que pueden ayudar con esto (por ejemplo, <a href="https://www.vischeck.com/" class="uri">https://www.vischeck.com/</a>), existen varios paquetes de R que proporcionan herramientas que pueden resultarle útiles. El paquete dicromático <span class="citation" data-cites="dichroma">(<a href="#ref-dichroma" role="doc-biblioref"><strong>dichroma?</strong></a>)</span> proporciona herramientas para simular el daltonismo y un conjunto de combinaciones de colores que se sabe que funcionan bien para las personas daltónicas. Otra herramienta útil es el paquete colorBlindness <span class="citation" data-cites="colorBlindness">(<a href="#ref-colorBlindness" role="doc-biblioref">Ou 2021</a>)</span> que proporciona una función <code>displayAllColors()</code> que le ayuda a aproximar la apariencia de un conjunto determinado de colores bajo diferentes formas de daltonismo. A modo de ilustración, revela rápidamente que los colores proporcionados por la paleta <code><a href="https://rdrr.io/r/grDevices/palettes.html">rainbow()</a></code> no son apropiados si estás tratando de crear gráficos que sean legibles para personas daltónicas, ni se reproducen bien en escala de grises:</p>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">colorBlindness</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/colorBlindness/man/displayColors.html">displayAllColors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">rainbow</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="scales-colour_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>A modo de contraste, los colores proporcionados por <code><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">viridis::viridis()</a></code> son discriminables bajo las formas más comunes de daltonismo y se reproducen bien en escala de grises:</p>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">colorBlindness</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/colorBlindness/man/displayColors.html">displayAllColors</a></span><span class="op">(</span><span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">viridis</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="scales-colour_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Además del paquete viridis, existen otros paquetes R que proporcionan paletas que son explícitamente seguras para daltónicos y los verá en uso a lo largo del capítulo. Finalmente, también puedes ayudar a las personas con daltonismo de la misma manera que puedes ayudar a las personas con impresoras en blanco y negro: proporcionando asignaciones redundantes a otras estéticas como el tamaño, el tipo de línea o la forma.</p>
+</section></section><section id="sec-colour-continuous" class="level2" data-number="11.2"><h2 data-number="11.2" class="anchored" data-anchor-id="sec-colour-continuous">
+<span class="header-section-number">11.2</span> Escalas de color continuas</h2>
+<p>Los degradados de color se utilizan a menudo para mostrar la altura de una superficie 2D. Los gráficos de esta sección utilizan la superficie de una estimación de densidad 2D del conjunto de datos <code>faithful</code> <span class="citation" data-cites="azzalini:1990">(<a href="#ref-azzalini:1990" role="doc-biblioref">Azzalini y Bowman 1990</a>)</span>, que registra el tiempo de espera entre erupciones y durante cada erupción del géiser Old Faithful en el Parque Yellowstone. Ocultamos las leyendas y configuramos <code>expand</code> en 0, para centrarnos en la apariencia de los datos. Recuerde: aunque usamos la gráfica <code>erupt</code> para ilustrar conceptos usando una estética de relleno, las mismas ideas se aplican a las escalas de color. Cada vez que hacemos referencia a <code>scale_fill_*()</code> en esta sección, hay un <code>scale_color_*()</code> correspondiente para la estética del color (o <code>scale_color_*()</code> si prefiere la ortografía estadounidense). </p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">faithfuld</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">waiting</span>, <span class="va">eruptions</span>, fill <span class="op">=</span> <span class="va">density</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_raster</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span><span class="cn">NULL</span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="cn">NULL</span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sec-particular-palettes" class="level3" data-number="11.2.1"><h3 data-number="11.2.1" class="anchored" data-anchor-id="sec-particular-palettes">
+<span class="header-section-number">11.2.1</span> Paletas particulares</h3>
+<p>Hay varias formas de especificar escalas de color continuas. Más adelante hablaremos sobre herramientas de uso general que puede utilizar para construir su propia paleta, pero esto suele ser innecesario ya que hay muchas paletas “seleccionadas a mano” disponibles. Por ejemplo, ggplot2 proporciona dos funciones de escala que agrupan paletas preespecificadas, <code>scale_fill_viridis_c()</code> y <code>scale_fill_distiller()</code>. Las escalas viridis <span class="citation" data-cites="viridis">(<a href="#ref-viridis" role="doc-biblioref">Garnier 2018</a>)</span> están diseñadas para ser perceptualmente uniformes tanto en color como cuando se reducen a blanco y negro, y para ser perceptibles para personas con diversas formas de daltonismo.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_viridis_c</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_viridis_c</span><span class="op">(</span>option <span class="op">=</span> <span class="st">"magma"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Para la mayoría de los casos de uso, las escalas viridis funcionarán mejor que otras escalas continuas integradas en ggplot2, pero existen otras opciones que son útiles en algunas situaciones. Un segundo grupo de escalas de color continuas integradas en ggplot2 se derivan de las escalas de ColorBrewer: <code>scale_fill_brewer()</code> proporciona estos colores como paletas discretas, mientras que <code>scale_fill_distiller()</code> y <code>scale_fill_fermenter()</code> son los análogos continuos y agrupados. Analizamos estas escalas en <span class="quarto-unresolved-ref">?sec-color-discrete</span>, pero con fines ilustrativos incluimos algunos ejemplos aquí:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_distiller</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_distiller</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"RdPu"</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_distiller</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"YlOrBr"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Hay muchos otros paquetes que proporcionan paletas de colores útiles. Por ejemplo, scico <span class="citation" data-cites="scico">(<a href="#ref-scico" role="doc-biblioref">Pedersen y Crameri 2020</a>)</span> proporciona más paletas que son perceptualmente uniformes y adecuadas para la visualización científica:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scico</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scico/man/ggplot2-scales.html">scale_fill_scico</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"bilbao"</span><span class="op">)</span> <span class="co"># por defecto</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scico</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scico/man/ggplot2-scales.html">scale_fill_scico</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"vik"</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scico</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scico/man/ggplot2-scales.html">scale_fill_scico</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"lajolla"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-7-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Sin embargo, como hay muchos paquetes de paletas en R, un paquete particularmente útil es Paletteer <span class="citation" data-cites="paletteer">(<a href="#ref-paletteer" role="doc-biblioref">Hvitfeldt 2020</a>)</span>, cuyo objetivo es proporcionar una interfaz común:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">paletteer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/paletteer/man/ggplot2-scales-continuous.html">scale_fill_paletteer_c</a></span><span class="op">(</span><span class="st">"viridis::plasma"</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">paletteer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/paletteer/man/ggplot2-scales-continuous.html">scale_fill_paletteer_c</a></span><span class="op">(</span><span class="st">"scico::tokyo"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+</section><section id="sec-robust-recipes" class="level3" data-number="11.2.2"><h3 data-number="11.2.2" class="anchored" data-anchor-id="sec-robust-recipes">
+<span class="header-section-number">11.2.2</span> Recetas robustas</h3>
+<p>La escala predeterminada para escalas de relleno continuo es <code>scale_fill_continuous()</code> que a su vez por defecto es <code>scale_fill_gradient()</code>. Como consecuencia, estos tres comandos producen el mismo gráfico usando una escala de gradiente:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_continuous</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_gradient</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-9-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Las escalas de degradado proporcionan un método sólido para crear cualquier combinación de colores que desee. Todo lo que necesitas hacer es especificar dos o más colores de referencia y ggplot2 interpolará linealmente entre ellos. Hay tres funciones que puede utilizar para este propósito: </p>
+<ul>
+<li>
+<code>scale_fill_gradient()</code> produce un degradado de dos colores</li>
+<li>
+<code>scale_fill_gradient2()</code> produce un degradado de tres colores con un punto medio especificado</li>
+<li>
+<code>scale_fill_gradientn()</code> produce un gradiente de n colores</li>
+</ul>
+<p>The use of gradient scales is illustrated below. The first plot uses a scale that linearly interpolates from grey (hex code: <code>"#bebebe"</code>) at the <code>low</code> end of the scale limits to brown (<code>"#a52a2a"</code>) at the <code>high</code> end. The second plot has the same endpoints but uses <code>scale_fill_gradient2()</code> to interpolate first from grey to white (<code>#ffffff</code>) and then from white to brown. Note that the <code>mid</code> argument specifies the colour to be shown at the intermediate point, and <code>midpoint</code> is the value in the data at which this colour is used (the default is <code>midpoint = 0</code>). The third method is to use <code>scale_fill_gradientn()</code> which takes a vector of reference <code>colours</code> as its argument, and constructs a scale that linearly interpolates between the specified values. By default, the <code>colours</code> are presumed to be equally spaced along the scale, but if you prefer you can specify a vector of <code>values</code> that correspond to each of the reference colours.</p>
+<p>El uso de escalas de gradiente se ilustra a continuación. El primer gráfico utiliza una escala que interpola linealmente desde el gris (código hexadecimal: <code>"#bebebe"</code>) en el extremo inferior <code>low</code> de los límites de la escala hasta el marrón (<code>"#a52a2a"</code>) en el extremo alto <code>high</code>. El segundo gráfico tiene los mismos puntos finales pero usa <code>scale_fill_gradient2()</code> para interpolar primero de gris a blanco (<code>#ffffff</code>) y luego de blanco a marrón. Tenga en cuenta que el argumento <code>mid</code> especifica el color que se mostrará en el punto intermedio, y <code>midpoint</code> es el valor de los datos en el que se utiliza este color (el valor predeterminado es <code>midpoint = 0</code>). El tercer método es utilizar <code>scale_fill_gradientn()</code> que toma un vector de <code>colores</code> de referencia como argumento y construye una escala que interpola linealmente entre los valores especificados. De forma predeterminada, se supone que los “colores” están igualmente espaciados a lo largo de la escala, pero si lo prefiere, puede especificar un vector de <code>values</code> que corresponda a cada uno de los colores de referencia.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_gradient</span><span class="op">(</span>low <span class="op">=</span> <span class="st">"grey"</span>, high <span class="op">=</span> <span class="st">"brown"</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_fill_gradient2</span><span class="op">(</span></span>
+<span>    low <span class="op">=</span> <span class="st">"grey"</span>, </span>
+<span>    mid <span class="op">=</span> <span class="st">"white"</span>, </span>
+<span>    high <span class="op">=</span> <span class="st">"brown"</span>, </span>
+<span>    midpoint <span class="op">=</span> <span class="fl">.02</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_gradientn</span><span class="op">(</span>colours <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">terrain.colors</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Crear buenas paletas de colores requiere cierto cuidado. Generalmente, para una escala de gradiente de dos puntos desea transmitir la impresión perceptiva de que los valores están ordenados secuencialmente, por lo que desea mantener el tono constante y variar el croma y la luminancia. El sistema de color Munsell es útil para esto, ya que proporciona una forma sencilla de especificar colores en función de su tono, croma y luminancia. El paquete munsell <span class="citation" data-cites="munsell">(<a href="#ref-munsell" role="doc-biblioref">Wickham 2018</a>)</span> proporciona fácil acceso a los colores Munsell, que luego se pueden usar para especificar una escala de gradiente:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">munsell</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/munsell/man/hue_slice.html">hue_slice</a></span><span class="op">(</span><span class="st">"5P"</span><span class="op">)</span> <span class="op">+</span>  <span class="co"># Generar un ggplot con hue_slice()</span></span>
+<span>  <span class="fu">annotate</span><span class="op">(</span>                 <span class="co"># Agregar flechas para anotaciones</span></span>
+<span>    geom <span class="op">=</span> <span class="st">"segment"</span>, </span>
+<span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span><span class="op">)</span>, </span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span>, </span>
+<span>    xend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span><span class="op">)</span>, </span>
+<span>    yend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">9</span><span class="op">)</span>, </span>
+<span>    arrow <span class="op">=</span> <span class="fu">arrow</span><span class="op">(</span>length <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">2</span>, <span class="st">"mm"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> </span>
+<span><span class="co">#&gt; Warning: Removed 31 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_text()`).</span></span>
+<span></span>
+<span><span class="co"># Escala de construcción</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_gradient</span><span class="op">(</span></span>
+<span>  low <span class="op">=</span> <span class="fu">munsell</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/munsell/man/mnsl.html">mnsl</a></span><span class="op">(</span><span class="st">"5P 2/12"</span><span class="op">)</span>, </span>
+<span>  high <span class="op">=</span> <span class="fu">munsell</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/munsell/man/mnsl.html">mnsl</a></span><span class="op">(</span><span class="st">"5P 7/12"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Las etiquetas en el gráfico de la izquierda son un poco difíciles de leer en esta escala, por lo que hemos usado <code>annotate()</code> para agregar flechas que resaltan la columna utilizada para construir la escala de la derecha. Para obtener más información sobre el paquete munsell, consulte <a href="https://github.com/cwickham/munsell/" class="uri">https://github.com/cwickham/munsell/</a>.</p>
+<p>Las escalas de gradiente de tres puntos tienen criterios de diseño ligeramente diferentes. Normalmente, el objetivo de una escala de este tipo es transmitir la impresión perceptiva de que existe un punto medio natural (a menudo un valor cero) del cual divergen los demás valores. El gráfico de la izquierda a continuación muestra cómo crear una escala divergente “amarillo/azul”, aunque es un poco artificial en este ejemplo.</p>
+<p>Finalmente, si tiene colores que son significativos para sus datos (por ejemplo, colores de carrocería negros o colores de terreno estándar), o desea utilizar una paleta producida por otro paquete, es posible que desee utilizar un degradado de n puntos. A modo de ilustración, los gráficos del centro y de la derecha a continuación utilizan el paquete <strong>colorspace</strong> <span class="citation" data-cites="zeileis:2008">(<a href="#ref-zeileis:2008" role="doc-biblioref">Zeileis, Hornik, y Murrell 2008</a>)</span>. Para obtener más información sobre el paquete de espacio de color, consulte <a href="https://colorspace.r-forge.r-project.org/" class="uri">https://colorspace.r-forge.r-project.org/</a>. </p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># ejemplo de munsell</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_gradient2</span><span class="op">(</span></span>
+<span>  low <span class="op">=</span> <span class="fu">munsell</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/munsell/man/mnsl.html">mnsl</a></span><span class="op">(</span><span class="st">"5B 7/8"</span><span class="op">)</span>,</span>
+<span>  high <span class="op">=</span> <span class="fu">munsell</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/munsell/man/mnsl.html">mnsl</a></span><span class="op">(</span><span class="st">"5Y 7/8"</span><span class="op">)</span>,</span>
+<span>  mid <span class="op">=</span> <span class="fu">munsell</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/munsell/man/mnsl.html">mnsl</a></span><span class="op">(</span><span class="st">"N 7/0"</span><span class="op">)</span>,</span>
+<span>  midpoint <span class="op">=</span> <span class="fl">.02</span></span>
+<span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># ejemplos de espacio de color</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_gradientn</span><span class="op">(</span>colours <span class="op">=</span> <span class="fu">colorspace</span><span class="fu">::</span><span class="fu"><a href="https://colorspace.R-Forge.R-project.org/reference/rainbow_hcl.html">heat_hcl</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_gradientn</span><span class="op">(</span>colours <span class="op">=</span> <span class="fu">colorspace</span><span class="fu">::</span><span class="fu"><a href="https://colorspace.R-Forge.R-project.org/reference/hcl_palettes.html">diverge_hcl</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+</section><section id="valores-faltantes" class="level3" data-number="11.2.3"><h3 data-number="11.2.3" class="anchored" data-anchor-id="valores-faltantes">
+<span class="header-section-number">11.2.3</span> Valores faltantes</h3>
+<p>Todas las escalas de colores continuos tienen un parámetro <code>na.value</code> que controla qué color se utiliza para los valores faltantes (incluidos los valores fuera del rango de los límites de la escala). Por defecto está configurado en gris, que resaltará cuando uses una escala de colores. Si usa una escala de blanco y negro, es posible que desee configurarla en otra cosa para que sea más obvia. Puedes configurar <code>na.value = NA</code> para hacer invisibles los valores faltantes, o elegir un color específico si lo prefieres: </p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">2</span>, <span class="cn">NA</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_tile</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">z</span><span class="op">)</span>, linewidth <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_fill_gradient</span><span class="op">(</span>na.value <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_fill_gradient</span><span class="op">(</span>na.value <span class="op">=</span> <span class="st">"yellow"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-13-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+</section><section id="sec-colour-continuous-limits" class="level3" data-number="11.2.4"><h3 data-number="11.2.4" class="anchored" data-anchor-id="sec-colour-continuous-limits">
+<span class="header-section-number">11.2.4</span> Límites, rupturas y etiquetas</h3>
+<p>En el capítulo anterior discutimos cómo se puede controlar la apariencia de los ejes estableciendo los límites, <code>limites</code> (<a href="scales-position.html#sec-position-continuous-limits" class="quarto-xref"><span>Sección 10.1.1</span></a>), rupturas, <code>breaks</code> (<a href="scales-position.html#sec-position-continuous-breaks" class="quarto-xref"><span>Sección 10.1.4</span></a>) y etiquetas, <code>labels</code> (@ argumento sec-position-continuous-labels) para la función de escala. El comportamiento de las escalas de color se puede controlar de forma análoga:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">toy</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">up</span>, <span class="va">up</span>, fill <span class="op">=</span> <span class="va">big</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_tile</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">base</span> </span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_fill_continuous</span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10000</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-15-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_fill_continuous</span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="fl">2000</span>, <span class="fl">4000</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_fill_continuous</span><span class="op">(</span>labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/dollar_format.html">label_dollar</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>(El conjunto de datos del juguete utilizado aquí es el mismo definido en <a href="scales-position.html#sec-position-continuous-breaks" class="quarto-xref"><span>Sección 10.1.4</span></a>). Puede suprimir las pausas por completo configurándolas en <code>NULL</code>, lo que elimina las claves y las etiquetas.</p>
+</section><section id="sec-guide-colourbar" class="level3" data-number="11.2.5"><h3 data-number="11.2.5" class="anchored" data-anchor-id="sec-guide-colourbar">
+<span class="header-section-number">11.2.5</span> Leyendas</h3>
+<p> </p>
+<p>Cada escala está asociada a una guía que muestra la relación entre la estética y los datos. En las escalas de posición, los ejes cumplen esta función. En el caso de las escalas de colores, este papel lo desempeña la leyenda, que se puede personalizar con la ayuda de una función de guía. Para escalas de colores continuas, la leyenda predeterminada toma la forma de una “barra de colores” que muestra un degradado continuo de colores:</p>
+<div class="cell">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">cyl</span>, <span class="va">displ</span>, colour <span class="op">=</span> <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="scales-colour_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>La apariencia de la leyenda se puede controlar usando la función <code>guide_colourbar()</code>. Hay muchos argumentos para esta función, lo que le permite ejercer un control preciso sobre la leyenda. Los argumentos más importantes se ilustran a continuación:</p>
+<ul>
+<li><p><code>reverse</code> voltea la barra de colores para colocar los valores más bajos en la parte superior.</p></li>
+<li><p><code>barwidth</code> y <code>barheight</code> Le permite especificar el tamaño de la barra. Se trata de unidades de rejilla, p.&nbsp;<code>unit(1, "cm")</code>.</p></li>
+<li><p><code>direction</code> especifica la dirección de la guía, <code>"horizontal"</code> o <code>"vertical"</code>.</p></li>
+</ul>
+<p>En <a href="scales-position.html#sec-guide-axis" class="quarto-xref"><span>Sección 10.3.2</span></a> introdujimos la función <code>guides()</code> que se utiliza para configurar leyendas y ejes personalizados. Cuando se aplica a escalas de colores, le permite crear leyendas personalizadas como estas:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu">guide_colourbar</span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu">guide_colourbar</span><span class="op">(</span>barheight <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fl">2</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu">guide_colourbar</span><span class="op">(</span>direction <span class="op">=</span> <span class="st">"horizontal"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-18-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-18-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Una forma alternativa de lograr el mismo objetivo es especificar el argumento <code>guide</code> para la función de escala. Estas dos especificaciones de la gráfica son idénticas:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu">guide_colourbar</span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">scale_colour_continuous</span><span class="op">(</span>guide <span class="op">=</span> <span class="fu">guide_colourbar</span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-19-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Puede obtener más información sobre las funciones de la guía en <a href="scales-guides.html#sec-scale-guide" class="quarto-xref"><span>Sección 14.5</span></a>.</p>
+</section></section><section id="sec-colour-discrete" class="level2" data-number="11.3"><h2 data-number="11.3" class="anchored" data-anchor-id="sec-colour-discrete">
+<span class="header-section-number">11.3</span> Escalas de colores discretas</h2>
+<p>En muchas situaciones se producen escalas de color y relleno discretas. Un ejemplo típico es un gráfico de barras que codifica tanto la posición como el relleno en la misma variable. Muchos conceptos de <span class="quarto-unresolved-ref">?sec-color-continuous</span> se aplican a escalas discretas, que ilustraremos usando este gráfico de barras como ejemplo: </p>
+<div class="cell">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>, <span class="st">"d"</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">bars</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, fill <span class="op">=</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_bar</span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La escala predeterminada para colores discretos es <code>scale_fill_discrete()</code> que a su vez por defecto es <code>scale_fill_hue()</code> entonces estas son gráficas idénticas:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bars</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_discrete</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_hue</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-21-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-21-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Esta escala predeterminada tiene algunas limitaciones (que se analizan en breve), por lo que comenzaremos analizando las herramientas para producir paletas discretas más bonitas.</p>
+<section id="básculas-de-cerveza" class="level3" data-number="11.3.1"><h3 data-number="11.3.1" class="anchored" data-anchor-id="básculas-de-cerveza">
+<span class="header-section-number">11.3.1</span> Básculas de cerveza</h3>
+<p><code>scale_colour_brewer()</code> es una escala de color discreta que, junto con la escala analógica continua <code>scale_colour_distiller()</code> y analógico agrupado <code>scale_colour_fermenter()</code>—utiliza colores “ColorBrewer” cuidadosamente seleccionados tomados de <a href="https://colorbrewer2.org/" class="uri">https://colorbrewer2.org/</a>. Estos colores han sido diseñados para funcionar bien en una amplia variedad de situaciones, aunque la atención se centra en los mapas, por lo que los colores tienden a funcionar mejor cuando se muestran en áreas grandes. Hay muchas opciones diferentes:</p>
+<div class="cell">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">display.brewer.all</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="scales-colour_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El primer grupo de paletas son escalas secuenciales que son útiles cuando la escala discreta está ordenada (por ejemplo, clasificar datos) y están disponibles para datos continuos usando <code>scale_colour_distiller()</code>. Para datos categóricos desordenados, las paletas de mayor interés son las del segundo grupo. ‘Set1’ y ‘Dark2’ son particularmente buenos para los puntos, y ‘Set2’, ‘Pastel1’, ‘Pastel2’ y ‘Accent’ funciona bien para áreas. </p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Accent"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-23-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-23-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Tenga en cuenta que ninguna paleta es uniformemente buena para todos los propósitos. Los diagramas de dispersión suelen utilizar marcadores de diagrama pequeños y los colores brillantes tienden a funcionar mejor que los sutiles:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># gráfico de dispersión</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span>, </span>
+<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span>, </span>
+<span>  z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">point</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">z</span><span class="op">)</span><span class="op">)</span>  <span class="op">+</span> </span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># tres paletas</span></span>
+<span><span class="va">point</span> <span class="op">+</span> <span class="fu">scale_colour_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span>
+<span><span class="va">point</span> <span class="op">+</span> <span class="fu">scale_colour_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span>  </span>
+<span><span class="va">point</span> <span class="op">+</span> <span class="fu">scale_colour_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Pastel1"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/brewer-pal-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/brewer-pal-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/brewer-pal-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Los gráficos de barras suelen contener grandes manchas de color y los colores brillantes pueden resultar abrumadores. Los colores sutiles tienden a funcionar mejor en esta situación:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># diagrama de barras</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, y <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">1</span>, z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">area</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_bar</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">z</span><span class="op">)</span>, stat <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># tres paletas</span></span>
+<span><span class="va">area</span> <span class="op">+</span> <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span></span>
+<span><span class="va">area</span> <span class="op">+</span> <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set2"</span><span class="op">)</span></span>
+<span><span class="va">area</span> <span class="op">+</span> <span class="fu">scale_fill_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Pastel1"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-24-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-24-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+</section><section id="tono-y-escalas-de-grises" class="level3" data-number="11.3.2"><h3 data-number="11.3.2" class="anchored" data-anchor-id="tono-y-escalas-de-grises">
+<span class="header-section-number">11.3.2</span> Tono y escalas de grises</h3>
+<p>El esquema de color predeterminado selecciona tonos espaciados uniformemente alrededor de la rueda de colores HCL. Esto funciona bien con hasta ocho colores, pero después resulta difícil distinguir los diferentes colores. Puedes controlar el croma y la luminancia predeterminados, y el rango de tonos, con los argumentos <code>h</code>, <code>c</code> y <code>l</code>: </p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bars</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_hue</span><span class="op">(</span>c <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_hue</span><span class="op">(</span>h <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">180</span>, <span class="fl">300</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-25-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-25-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Hay algunos problemas con este esquema predeterminado. Una es que, a diferencia de muchas de las otras paletas analizadas en este capítulo, no son seguras para los daltónicos (lo que se analiza en <span class="quarto-unresolved-ref">?sec-color-blindness</span>). La segunda es que, debido a que todos los colores tienen la misma luminancia y croma, todos aparecen con un tono de gris idéntico cuando se imprimen en blanco y negro. Si desea imprimir una escala de color discreta en blanco y negro, es mejor usar explícitamente <code>scale_fill_grey()</code> que asigna datos discretos a grises, de claro a oscuro: </p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_grey</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_grey</span><span class="op">(</span>start <span class="op">=</span> <span class="fl">0.5</span>, end <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">scale_fill_grey</span><span class="op">(</span>start <span class="op">=</span> <span class="fl">0</span>, end <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-26-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-26-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+</section><section id="básculas-paletizadoras" class="level3" data-number="11.3.3"><h3 data-number="11.3.3" class="anchored" data-anchor-id="básculas-paletizadoras">
+<span class="header-section-number">11.3.3</span> Básculas paletizadoras</h3>
+<p>Otra alternativa la proporciona el paquete Paletteer, discutido anteriormente en relación con las escalas de color continuas en <a href="#sec-particular-palettes" class="quarto-xref"><span>Sección 11.2.1</span></a>. Al proporcionar una interfaz unificada que abarca una gran cantidad de paquetes, Paletteer permite elegir entre una gran cantidad de paletas de manera consistente:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bars</span> <span class="op">+</span> <span class="fu">paletteer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/paletteer/man/ggplot2-scales-discrete.html">scale_fill_paletteer_d</a></span><span class="op">(</span><span class="st">"rtist::vangogh"</span><span class="op">)</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">paletteer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/paletteer/man/ggplot2-scales-discrete.html">scale_fill_paletteer_d</a></span><span class="op">(</span><span class="st">"colorBlindness::paletteMartin"</span><span class="op">)</span></span>
+<span><span class="va">bars</span> <span class="op">+</span> <span class="fu">paletteer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/paletteer/man/ggplot2-scales-discrete.html">scale_fill_paletteer_d</a></span><span class="op">(</span><span class="st">"wesanderson::FantasticFox1"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-27-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-27-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+</section><section id="sec-manual-colour" class="level3" data-number="11.3.4"><h3 data-number="11.3.4" class="anchored" data-anchor-id="sec-manual-colour">
+<span class="header-section-number">11.3.4</span> Balanzas manuales</h3>
+<p>Si ninguna de las paletas preexistentes es adecuada, o si tiene sus propios colores preferidos, puede usar <code>scale_fill_manual()</code> para configurar los colores manualmente. Esto puede resultar útil si desea elegir colores que resalten una estructura de agrupación secundaria o llamen la atención sobre diferentes comparaciones: </p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bars</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span></span>
+<span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"sienna1"</span>, <span class="st">"sienna4"</span>, <span class="st">"hotpink1"</span>, <span class="st">"hotpink4"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">bars</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span></span>
+<span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"tomato1"</span>, <span class="st">"tomato2"</span>, <span class="st">"tomato3"</span>, <span class="st">"tomato4"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">bars</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span></span>
+<span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"grey"</span>, <span class="st">"black"</span>, <span class="st">"grey"</span>, <span class="st">"grey"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-28-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-28-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>También puede utilizar un vector con nombre para especificar los colores que se asignarán a cada nivel, lo que le permite especificar los niveles en el orden que desee:</p>
+<div class="cell">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bars</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_fill_manual</span><span class="op">(</span></span>
+<span>    values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span></span>
+<span>      <span class="st">"d"</span> <span class="op">=</span> <span class="st">"grey"</span>,</span>
+<span>      <span class="st">"c"</span> <span class="op">=</span> <span class="st">"grey"</span>,</span>
+<span>      <span class="st">"b"</span> <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>      <span class="st">"a"</span> <span class="op">=</span> <span class="st">"grey"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="scales-colour_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Para obtener más información sobre básculas manuales, consulte <a href="scales-other.html#sec-scale-manual" class="quarto-xref"><span>Sección 12.5</span></a>.</p>
+</section><section id="sec-colour-discrete-limits" class="level3" data-number="11.3.5"><h3 data-number="11.3.5" class="anchored" data-anchor-id="sec-colour-discrete-limits">
+<span class="header-section-number">11.3.5</span> Límites, rupturas y etiquetas</h3>
+<p>Los límites de escala para escalas de colores discretas se pueden establecer usando el argumento <code>limits</code> para el argumento de escala, o usando la función auxiliar <code>lims()</code>. Esto puede ser importante cuando la misma variable se representa en diferentes gráficos y desea asegurarse de que los colores sean consistentes en todos los gráficos. Para demostrar esto, ampliaremos el ejemplo de <a href="scales-position.html#sec-position-continuous-limits" class="quarto-xref"><span>Sección 10.1.1</span></a>. El color representa el tipo de combustible, que puede ser <strong>r</strong>regular, <strong>e</strong>tanol, <strong>d</strong>diesel, <strong>p</strong>remium o <strong>c</strong>gas natural comprimido.</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mpg_99</span> <span class="op">&lt;-</span> <span class="va">mpg</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">1999</span><span class="op">)</span></span>
+<span><span class="va">mpg_08</span> <span class="op">&lt;-</span> <span class="va">mpg</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2008</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base_99</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg_99</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="va">fl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> </span>
+<span><span class="va">base_08</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg_08</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="va">fl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">base_99</span></span>
+<span><span class="va">base_08</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-30-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Cada gráfica tiene sentido por sí sola, pero la comparación visual entre las dos es difícil. Los límites de los ejes son diferentes y, debido a que en los datos de 1998 sólo se representan los combustibles regular, premium y diésel, los colores se asignan de manera inconsistente. Para garantizar un mapeo consistente para la estética del color, podemos usar <code>lims()</code> para establecer los límites manualmente. Como se analiza en <a href="scales-position.html#sec-position-continuous-limits" class="quarto-xref"><span>Sección 10.1.1</span></a>, toma pares nombre-valor como entrada, donde el nombre especifica la estética y el valor especifica los límites:</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base_99</span> <span class="op">+</span> <span class="fu">lims</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>, <span class="st">"p"</span>, <span class="st">"r"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base_08</span> <span class="op">+</span> <span class="fu">lims</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>, <span class="st">"p"</span>, <span class="st">"r"</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-31-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Lo bueno de <code>lims()</code> es que podemos establecer límites para múltiples estéticas a la vez. Para garantizar que x, y y color utilicen límites consistentes, podemos hacer esto:</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base_99</span> <span class="op">+</span> </span>
+<span>  <span class="fu">lims</span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">7</span><span class="op">)</span>, </span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">45</span><span class="op">)</span>, </span>
+<span>    colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>, <span class="st">"p"</span>, <span class="st">"r"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">base_08</span> <span class="op">+</span> </span>
+<span>  <span class="fu">lims</span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">7</span><span class="op">)</span>, </span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">45</span><span class="op">)</span>, </span>
+<span>    colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>, <span class="st">"p"</span>, <span class="st">"r"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-32-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Hay dos limitaciones potenciales para estas gráficas. En primer lugar, si bien establecer los límites de la escala garantiza que los colores se representen de manera idéntica en ambos gráficos, también significa que el gráfico de los datos de 1999 muestra etiquetas para los cinco tipos de combustible, a pesar de que no se utilizaban etanol ni gas natural comprimido. En ese tiempo. Podemos solucionar esto configurando manualmente los saltos de escala, asegurándonos de que solo los tipos de combustible que aparecen en los datos se muestren en la leyenda. La segunda limitación es que las etiquetas no son particularmente útiles, lo que podemos solucionar especificándolas manualmente. Al configurar múltiples propiedades de una sola escala, puede ser más útil personalizar usando los argumentos de la función de escala en lugar de usar la función auxiliar <code>lims()</code>:</p>
+<div class="cell">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base_99</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_color_discrete</span><span class="op">(</span></span>
+<span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>, <span class="st">"p"</span>, <span class="st">"r"</span><span class="op">)</span>, </span>
+<span>    breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"d"</span>, <span class="st">"p"</span>, <span class="st">"r"</span><span class="op">)</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"diesel"</span>, <span class="st">"premium"</span>, <span class="st">"regular"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="scales-colour_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Sin embargo, no hay nada que le impida usar <code>lims()</code> para controlar los límites estéticos de la posición, mientras usa <code>scale_colour_discrete()</code> para ejercer un control más detallado sobre la estética del color:</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base_99</span> <span class="op">+</span> </span>
+<span>  <span class="fu">lims</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">7</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_color_discrete</span><span class="op">(</span></span>
+<span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>, <span class="st">"p"</span>, <span class="st">"r"</span><span class="op">)</span>, </span>
+<span>    breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"d"</span>, <span class="st">"p"</span>, <span class="st">"r"</span><span class="op">)</span>,</span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"diesel"</span>, <span class="st">"premium"</span>, <span class="st">"regular"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">base_08</span> <span class="op">+</span> </span>
+<span>  <span class="fu">lims</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">7</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_color_discrete</span><span class="op">(</span></span>
+<span>    limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"c"</span>, <span class="st">"d"</span>, <span class="st">"e"</span>, <span class="st">"p"</span>, <span class="st">"r"</span><span class="op">)</span>, </span>
+<span>    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"compressed"</span>, <span class="st">"diesel"</span>, <span class="st">"ethanol"</span>, <span class="st">"premium"</span>, <span class="st">"regular"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-34-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+</section><section id="sec-guide-legend" class="level3" data-number="11.3.6"><h3 data-number="11.3.6" class="anchored" data-anchor-id="sec-guide-legend">
+<span class="header-section-number">11.3.6</span> Leyendas</h3>
+<p></p>
+<p>Las leyendas para escalas de colores discretas se pueden personalizar usando el argumento <code>guide</code> de la función de escala o con la función auxiliar <code>guides()</code>, descrita en <span class="quarto-unresolved-ref">?sec-guide-colorbar</span>. Para una escala discreta, la leyenda predeterminada muestra claves individuales en una tabla, que se puede personalizar usando <code>guide_legend()</code>. Las opciones más útiles son:</p>
+<ul>
+<li>
+<p><code>nrow</code> o <code>ncol</code> que especifican las dimensiones de la mesa. <code>byrow</code> controla cómo se llena la tabla: <code>FALSE</code> la llena por columna (el valor predeterminado), <code>TRUE</code> la llena por fila.</p>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">drv</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_bar</span><span class="op">(</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">base</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-rows-cols-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-rows-cols-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-rows-cols-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code>reverse</code> invierte el orden de las claves:</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>reverse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-35-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code>override.aes</code> es útil cuando desea que los elementos de la leyenda se muestren de manera diferente a las geomas del gráfico. Esto suele ser necesario cuando se ha utilizado transparencia o tamaño para tratar un sobretrazado moderado y también se ha utilizado color en el trazado. </p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="va">drv</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, alpha <span class="op">=</span> <span class="fl">.2</span>, stroke <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-36-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+</li>
+<li><p><code>keywidth</code> y <code>keyheight</code> (junto con <code>default.unit</code>) le permite especificar el tamaño de las claves. Se trata de unidades de rejilla, p.&nbsp;<code>unit(1, "cm")</code>.</p></li>
+</ul>
+<p>Puedes conocer más sobre las guías en <a href="scales-guides.html#sec-scale-guide" class="quarto-xref"><span>Sección 14.5</span></a>.</p>
+<!-- ### Exercises -->
+<!-- 1.  Compare and contrast the four continuous colour scales with the four discrete scales. -->
+<!-- 1.  Explore the distribution of the built-in `colors()` using the `luv_colours` dataset. -->
+<!-- ### Exercises -->
+<!-- 1.  Recreate the following plot: -->
+<!--     ```{r, echo = FALSE} -->
+<!--     drv_labels <- c("4" = "4wd", "f" = "fwd", "r" = "rwd") -->
+<!--     ggplot(mpg, aes(displ, hwy)) +  -->
+<!--       geom_point(aes(colour = drv)) +   -->
+<!--       scale_colour_discrete(labels = drv_labels) -->
+<!--     ``` -->
+</section></section><section id="sec-binned-colour" class="level2" data-number="11.4"><h2 data-number="11.4" class="anchored" data-anchor-id="sec-binned-colour">
+<span class="header-section-number">11.4</span> Escalas de colores agrupadas</h2>
+<p>Las escalas de colores también vienen en versiones agrupadas. La escala predeterminada es <code>scale_fill_binned()</code> que a su vez es <code>scale_fill_steps()</code>. Al igual que con las escalas de posición agrupadas analizadas en <a href="scales-position.html#sec-binned-position" class="quarto-xref"><span>Sección 10.4</span></a>, estas escalas tienen un argumento <code>n.breaks</code> que controla el número de categorías de color discretas creadas por la escala. Contrariamente a la intuición, debido a que el sistema visual humano es muy bueno para detectar bordes, esto a veces puede hacer que un gradiente de color continuo sea más fácil de percibir:</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_binned</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_steps</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_steps</span><span class="op">(</span>n.breaks <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-37-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-37-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>En otros aspectos, <code>scale_fill_steps()</code> es análogo a <code>scale_fill_gradient()</code> y te permite construir tus propios degradados de dos colores. También hay una variante de tres colores <code>scale_fill_steps2()</code> y una variante de escala de n colores <code>scale_fill_stepsn()</code> que se comportan de manera similar a sus contrapartes continuas:</p>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_steps</span><span class="op">(</span>low <span class="op">=</span> <span class="st">"grey"</span>, high <span class="op">=</span> <span class="st">"brown"</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_fill_steps2</span><span class="op">(</span></span>
+<span>    low <span class="op">=</span> <span class="st">"grey"</span>, </span>
+<span>    mid <span class="op">=</span> <span class="st">"white"</span>, </span>
+<span>    high <span class="op">=</span> <span class="st">"brown"</span>, </span>
+<span>    midpoint <span class="op">=</span> <span class="fl">.02</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_stepsn</span><span class="op">(</span>n.breaks <span class="op">=</span> <span class="fl">12</span>, colours <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">terrain.colors</a></span><span class="op">(</span><span class="fl">12</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-38-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-38-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Las paletas viridis se pueden usar de la misma manera, llamando directamente a las funciones generadoras de paletas al especificar el argumento <code>colors</code> para <code>scale_fill_stepsn()</code>:</p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_stepsn</span><span class="op">(</span>n.breaks <span class="op">=</span> <span class="fl">9</span>, colours <span class="op">=</span> <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">viridis</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_stepsn</span><span class="op">(</span>n.breaks <span class="op">=</span> <span class="fl">9</span>, colours <span class="op">=</span> <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">magma</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_stepsn</span><span class="op">(</span>n.breaks <span class="op">=</span> <span class="fl">9</span>, colours <span class="op">=</span> <span class="fu">viridis</span><span class="fu">::</span><span class="fu"><a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">inferno</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-39-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-39-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Alternativamente, también existe un análogo de cerveza para básculas agrupadas, y se llama <code>scale_fill_fermenter()</code>:</p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_fermenter</span><span class="op">(</span>n.breaks <span class="op">=</span> <span class="fl">9</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_fermenter</span><span class="op">(</span>n.breaks <span class="op">=</span> <span class="fl">9</span>, palette <span class="op">=</span> <span class="st">"Oranges"</span><span class="op">)</span></span>
+<span><span class="va">erupt</span> <span class="op">+</span> <span class="fu">scale_fill_fermenter</span><span class="op">(</span>n.breaks <span class="op">=</span> <span class="fl">9</span>, palette <span class="op">=</span> <span class="st">"PuOr"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-40-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-40-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Tenga en cuenta que, al igual que el discreto <code>scale_fill_brewer()</code>—y a diferencia del continuo <code>scale_fill_distiller()</code>—la función agrupada <code>scale_fill_fermenter()</code> no interpola entre los colores de la cafetera, y si configura <code>n.breaks</code> Si es mayor que el número de colores de la paleta, aparecerá un mensaje de advertencia y algunos colores no se mostrarán.</p>
+<section id="limits-breaks-and-labels" class="level3" data-number="11.4.1"><h3 data-number="11.4.1" class="anchored" data-anchor-id="limits-breaks-and-labels">
+<span class="header-section-number">11.4.1</span> Limits, breaks, and labels</h3>
+<p>In most respects setting limits, breaks, and labels for a binned scale follows the same logic that applies to continuous scales (<a href="scales-position.html#sec-position-continuous-breaks" class="quarto-xref"><span>Sección 10.1.4</span></a> and <a href="#sec-colour-continuous-limits" class="quarto-xref"><span>Sección 11.2.4</span></a>). Like a continuous scale, the <code>limits</code> argument is typically a numeric vector of length two specifying the end points, <code>breaks</code> is a numeric vector specifying the break points, and <code>labels</code> is a character vector specifying the labels. All three arguments will accept functions as input (discussed in <a href="scales-position.html#sec-numeric-position-scales" class="quarto-xref"><span>Sección 10.1</span></a>). The main difference between binned and continuous scales is that the <code>breaks</code> argument defines the edges of the bins rather than simply specifying locations of tick marks. Límites, rupturas y etiquetas</p>
+<p>En la mayoría de los aspectos, establecer límites, interrupciones y etiquetas para una escala agrupada sigue la misma lógica que se aplica a las escalas continuas (<a href="scales-position.html#sec-position-continuous-breaks" class="quarto-xref"><span>Sección 10.1.4</span></a> y <span class="quarto-unresolved-ref">?sec-color-continuous-limits</span>). Al igual que una escala continua, el argumento <code>limits</code> suele ser un vector numérico de longitud dos que especifica los puntos finales, <code>breaks</code> es un vector numérico que especifica los puntos de interrupción y <code>labels</code> es un vector de caracteres que especifica las etiquetas. Los tres argumentos aceptarán funciones como entrada (discutidas en <a href="scales-position.html#sec-numeric-position-scales" class="quarto-xref"><span>Sección 10.1</span></a>). La principal diferencia entre escalas agrupadas y continuas es que el argumento <code>breaks</code> define los bordes de las ubicaciones en lugar de simplemente especificar las ubicaciones de las marcas.</p>
+</section><section id="sec-guide-coloursteps" class="level3" data-number="11.4.2"><h3 data-number="11.4.2" class="anchored" data-anchor-id="sec-guide-coloursteps">
+<span class="header-section-number">11.4.2</span> Leyendas</h3>
+<p>La leyenda predeterminada para escalas agrupadas utiliza pasos de color en lugar de una barra de colores y se puede personalizar usando la función <code>guide_coloursteps()</code>. Una leyenda de paso de color muestra el área entre cortes como un único color constante, en lugar de mostrar un degradado de color que varía suavemente a lo largo de la barra. Los argumentos de <code>guide_coloursteps()</code> en su mayoría reflejan los de <code>guide_colourbar()</code> (ver <a href="#sec-guide-colourbar" class="quarto-xref"><span>Sección 11.2.5</span></a>), con argumentos adicionales que son relevantes para escalas agrupadas:</p>
+<ul>
+<li>
+<p><code>show.limits</code> indica si los valores deben mostrarse en los extremos de la barra de color escalonada, de forma análoga al argumento correspondiente en <code>guide_bins()</code></p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">cyl</span>, <span class="va">displ</span>, colour <span class="op">=</span> <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_color_binned</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span> </span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">guides</span><span class="op">(</span>colour <span class="op">=</span> <span class="fu">guide_coloursteps</span><span class="op">(</span>show.limits <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-41-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+</li>
+<li><p><code>ticks</code> es una variable lógica que indica si las marcas deben mostrarse junto a las etiquetas de leyenda (el valor predeterminado es <code>NULL</code>, en cuyo caso el valor se hereda de la escala)</p></li>
+<li><p><code>even.steps</code> es una variable lógica que indica si los contenedores deben estar espaciados uniformemente (el valor predeterminado es <code>TRUE</code>) o su tamaño debe ser proporcional a su frecuencia en los datos.</p></li>
+</ul></section></section><section id="sec-date-colour-scales" class="level2" data-number="11.5"><h2 data-number="11.5" class="anchored" data-anchor-id="sec-date-colour-scales">
+<span class="header-section-number">11.5</span> Escalas de color de fecha y hora</h2>
+<p>Cuando una estética de color se asigna a un tipo de fecha/hora, ggplot2 usa <code>scale_colour_date()</code> o <code>scale_colour_datetime()</code> para especificar la escala. Están diseñados para manejar datos de fechas, de forma análoga a las escalas de fechas analizadas en <a href="scales-position.html#sec-date-scales" class="quarto-xref"><span>Sección 10.2</span></a>. Estas escalas tienen argumentos <code>date_breaks</code> y <code>date_labels</code> que hacen que sea un poco más fácil trabajar con estos datos, como lo ilustra el siguiente ejemplo ligeramente artificial:</p>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">economics</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">psavert</span>, <span class="va">uempmed</span>, colour <span class="op">=</span> <span class="va">date</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">base</span></span>
+<span><span class="va">base</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_colour_date</span><span class="op">(</span></span>
+<span>    date_breaks <span class="op">=</span> <span class="st">"142 months"</span>, </span>
+<span>    date_labels <span class="op">=</span> <span class="st">"%b %Y"</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/unnamed-chunk-42-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+</section><section id="sec-scales-alpha" class="level2" data-number="11.6"><h2 data-number="11.6" class="anchored" data-anchor-id="sec-scales-alpha">
+<span class="header-section-number">11.6</span> Escalas alfa</h2>
+<p>Las escalas alfa asignan la transparencia de una sombra a un valor en los datos. No suelen ser útiles, pero pueden ser una manera conveniente de restar importancia visual a observaciones menos importantes. <code>scale_alpha()</code> es un alias para <code>scale_alpha_continuous()</code> ya que ese es el uso más común de alpha y ahorra un poco de escritura. A continuación se muestra un ejemplo de una escala alfa utilizando los datos de las erupciones:</p>
+<div class="cell">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">faithfuld</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">waiting</span>, <span class="va">eruptions</span>, alpha <span class="op">=</span> <span class="va">density</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_raster</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"maroon"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">scale_y_continuous</span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="scales-colour_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="sec-legend-layout" class="level2" data-number="11.7"><h2 data-number="11.7" class="anchored" data-anchor-id="sec-legend-layout">
+<span class="header-section-number">11.7</span> Posición de la leyenda</h2>
+<p>Una serie de configuraciones que afectan la visualización general de las leyendas se controlan a través del sistema de temas. Aprenderás más sobre eso en <a href="themes.html#sec-themes" class="quarto-xref"><span>Sección 17.2</span></a>, pero por ahora, todo lo que necesitas saber es que modificas la configuración del tema con la función <code>theme()</code>. </p>
+<p>La posición y justificación de las leyendas están controladas por la configuración del tema <code>legend.position</code>, que toma valores “right”, “left”, “top”, “bottom” o “none” (sin leyenda). </p>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">toy</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">up</span>, <span class="va">up</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">txt</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">xlab</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"left"</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span> <span class="co"># el valor por defecto</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2" data-layout-nrow="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-position-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-position-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-position-3.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-position-4.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Cambiar entre izquierda/derecha y arriba/abajo modifica cómo se distribuyen las claves en cada leyenda (horizontal o verticalmente) y cómo se apilan varias leyendas (horizontal o verticalmente). Si es necesario, puedes ajustar esas opciones de forma independiente:</p>
+<ul>
+<li><p><code>legend.direction</code>: disposición de elementos en leyendas (“horizontal” o “vertical”).</p></li>
+<li><p><code>legend.box</code>: disposición de múltiples leyendas (“horizontal” o “vertical”).</p></li>
+<li><p><code>legend.box.just</code>: justificación de cada leyenda dentro del cuadro delimitador general, cuando hay varias leyendas (“top”, “bottom”, “left”, o “right”).</p></li>
+</ul>
+<p>Alternativamente, si hay mucho espacio en blanco en su gráfica, es posible que desee colocar la leyenda dentro de la gráfica. Puede hacer esto estableciendo <code>legend.position</code> en un vector numérico de longitud dos. Los números representan una ubicación relativa en el área del panel: <code>c(0, 1)</code> es la esquina superior izquierda y <code>c(1, 0)</code> es la esquina inferior derecha. Usted controla a qué esquina de la leyenda se refiere <code>legend.position</code> con <code>legend.justification</code>, que se especifica de manera similar. Desafortunadamente, colocar la leyenda exactamente donde la desea requiere mucho ensayo y error.</p>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">toy</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">up</span>, <span class="va">up</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">txt</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span> <span class="op">+</span> </span>
+<span>  <span class="fu">theme</span><span class="op">(</span></span>
+<span>    legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, </span>
+<span>    legend.justification <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: A numeric `legend.position` argument in `theme()` was deprecated in ggplot2</span></span>
+<span><span class="co">#&gt; 3.5.0.</span></span>
+<span><span class="co">#&gt; ℹ Please use the `legend.position.inside` argument of `theme()` instead.</span></span>
+<span></span>
+<span><span class="va">base</span> <span class="op">+</span> </span>
+<span>  <span class="fu">theme</span><span class="op">(</span></span>
+<span>    legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span>, </span>
+<span>    legend.justification <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span> <span class="op">+</span> </span>
+<span>  <span class="fu">theme</span><span class="op">(</span></span>
+<span>    legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, </span>
+<span>    legend.justification <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-position-man-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-position-man-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="scales-colour_files/figure-html/legend-position-man-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>También hay un margen alrededor de las leyendas, que puedes suprimir con <code>legend.margin = unit(0, "mm")</code>.</p>
+<!-- ### Exercises -->
+<!-- 1.  How do you make legends appear to the left of the plot? -->
+<!-- 1.  What's gone wrong with this plot? How could you fix it? -->
+<!--     ```{r} -->
+<!--     ggplot(mpg, aes(displ, hwy)) +  -->
+<!--       geom_point(aes(colour = drv, shape = drv)) +  -->
+<!--       scale_colour_discrete("Drive train") -->
+<!--     ``` -->
+<!-- 1.  Can you recreate the code for this plot? -->
+<!--     ```{r, echo = FALSE} -->
+<!--     ggplot(mpg, aes(displ, hwy, colour = class)) +  -->
+<!--       geom_point(show.legend = FALSE) +  -->
+<!--       geom_smooth(method = "lm", se = FALSE) +  -->
+<!--       theme(legend.position = "bottom") +  -->
+<!--       guides(colour = guide_legend(nrow = 1)) -->
+<!--     ``` -->
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-azzalini:1990" class="csl-entry" role="listitem">
+Azzalini, A., y A. W. Bowman. 1990. <span>«A look at some data on the <span>O</span>ld <span>F</span>aithful geyser.»</span> <em>Applied Statistics</em> 39: 357-65.
+</div>
+<div id="ref-viridis" class="csl-entry" role="listitem">
+Garnier, Simon. 2018. <em>viridis: Default Color Maps from ’matplotlib’</em>. <a href="https://CRAN.R-project.org/package=viridis">https://CRAN.R-project.org/package=viridis</a>.
+</div>
+<div id="ref-paletteer" class="csl-entry" role="listitem">
+Hvitfeldt, Emil. 2020. <em>paletteer: Comprehensive Collection of Color Palettes</em>. <a href="https://CRAN.R-project.org/package=paletteer">https://CRAN.R-project.org/package=paletteer</a>.
+</div>
+<div id="ref-colorBlindness" class="csl-entry" role="listitem">
+Ou, Jianhong. 2021. <em>colorBlindness: Safe Color Set for Color Blindness</em>. <a href="https://CRAN.R-project.org/package=colorBlindness">https://CRAN.R-project.org/package=colorBlindness</a>.
+</div>
+<div id="ref-scico" class="csl-entry" role="listitem">
+Pedersen, Thomas Lin, y Fabio Crameri. 2020. <em>scico: Colour Palettes Based on the Scientific Colour-Maps</em>. <a href="https://CRAN.R-project.org/package=scico">https://CRAN.R-project.org/package=scico</a>.
+</div>
+<div id="ref-munsell" class="csl-entry" role="listitem">
+Wickham, Charlotte. 2018. <em>munsell: Utilities for Using Munsell Colours</em>. <a href="https://CRAN.R-project.org/package=munsell">https://CRAN.R-project.org/package=munsell</a>.
+</div>
+<div id="ref-zeileis:2008" class="csl-entry" role="listitem">
+Zeileis, Achim, Kurt Hornik, y Paul Murrell. 2008. <span>«Escaping <span>RGB</span>land: Selecting Colors for Statistical Graphics»</span>. <em>Computational Statistics &amp; Data Analysis</em>. <a href="http://statmath.wu-wien.ac.at/~zeileis/papers/Zeileis+Hornik+Murrell-2008.pdf">http://statmath.wu-wien.ac.at/~zeileis/papers/Zeileis+Hornik+Murrell-2008.pdf</a>.
+</div>
+</div>
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./scales-position.html" class="pagination-link" aria-label="Escalas de posición y ejes.">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Escalas de posición y ejes.</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./scales-other.html" class="pagination-link" aria-label="Otra estéticas">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Otra estéticas</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>ggplot2: Gráficos elegantes para análisis de datos (3e) fue escrito por Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

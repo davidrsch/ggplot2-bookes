@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen">
+<title>La Gramática – ggplot2: Gráficos elegantes para análisis de datos (3e)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./layers.html" rel="next">
+<link href="./scales-other.html" rel="prev">
+<link href="./cover.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6e4858b4921ffe5a9c7d897cee0e5447.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./mastery.html">La Gramática</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ggplot2: Gráficos elegantes para análisis de datos (3e)</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+<li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/ggplot2-book/">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/ggplot2-bookes">
+            Traducción
+            </a>
+          </li>
+      </ul>
+</div>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">¡Bienvenidos!</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-3e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la tercera edición</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-2e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la segunda edición.</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./start.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Empezando</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Primeros pasos</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./toolbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Layers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./individual-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Geomas individuales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./collective-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geomas colectivas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statistical-summaries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Resúmenes estadísticos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mapas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Redes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Anotaciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./arranging-plots.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Organizar gráficas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./scales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scales</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-position.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Escalas de posición y ejes.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-colour.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Escalas de colores y leyendas.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-other.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Otra estéticas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./mastery.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">La Gramática</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Construya una gráfica capa por capa</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-guides.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Escalas y guías</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./coord.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Sistemas coordinados</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./facet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Facetado</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./themes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Temas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./extending.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temas avanzados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Programar con ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./internals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Internos de ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./extensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Extendiendo ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ext-springs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Un caso de estudio</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+<li>
+<a href="#sec-simple-plot" id="toc-sec-simple-plot" class="nav-link active" data-scroll-target="#sec-simple-plot">Construyendo un diagrama de dispersión</a>
+  <ul class="collapse">
+<li><a href="#mapeo-de-la-est%C3%A9tica-a-los-datos" id="toc-mapeo-de-la-estética-a-los-datos" class="nav-link" data-scroll-target="#mapeo-de-la-est%C3%A9tica-a-los-datos">Mapeo de la estética a los datos</a></li>
+  <li><a href="#escalado" id="toc-escalado" class="nav-link" data-scroll-target="#escalado">Escalado</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-complex-plot" id="toc-sec-complex-plot" class="nav-link" data-scroll-target="#sec-complex-plot">Añadiendo complejidad</a></li>
+  <li>
+<a href="#sec-components" id="toc-sec-components" class="nav-link" data-scroll-target="#sec-components">Componentes de la gramática en capas.</a>
+  <ul class="collapse">
+<li><a href="#sec-mastering-layers" id="toc-sec-mastering-layers" class="nav-link" data-scroll-target="#sec-mastering-layers">Capas</a></li>
+  <li><a href="#sec-mastering-scales" id="toc-sec-mastering-scales" class="nav-link" data-scroll-target="#sec-mastering-scales">Escalas</a></li>
+  <li><a href="#sec-coordinate-systems" id="toc-sec-coordinate-systems" class="nav-link" data-scroll-target="#sec-coordinate-systems">Sistema coordinado</a></li>
+  <li><a href="#sec-intro-faceting" id="toc-sec-intro-faceting" class="nav-link" data-scroll-target="#sec-intro-faceting">Facetado</a></li>
+  </ul>
+</li>
+  <li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios">Ejercicios</a></li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-mastery" class="quarto-section-identifier">La Gramática</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>You are reading the work-in-progress third edition of the ggplot2 book. This chapter is currently a dumping ground for ideas, and we don’t recommend reading it.</p>
+</div>
+</div>
+</div>
+<p>Para desbloquear todo el poder de ggplot2, necesitarás dominar la gramática subyacente. Al comprender la gramática y cómo encajan sus componentes, puede crear una gama más amplia de visualizaciones, combinar múltiples fuentes de datos y personalizarlas a su gusto.</p>
+<p>Este capítulo describe la base teórica de ggplot2: la gramática en capas de gráficos. La gramática en capas se basa en la gramática de gráficos de Wilkinson <span class="citation" data-cites="wilkinson:2006">(<a href="#ref-wilkinson:2006" role="doc-biblioref">Wilkinson 2005</a>)</span>, pero agrega una serie de mejoras que la ayudan a ser más expresiva y encajar perfectamente en el entorno R. Las diferencias entre la gramática en capas y la gramática de Wilkinson se describen detalladamente en <span class="citation" data-cites="wickham:2008">Wickham (<a href="#ref-wickham:2008" role="doc-biblioref">2008</a>)</span>. En este capítulo aprenderá un poco sobre cada componente de la gramática y cómo encajan todos. Los siguientes capítulos analizan los componentes con más detalle y brindan más ejemplos de cómo usarlos en la práctica. </p>
+<p>La gramática le facilita la actualización iterativa de un gráfico, cambiando una sola característica a la vez. La gramática también es útil porque sugiere los aspectos de alto nivel de una gráfica que <em>pueden</em> cambiarse, brindándole un marco para pensar en los gráficos y, con suerte, acortando la distancia entre la mente y el papel. También fomenta el uso de gráficos personalizados para un problema particular, en lugar de depender de tipos de gráficos específicos.</p>
+<p>Este capítulo comienza describiendo en detalle el proceso de dibujar una gráfica simple. <a href="#sec-simple-plot" class="quarto-xref"><span>Construyendo un diagrama de dispersión</span></a> comienza con un diagrama de dispersión simple, luego <a href="#sec-complex-plot" class="quarto-xref"><span>Añadiendo complejidad</span></a> lo hace más complejo agregando una línea suave y facetas. Mientras trabaja en estos ejemplos, se le presentarán los seis componentes de la gramática, que luego se definen con mayor precisión en <a href="#sec-components" class="quarto-xref"><span>Componentes de la gramática en capas.</span></a>.</p>
+<section id="sec-simple-plot" class="level2"><h2 class="anchored" data-anchor-id="sec-simple-plot">Construyendo un diagrama de dispersión</h2>
+<p>¿Cómo se relacionan el tamaño del motor y la economía de combustible? Podríamos crear un diagrama de dispersión de la cilindrada del motor y las mpg en carretera con puntos coloreados según el número de cilindros:</p>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="mastery_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Puedes crear gráficas como esta fácilmente, pero ¿qué sucede debajo de la superficie? ¿Cómo dibuja ggplot2 este gráfico? </p>
+<section id="mapeo-de-la-estética-a-los-datos" class="level3"><h3 class="anchored" data-anchor-id="mapeo-de-la-estética-a-los-datos">Mapeo de la estética a los datos</h3>
+<p>¿Qué es exactamente un diagrama de dispersión? Has visto muchos antes y probablemente incluso hayas dibujado algunos a mano. Un diagrama de dispersión representa cada observación como un punto, posicionado según el valor de dos variables. Además de una posición horizontal y vertical, cada punto también tiene un tamaño, un color y una forma. Estos atributos se llaman <strong>estética</strong> y son las propiedades que se pueden percibir en el gráfico. Cada estética se puede asignar a partir de una variable o establecerse en un valor constante. En el gráfico anterior, “displ” se asigna a la posición horizontal, “hwy” a la posición vertical y “cyl” al color. El tamaño y la forma no se asignan, pero permanecen en sus valores predeterminados (constantes). </p>
+<p>Una vez que tengamos estas asignaciones, podemos crear un nuevo conjunto de datos que registre esta información:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th style="text-align: right;">x</th>
+<th style="text-align: right;">y</th>
+<th style="text-align: right;">colour</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1.8</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.8</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2.8</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2.8</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3.1</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1.8</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Este nuevo conjunto de datos es el resultado de aplicar las asignaciones estéticas a los datos originales. Podemos crear muchos tipos diferentes de gráficos utilizando estos datos. El diagrama de dispersión utiliza puntos, pero si en su lugar se dibujasen líneas obtendríamos un diagrama de líneas. Si usáramos barras, obtendríamos un diagrama de barras. Ninguno de esos ejemplos tiene sentido para estos datos, pero aún así podríamos dibujarlos (hemos omitido las leyendas para ahorrar espacio):</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_bar</span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"identity"</span>, position <span class="op">=</span> <span class="st">"identity"</span>, fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="mastery_files/figure-html/other-geoms-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="mastery_files/figure-html/other-geoms-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>En ggplot, podemos producir muchos gráficos que no tienen sentido, pero que son gramaticalmente válidos. Esto no es diferente al español, donde podemos crear oraciones sin sentido pero gramaticales como la roca enojada ladra como una coma.</p>
+<p>Los puntos, las líneas y las barras son ejemplos de objetos geométricos o <strong>geoms</strong>. Las geomas determinan el “tipo” de la gráfica. Las gráficas que utilizan una sola geom suelen recibir un nombre especial:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th style="text-align: left;">Named plot</th>
+<th style="text-align: left;">Geom</th>
+<th style="text-align: left;">Other features</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">gráfico de dispersión</td>
+<td style="text-align: left;">point</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gráfico de burbujas</td>
+<td style="text-align: left;">point</td>
+<td style="text-align: left;">size mapped to a variable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gráfico de barras</td>
+<td style="text-align: left;">bar</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">diagrama de caja</td>
+<td style="text-align: left;">boxplot</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gráfico de línea</td>
+<td style="text-align: left;">line</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>Las gráficas más complejas con combinaciones de múltiples geoms no tienen un nombre especial y tenemos que describirlas a mano. Por ejemplo, este gráfico superpone una línea de regresión por grupo encima de un diagrama de dispersión:</p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cyl</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_smooth</span><span class="op">(</span>method <span class="op">=</span> <span class="st">"lm"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using formula = 'y ~ x'</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="mastery_files/figure-html/complex-plot-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>¿Cómo llamarías a esta gráfica? Una vez que haya dominado la gramática, descubrirá que muchas de las gráficas que produzca se adaptan exclusivamente a sus problemas y ya no tendrán nombres especiales. </p>
+</section><section id="escalado" class="level3"><h3 class="anchored" data-anchor-id="escalado">Escalado</h3>
+<p>Los valores de la tabla anterior no tienen significado para la computadora. Necesitamos convertirlos de unidades de datos (por ejemplo, litros, millas por galón y número de cilindros) a unidades gráficas (por ejemplo, píxeles y colores) que la computadora pueda mostrar. Este proceso de conversión se llama <strong>escalado</strong> y se realiza mediante escalas. Ahora que estos valores son significativos para la computadora, es posible que no lo sean para nosotros: los colores se representan mediante una cadena hexadecimal de seis letras, los tamaños mediante un número y las formas mediante un número entero. Estas especificaciones estéticas que son significativas para R se describen en <code>vignette("ggplot2-specs")</code>. </p>
+<p>En este ejemplo, tenemos tres estéticas que deben escalarse: posición horizontal (<code>x</code>), posición vertical (<code>y</code>) y <code>colour</code>. Escalar la posición es fácil en este ejemplo porque estamos usando las escalas lineales predeterminadas. Solo necesitamos un mapeo lineal desde el rango de datos hasta <span class="math inline">\([0, 1]\)</span>. Usamos <span class="math inline">\([0, 1]\)</span> en lugar de píxeles exactos porque el sistema de dibujo que usa ggplot2, <strong>grid</strong>, se encarga de esa conversión final por nosotros. Un paso final determina cómo se combinan las dos posiciones (x e y) para formar la ubicación final en el gráfico. Esto lo realiza el sistema de coordenadas o <strong>coord</strong>. En la mayoría de los casos, serán coordenadas cartesianas, pero podrían ser coordenadas polares o una proyección esférica utilizada para un mapa.</p>
+<p>El proceso de mapeo del color es un poco más complicado, ya que tenemos un resultado no numérico: colores. Sin embargo, se puede considerar que los colores tienen tres componentes, correspondientes a los tres tipos de células que detectan el color en el ojo humano. Estos tres tipos de células dan lugar a un espacio de color tridimensional. Luego, el escalado implica asignar los valores de datos a puntos en este espacio. Hay muchas formas de hacer esto, pero aquí, dado que <code>cyl</code> es una variable categórica, asignamos valores a tonos espaciados uniformemente en la rueda de colores, como se muestra en la siguiente figura. Se utiliza un mapeo diferente cuando la variable es continua. </p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="diagrams/colour-wheel.png" class="img-fluid figure-img" style="width:50.0%"></p>
+<figcaption>Una rueda de colores que ilustra la elección de cinco colores equiespaciados. Esta es la escala predeterminada para variables discretas.</figcaption></figure>
+</div>
+</div>
+</div>
+<p>El resultado de estas conversiones se encuentra a continuación. Además de la estética que se ha asignado a variables, también incluimos estéticas que son constantes. Los necesitamos para que la estética de cada punto esté completamente especificada y R pueda dibujar la gráfica. Los puntos serán círculos rellenos (forma 19 en R) con un diámetro de 1 mm:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th style="text-align: left;">x</th>
+<th style="text-align: left;">y</th>
+<th style="text-align: left;">colour</th>
+<th style="text-align: left;">size</th>
+<th style="text-align: left;">shape</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0.037</td>
+<td style="text-align: left;">0.531</td>
+<td style="text-align: left;">#F8766D</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0.037</td>
+<td style="text-align: left;">0.531</td>
+<td style="text-align: left;">#F8766D</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">0.074</td>
+<td style="text-align: left;">0.594</td>
+<td style="text-align: left;">#F8766D</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0.074</td>
+<td style="text-align: left;">0.562</td>
+<td style="text-align: left;">#F8766D</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">0.222</td>
+<td style="text-align: left;">0.438</td>
+<td style="text-align: left;">#00BFC4</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0.222</td>
+<td style="text-align: left;">0.438</td>
+<td style="text-align: left;">#00BFC4</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">0.278</td>
+<td style="text-align: left;">0.469</td>
+<td style="text-align: left;">#00BFC4</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0.037</td>
+<td style="text-align: left;">0.438</td>
+<td style="text-align: left;">#F8766D</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">19</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Finalmente, necesitamos representar estos datos para crear los objetos gráficos que se muestran en la pantalla. Para crear un gráfico completo necesitamos combinar objetos gráficos de tres fuentes: los <em>datos</em>, representados por el punto geom; las <em>escalas y sistema de coordenadas</em>, que generan ejes y leyendas para que podamos leer valores del gráfico; y <em>anotaciones de la gráfica</em>, como el fondo y el título de la gráfica.</p>
+</section></section><section id="sec-complex-plot" class="level2"><h2 class="anchored" data-anchor-id="sec-complex-plot">Añadiendo complejidad</h2>
+<p>Con un ejemplo simple en nuestro haber, veamos ahora este ejemplo un poco más complicado:</p>
+<div class="cell">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_smooth</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">year</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="mastery_files/figure-html/complex-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Esta gráfica agrega tres nuevos componentes a la mezcla: facetas, múltiples capas y estadísticas. Las facetas y capas amplían la estructura de datos descrita anteriormente: cada panel de facetas en cada capa tiene su propio conjunto de datos. Puedes pensar en esto como una matriz tridimensional: los paneles de las facetas forman una cuadrícula bidimensional y las capas se extienden hacia arriba en la tercera dimensión. En este caso, los datos de las capas son los mismos, pero en general podemos trazar diferentes conjuntos de datos en diferentes capas.</p>
+<p>La capa suave es diferente de la capa de puntos porque no muestra los datos sin procesar, sino que muestra una transformación estadística de los datos. Específicamente, la capa suave se ajusta a una línea suave que pasa por el centro de los datos. Esto requiere un paso adicional en el proceso descrito anteriormente: después de asignar los datos a la estética, los datos se pasan a una transformación estadística, o <strong>stat</strong>, que manipula los datos de alguna manera útil. En este ejemplo, la estadística ajusta los datos de manera más suave y luego devuelve predicciones desde puntos espaciados uniformemente dentro del rango de los datos. Otras estadísticas útiles incluyen agrupamiento 1 y 2D, medias de grupo, regresión por cuantiles y contorno.</p>
+<p>Además de agregar un paso adicional para resumir los datos, también necesitamos algunos pasos adicionales cuando lleguemos a las escalas. Esto se debe a que ahora tenemos múltiples conjuntos de datos (para las diferentes facetas y capas) y debemos asegurarnos de que las escalas sean las mismas en todos ellos. En realidad, el escalamiento se produce en tres partes: transformación, capacitación y mapeo. No hemos mencionado la transformación antes, pero probablemente la hayas visto antes en gráficos log-log. En un gráfico log-log, los valores de los datos no se asignan linealmente a su posición en el gráfico, sino que primero se transforman logarítmicamente.</p>
+<ul>
+<li><p>La transformación de escala ocurre antes de la transformación estadística, de modo que las estadísticas se calculan sobre los datos transformados a escala. Esto garantiza que una gráfica de <span class="math inline">\(\log(x)\)</span> frente a <span class="math inline">\(\log(y)\)</span> en escalas lineales se vea igual que <span class="math inline">\(x\)</span> frente a <span class="math inline">\(y\)</span> en escalas logarítmicas. Hay muchas transformaciones diferentes que se pueden utilizar, incluida la extracción de raíces cuadradas, logaritmos y recíprocos. Consulte <a href="scales-position.html" class="quarto-xref"><span>10&nbsp; Escalas de posición y ejes.</span></a> para obtener más detalles.</p></li>
+<li><p>Una vez calculadas las estadísticas, cada escala se entrena en cada conjunto de datos de todas las capas y facetas. La operación de entrenamiento combina los rangos de los conjuntos de datos individuales para obtener el rango de los datos completos. Sin este paso, las escalas sólo podrían tener sentido localmente y no podríamos superponer diferentes capas porque sus posiciones no se alinearían. A veces queremos variar las escalas de posición entre facetas (pero nunca entre capas), y esto se describe con más detalle en <a href="facet.html#sec-controlling-scales" class="quarto-xref"><span>Control de escalas</span></a>.</p></li>
+<li><p>Finalmente, las escalas asignan los valores de los datos a valores estéticos. Esta es una operación local: las variables en cada conjunto de datos se asignan a sus valores estéticos, lo que produce un nuevo conjunto de datos que luego las geoms pueden representar.</p></li>
+</ul>
+<p>La siguiente figura ilustra esquemáticamente el proceso completo.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="diagrams/mastery-schema.png" class="img-fluid figure-img" style="width:75.0%"></p>
+<figcaption>Descripción esquemática del proceso de generación de gráficas. Cada cuadrado representa una capa y este esquema representa una gráfica con tres capas y tres paneles. Todos los pasos funcionan transformando marcos de datos individuales, excepto las escalas de entrenamiento, que no afectan el marco de datos y operan en todos los conjuntos de datos simultáneamente.</figcaption></figure>
+</div>
+</div>
+</div>
+</section><section id="sec-components" class="level2"><h2 class="anchored" data-anchor-id="sec-components">Componentes de la gramática en capas.</h2>
+<p>En los ejemplos anteriores, hemos visto algunos de los componentes que componen una gráfica: datos y asignaciones estéticas, objetos geométricos (geoms), transformaciones estadísticas (stats), escalas y facetas. También hemos tocado el sistema de coordenadas. Una cosa que no mencionamos es el ajuste de posición, que se ocupa de la superposición de objetos gráficos. Juntos, los datos, asignaciones, estadísticas, geom y ajustes de posición forman una <strong>capa</strong>. Un gráfico puede tener varias capas, como en el ejemplo en el que superpusimos una línea suavizada en un diagrama de dispersión. En conjunto, la gramática en capas define una gráfica como la combinación de: </p>
+<ul>
+<li><p>Un conjunto de datos predeterminado y un conjunto de asignaciones de variables a estética.</p></li>
+<li><p>Una o más capas, cada una compuesta por un objeto geométrico, una transformación estadística, un ajuste de posición y, opcionalmente, un conjunto de datos y mapeos estéticos.</p></li>
+<li><p>Una escala para cada mapeo estético.</p></li>
+<li><p>Un sistema de coordenadas.</p></li>
+<li><p>La especificación de facetado.</p></li>
+</ul>
+<p>Las siguientes secciones describen cada uno de los componentes de nivel superior con mayor precisión y le indican las partes del libro donde están documentados.</p>
+<section id="sec-mastering-layers" class="level3"><h3 class="anchored" data-anchor-id="sec-mastering-layers">Capas</h3>
+<p><strong>Las capas</strong> son las encargadas de crear los objetos que percibimos en la gráfica. Una capa se compone de cinco partes:</p>
+<ol type="1">
+<li>Datos</li>
+<li>Mapeos estéticos.</li>
+<li>Una transformación estadística (stat).</li>
+<li>Un objeto geométrico (geom).</li>
+<li>Un ajuste de posición.</li>
+</ol>
+<p>Las propiedades de una capa se describen en <a href="layers.html" class="quarto-xref"><span>13&nbsp; Construya una gráfica capa por capa</span></a> y sus usos para la visualización de datos se describen en <a href="individual-geoms.html" class="quarto-xref"><span>3&nbsp; Geomas individuales</span></a> a <a href="annotations.html" class="quarto-xref"><span>8&nbsp; Anotaciones</span></a>.</p>
+</section><section id="sec-mastering-scales" class="level3"><h3 class="anchored" data-anchor-id="sec-mastering-scales">Escalas</h3>
+<p>Una <strong>escala</strong> controla el mapeo de los datos a los atributos estéticos, y necesitamos una escala para cada estética utilizada en una gráfica. Cada escala opera en todos los datos del gráfico, lo que garantiza un mapeo consistente desde los datos hasta la estética. Algunos ejemplos se muestran a continuación.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="mastery_files/figure-html/scale-legends-1.png" class="img-fluid figure-img" width="2100"></p>
+<figcaption>Ejemplos de leyendas de cuatro escalas diferentes. De izquierda a derecha: variable continua asignada a tamaño y color, variable discreta asignada a forma y color. El orden de las escalas parece al revés, pero coincide con el etiquetado del eje <span class="math inline">\(y\)</span>: los valores pequeños aparecen en la parte inferior.</figcaption></figure>
+</div>
+</div>
+</div>
+<p>Una escala es una función y su inversa, junto con un conjunto de parámetros. Por ejemplo, la escala de gradiente de color asigna un segmento de la línea real a una ruta a través de un espacio de color. Los parámetros de la función definen si la ruta es lineal o curva, qué espacio de color usar (por ejemplo, LUV o RGB) y los colores al principio y al final.</p>
+<p>La función inversa se utiliza para dibujar una guía para que pueda leer los valores del gráfico. Las guías son ejes (para escalas de posición) o leyendas (para todo lo demás). La mayoría de las asignaciones tienen una inversa única (es decir, la función de asignación es uno a uno), pero muchas no la tienen. Un inverso único permite recuperar los datos originales, pero esto no siempre es deseable si queremos centrar la atención en un solo aspecto.</p>
+<p>Para más detalles, ver <a href="scales-colour.html" class="quarto-xref"><span>11&nbsp; Escalas de colores y leyendas.</span></a>.</p>
+</section><section id="sec-coordinate-systems" class="level3"><h3 class="anchored" data-anchor-id="sec-coordinate-systems">Sistema coordinado</h3>
+<p>Un sistema de coordenadas, o <strong>coord</strong> para abreviar, asigna la posición de los objetos al plano del gráfico. La posición a menudo se especifica mediante dos coordenadas <span class="math inline">\((x, y)\)</span>, pero potencialmente podrían ser tres o más (aunque esto no está implementado en ggplot2). El sistema de coordenadas cartesiano es el sistema de coordenadas más común para dos dimensiones, mientras que las coordenadas polares y varias proyecciones cartográficas se utilizan con menos frecuencia.</p>
+<p>Los sistemas de coordenadas afectan a todas las variables de posición simultáneamente y se diferencian de las escalas en que también cambian la apariencia de los objetos geométricos. Por ejemplo, en coordenadas polares, las geomas de barra parecen segmentos de un círculo. Además, el escalado se realiza antes de la transformación estadística, mientras que las transformaciones de coordenadas se producen después. Las consecuencias de esto se muestran en <a href="coord.html#sec-coord-non-linear" class="quarto-xref"><span>Sistemas de coordenadas no lineales</span></a>.</p>
+<p>Los sistemas de coordenadas controlan cómo se dibujan los ejes y las líneas de la cuadrícula. La siguiente figura ilustra tres tipos diferentes de sistemas de coordenadas: cartesiano, semilogarítmico y polar. Hay muy pocos consejos disponibles para dibujarlos para sistemas de coordenadas no cartesianas, por lo que se necesita mucho trabajo por hacer para producir resultados pulidos. Consulte <a href="coord.html" class="quarto-xref"><span>15&nbsp; Sistemas coordinados</span></a> para obtener más detalles.</p>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="mastery_files/figure-html/coord-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="mastery_files/figure-html/coord-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="mastery_files/figure-html/coord-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>El sistema de coordenadas polares ilustra las dificultades asociadas con las coordenadas no cartesianas: es difícil dibujar bien los ejes.</p>
+</section><section id="sec-intro-faceting" class="level3"><h3 class="anchored" data-anchor-id="sec-intro-faceting">Facetado</h3>
+<p>También hay otra cosa que resulta suficientemente útil como para incluirla en nuestro marco general: el facetado, un caso general de gráficas condicionadas o enrejadas. Esto facilita la creación de pequeños múltiplos, cada uno de los cuales muestra un subconjunto diferente de todo el conjunto de datos. Esta es una herramienta poderosa para investigar si los patrones se mantienen en todas las condiciones. La especificación de facetado describe qué variables deben usarse para dividir los datos y si las escalas de posición deben ser libres o restringidas. El facetado se describe en <a href="layers.html#sec-position" class="quarto-xref"><span>Ajustes de posición</span></a>.</p>
+</section></section><section id="ejercicios" class="level2"><h2 class="anchored" data-anchor-id="ejercicios">Ejercicios</h2>
+<!-- TODO: update with more modern examples -->
+<ol type="1">
+<li>
+<p>Una de las mejores formas de comprender cómo funciona la gramática es aplicarla al análisis de gráficos existentes. Para cada uno de los gráficos enumerados a continuación, escriba los componentes del gráfico. No te preocupes si no sabes cómo se llaman las funciones correspondientes en ggplot2 (¡o si siquiera existen!), enfócate en registrar los elementos clave de una gráfica para poder comunicárselo a otra persona.</p>
+<ol type="1">
+<li><p>“La marcha de Napoleón” de Charles John Minard: <a href="http://www.datavis.ca/gallery/re-minard.php" class="uri">http://www.datavis.ca/gallery/re-minard.php</a></p></li>
+<li><p>“Donde el calor y el trueno acertaron”, por Jeremy White, Joe Ward y Matthew Ericson en The New York Times. <a href="http://nyti.ms/1duzTvY" class="uri">http://nyti.ms/1duzTvY</a></p></li>
+<li><p>“Viajes de alquiler de bicicletas en Londres”, por James Cheshire. <a href="http://bit.ly/1S2cyRy" class="uri">http://bit.ly/1S2cyRy</a></p></li>
+<li><p>Las visualizaciones de datos favoritas del Pew Research Center de 2014: <a href="http://pewrsr.ch/1KZSSN6" class="uri">http://pewrsr.ch/1KZSSN6</a></p></li>
+<li><p>“Los Tony nunca han estado tan dominados por las mujeres”, por Joanna Kao en FiveThirtyEight: <a href="http://53eig.ht/1cJRCyG" class="uri">http://53eig.ht/1cJRCyG</a></p></li>
+<li><p>“En Climbing Income Ladder, la ubicación importa”, de Mike Bostock, Shan Carter, Amanda Cox, Matthew Ericson, Josh Keller, Alicia Parlapiano, Kevin Quealy y Josh Williams en el New York Times: <a href="http://nyti.ms/1S2dJQT" class="uri">http://nyti.ms/1S2dJQT</a></p></li>
+<li><p>“Diseccionando un tráiler: las partes de la película que hacen el corte”, por Shan Carter, Amanda Cox y Mike Bostock en el New York Times: <a href="http://nyti.ms/1KTJQOE" class="uri">http://nyti.ms/1KTJQOE</a></p></li>
+</ol>
+</li>
+</ol>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-wickham:2008" class="csl-entry" role="listitem">
+Wickham, Hadley. 2008. <span>«Practical tools for exploring data and models»</span>. Tesis doctoral, Iowa State University. <a href="http://had.co.nz/thesis">http://had.co.nz/thesis</a>.
+</div>
+<div id="ref-wilkinson:2006" class="csl-entry" role="listitem">
+Wilkinson, Leland. 2005. <em>The Grammar of Graphics</em>. 2nd ed. Statistics y Computing. Springer.
+</div>
+</div>
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./scales-other.html" class="pagination-link" aria-label="Otra estéticas">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Otra estéticas</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./layers.html" class="pagination-link" aria-label="Construya una gráfica capa por capa">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Construya una gráfica capa por capa</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>ggplot2: Gráficos elegantes para análisis de datos (3e) fue escrito por Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

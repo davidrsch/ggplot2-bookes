@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen">
+<title>18&nbsp; Programar con ggplot2 – ggplot2: Gráficos elegantes para análisis de datos (3e)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./internals.html" rel="next">
+<link href="./extending.html" rel="prev">
+<link href="./cover.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6e4858b4921ffe5a9c7d897cee0e5447.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./extending.html">Temas avanzados</a></li><li class="breadcrumb-item"><a href="./programming.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Programar con ggplot2</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ggplot2: Gráficos elegantes para análisis de datos (3e)</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+<li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/ggplot2-book/">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/ggplot2-bookes">
+            Traducción
+            </a>
+          </li>
+      </ul>
+</div>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">¡Bienvenidos!</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-3e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la tercera edición</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-2e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la segunda edición.</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./start.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Empezando</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Primeros pasos</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./toolbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Layers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./individual-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Geomas individuales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./collective-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geomas colectivas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statistical-summaries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Resúmenes estadísticos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mapas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Redes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Anotaciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./arranging-plots.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Organizar gráficas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./scales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scales</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-position.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Escalas de posición y ejes.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-colour.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Escalas de colores y leyendas.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-other.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Otra estéticas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./mastery.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">La Gramática</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Construya una gráfica capa por capa</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-guides.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Escalas y guías</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./coord.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Sistemas coordinados</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./facet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Facetado</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./themes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Temas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./extending.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temas avanzados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./programming.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Programar con ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./internals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Internos de ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./extensions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Extendiendo ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ext-springs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Un caso de estudio</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+<li><a href="#introductci%C3%B3n" id="toc-introductción" class="nav-link active" data-scroll-target="#introductci%C3%B3n"><span class="header-section-number">18.1</span> Introductción</a></li>
+  <li>
+<a href="#componentes-individuales" id="toc-componentes-individuales" class="nav-link" data-scroll-target="#componentes-individuales"><span class="header-section-number">18.2</span> Componentes individuales</a>
+  <ul class="collapse">
+<li><a href="#ejercicios" id="toc-ejercicios" class="nav-link" data-scroll-target="#ejercicios"><span class="header-section-number">18.2.1</span> Ejercicios</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#m%C3%BAltiples-componentes" id="toc-múltiples-componentes" class="nav-link" data-scroll-target="#m%C3%BAltiples-componentes"><span class="header-section-number">18.3</span> Múltiples componentes</a>
+  <ul class="collapse">
+<li><a href="#componentes-de-la-trama" id="toc-componentes-de-la-trama" class="nav-link" data-scroll-target="#componentes-de-la-trama"><span class="header-section-number">18.3.1</span> Componentes de la trama</a></li>
+  <li><a href="#anotaci%C3%B3n" id="toc-anotación" class="nav-link" data-scroll-target="#anotaci%C3%B3n"><span class="header-section-number">18.3.2</span> Anotación</a></li>
+  <li><a href="#argumentos-adicionales" id="toc-argumentos-adicionales" class="nav-link" data-scroll-target="#argumentos-adicionales"><span class="header-section-number">18.3.3</span> Argumentos adicionales</a></li>
+  <li><a href="#ejercicios-1" id="toc-ejercicios-1" class="nav-link" data-scroll-target="#ejercicios-1"><span class="header-section-number">18.3.4</span> Ejercicios</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-functions" id="toc-sec-functions" class="nav-link" data-scroll-target="#sec-functions"><span class="header-section-number">18.4</span> Funciones de trazado</a>
+  <ul class="collapse">
+<li><a href="#refiri%C3%A9ndose-indirectamente-a-variables." id="toc-refiriéndose-indirectamente-a-variables." class="nav-link" data-scroll-target="#refiri%C3%A9ndose-indirectamente-a-variables."><span class="header-section-number">18.4.1</span> Refiriéndose indirectamente a variables.</a></li>
+  <li><a href="#ejercicios-2" id="toc-ejercicios-2" class="nav-link" data-scroll-target="#ejercicios-2"><span class="header-section-number">18.4.2</span> Ejercicios</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#programaci%C3%B3n-funcional" id="toc-programación-funcional" class="nav-link" data-scroll-target="#programaci%C3%B3n-funcional"><span class="header-section-number">18.5</span> Programación funcional</a>
+  <ul class="collapse">
+<li><a href="#ejercicios-3" id="toc-ejercicios-3" class="nav-link" data-scroll-target="#ejercicios-3"><span class="header-section-number">18.5.1</span> Ejercicios</a></li>
+  </ul>
+</li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./extending.html">Temas avanzados</a></li><li class="breadcrumb-item"><a href="./programming.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Programar con ggplot2</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-programming" class="quarto-section-identifier"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Programar con ggplot2</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>You are reading the work-in-progress third edition of the ggplot2 book. This chapter is currently a dumping ground for ideas, and we don’t recommend reading it.</p>
+</div>
+</div>
+</div>
+<section id="introductción" class="level2" data-number="18.1"><h2 data-number="18.1" class="anchored" data-anchor-id="introductción">
+<span class="header-section-number">18.1</span> Introductción</h2>
+<p>Un requisito importante para un buen análisis de datos es la flexibilidad. Si sus datos cambian o descubre algo que le hace reconsiderar sus suposiciones básicas, debe poder cambiar fácilmente muchos gráficos a la vez. El principal inhibidor de la flexibilidad es la duplicación de código. Si tienes la misma frase argumental repetida una y otra vez, tendrás que hacer el mismo cambio en muchos lugares diferentes. ¡A menudo la sola idea de hacer todos esos cambios es agotadora! Este capítulo le ayudará a superar ese problema mostrándole cómo programar con ggplot2. </p>
+<p>Para que su código sea más flexible, debe reducir el código duplicado escribiendo funciones. Cuando notes que estás haciendo lo mismo una y otra vez, piensa en cómo podrías generalizarlo y convertirlo en una función. Si no está muy familiarizado con cómo funcionan las funciones en R, es posible que desee mejorar sus conocimientos en <a href="https://adv-r.hadley.nz/functions.html" class="uri">https://adv-r.hadley.nz/functions.html</a>.</p>
+<p>En este capítulo mostraremos cómo escribir funciones que crean:</p>
+<ul>
+<li>Un único componente ggplot2.</li>
+<li>Múltiples componentes de ggplot2.</li>
+<li>Una trama completa.</li>
+</ul>
+<p>Y luego terminaremos con una breve ilustración de cómo se pueden aplicar técnicas de programación funcional a objetos ggplot2.</p>
+<p>También puede que le resulten útiles los paquetes <a href="https://github.com/wilkelab/cowplot">cowplot</a> y <a href="https://github.com/jrnold/ggthemes">ggthemes</a>. Además de proporcionar componentes reutilizables que le ayudarán directamente, también puede leer el código fuente de los paquetes para descubrir cómo funcionan.</p>
+</section><section id="componentes-individuales" class="level2" data-number="18.2"><h2 data-number="18.2" class="anchored" data-anchor-id="componentes-individuales">
+<span class="header-section-number">18.2</span> Componentes individuales</h2>
+<p>Cada componente de un gráfico ggplot es un objeto. La mayoría de las veces usted crea el componente y lo agrega inmediatamente a un gráfico, pero no es necesario. En su lugar, puede guardar cualquier componente en una variable (dándole un nombre) y luego agregarlo a varios gráficos:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">bestfit</span> <span class="op">&lt;-</span> <span class="fu">geom_smooth</span><span class="op">(</span></span>
+<span>  method <span class="op">=</span> <span class="st">"lm"</span>, </span>
+<span>  se <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>  colour <span class="op">=</span> <span class="fu">alpha</span><span class="op">(</span><span class="st">"steelblue"</span>, <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>  linewidth <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">cty</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="va">bestfit</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using formula = 'y ~ x'</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="va">bestfit</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using formula = 'y ~ x'</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/layer9-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/layer9-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Esta es una excelente manera de reducir los tipos simples de duplicación (¡es mucho mejor que copiar y pegar!), pero requiere que el componente sea exactamente el mismo cada vez. Si necesita más flexibilidad, puede envolver estos fragmentos reutilizables en una función. Por ejemplo, podríamos extender nuestro objeto <code>bestfit</code> a una función más general para agregar líneas de mejor ajuste a un gráfico. El siguiente código crea un <code>geom_lm()</code> con tres parámetros: el modelo <code>formula</code>, la línea <code>colour</code> y el <code>linewidth</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geom_lm</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">formula</span> <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, <span class="va">colour</span> <span class="op">=</span> <span class="fu">alpha</span><span class="op">(</span><span class="st">"steelblue"</span>, <span class="fl">0.5</span><span class="op">)</span>, </span>
+<span>                    <span class="va">linewidth</span> <span class="op">=</span> <span class="fl">2</span>, <span class="va">...</span><span class="op">)</span>  <span class="op">{</span></span>
+<span>  <span class="fu">geom_smooth</span><span class="op">(</span>formula <span class="op">=</span> <span class="va">formula</span>, se <span class="op">=</span> <span class="cn">FALSE</span>, method <span class="op">=</span> <span class="st">"lm"</span>, colour <span class="op">=</span> <span class="va">colour</span>,</span>
+<span>    linewidth <span class="op">=</span> <span class="va">linewidth</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="fl">1</span> <span class="op">/</span> <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_lm</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="fl">1</span> <span class="op">/</span> <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_lm</span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/poly.html">poly</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span>, linewidth <span class="op">=</span> <span class="fl">1</span>, colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/geom-lm-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/geom-lm-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Preste mucha atención al uso de “<code>...</code>”. Cuando se incluye en la definición de función “<code>...</code>” permite que una función acepte argumentos adicionales arbitrarios. Dentro de la función, puedes usar “<code>...</code>” para pasar esos argumentos a otra función. Aquí pasamos “<code>...</code>” a <code>geom_smooth()</code> para que el usuario aún pueda modificar todos los demás argumentos que no hemos anulado explícitamente. Cuando escribes tus propias funciones de componentes, es una buena idea usar siempre “<code>...</code>” de esta manera. </p>
+<p>Finalmente, tenga en cuenta que sólo puede <em>agregar</em> componentes a un gráfico; no puede modificar ni eliminar objetos existentes.</p>
+<section id="ejercicios" class="level3" data-number="18.2.1"><h3 data-number="18.2.1" class="anchored" data-anchor-id="ejercicios">
+<span class="header-section-number">18.2.1</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Cree un objeto que represente un histograma rosa con 100 contenedores.</p></li>
+<li><p>Cree un objeto que represente una escala de relleno con la paleta Blues ColorBrewer.</p></li>
+<li><p>Lea el código fuente de <code>theme_grey()</code>. ¿Cuáles son sus argumentos? ¿Como funciona?</p></li>
+<li><p>Cree <code>scale_colour_wesanderson()</code>. Debería tener un parámetro para elegir la paleta del paquete wesanderson y crear una escala continua o discreta.</p></li>
+</ol></section></section><section id="múltiples-componentes" class="level2" data-number="18.3"><h2 data-number="18.3" class="anchored" data-anchor-id="múltiples-componentes">
+<span class="header-section-number">18.3</span> Múltiples componentes</h2>
+<p>No siempre es posible lograr tus objetivos con un solo componente. Afortunadamente, ggplot2 tiene una manera conveniente de agregar múltiples componentes a un gráfico en un solo paso con una lista. La siguiente función agrega dos capas: una para mostrar la media y otra para mostrar su intervalo de confianza del 95%:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geom_mean</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    <span class="fu">stat_summary</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"mean"</span>, geom <span class="op">=</span> <span class="st">"bar"</span>, fill <span class="op">=</span> <span class="st">"grey70"</span><span class="op">)</span>,</span>
+<span>    <span class="fu">stat_summary</span><span class="op">(</span>fun.data <span class="op">=</span> <span class="st">"mean_cl_normal"</span>, geom <span class="op">=</span> <span class="st">"errorbar"</span>, width <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">class</span>, <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_mean</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">drv</span>, <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_mean</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/geom-mean-1-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/geom-mean-1-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Si la lista contiene elementos <code>NULL</code>, se ignoran. Esto facilita la adición condicional de componentes:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geom_mean</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">se</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    <span class="fu">stat_summary</span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"mean"</span>, geom <span class="op">=</span> <span class="st">"bar"</span>, fill <span class="op">=</span> <span class="st">"grey70"</span><span class="op">)</span>,</span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">se</span><span class="op">)</span> </span>
+<span>      <span class="fu">stat_summary</span><span class="op">(</span>fun.data <span class="op">=</span> <span class="st">"mean_cl_normal"</span>, geom <span class="op">=</span> <span class="st">"errorbar"</span>, width <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">drv</span>, <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_mean</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">drv</span>, <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_mean</span><span class="op">(</span>se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/geom-mean-2-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/geom-mean-2-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<section id="componentes-de-la-trama" class="level3" data-number="18.3.1"><h3 data-number="18.3.1" class="anchored" data-anchor-id="componentes-de-la-trama">
+<span class="header-section-number">18.3.1</span> Componentes de la trama</h3>
+<p>No estás limitado sólo a agregar capas de esta manera. También puede incluir cualquiera de los siguientes tipos de objetos en la lista:</p>
+<ul>
+<li><p>Un marco de datos, que anulará el conjunto de datos predeterminado asociado con el gráfico. (Si agrega un marco de datos por sí solo, necesitará usar <code>%+%</code>, pero esto no es necesario si el marco de datos está en una lista).</p></li>
+<li><p>Un objeto <code>aes()</code>, que se combinará con el mapeo estético predeterminado existente.</p></li>
+<li><p>Escalas, que anulan las escalas existentes, con una advertencia si ya han sido configuradas por el usuario.</p></li>
+<li><p>Sistemas de coordenadas y especificación de facetas, que anulan la configuración existente.</p></li>
+<li><p>Componentes del tema, que anulan los componentes especificados.</p></li>
+</ul></section><section id="anotación" class="level3" data-number="18.3.2"><h3 data-number="18.3.2" class="anchored" data-anchor-id="anotación">
+<span class="header-section-number">18.3.2</span> Anotación</h3>
+<p>A menudo resulta útil agregar anotaciones estándar a un gráfico. En este caso, su función también establecerá los datos en la función de capa, en lugar de heredarlos del gráfico. Hay otras dos opciones que debes configurar al hacer esto. Estos garantizan que la capa sea autónoma: </p>
+<ul>
+<li><p><code>inherit.aes = FALSE</code> evita que la capa herede la estética del trazado principal. Esto garantiza que su anotación funcione independientemente de lo que haya en el gráfico. </p></li>
+<li><p><code>show.legend = FALSE</code> garantiza que su anotación no aparecerá en la leyenda. </p></li>
+</ul>
+<p>Un ejemplo de esta técnica es la función <code>borders()</code> integrada en ggplot2. Está diseñado para agregar bordes de mapas desde uno de los conjuntos de datos del paquete de mapas: </p>
+<div class="cell">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">borders</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">database</span> <span class="op">=</span> <span class="st">"world"</span>, <span class="va">regions</span> <span class="op">=</span> <span class="st">"."</span>, <span class="va">fill</span> <span class="op">=</span> <span class="cn">NA</span>, </span>
+<span>                    <span class="va">colour</span> <span class="op">=</span> <span class="st">"grey50"</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">map_data</span><span class="op">(</span><span class="va">database</span>, <span class="va">regions</span><span class="op">)</span></span>
+<span>  <span class="fu">geom_polygon</span><span class="op">(</span></span>
+<span>    <span class="fu">aes_</span><span class="op">(</span><span class="op">~</span><span class="va">long</span>, <span class="op">~</span><span class="va">lat</span>, group <span class="op">=</span> <span class="op">~</span><span class="va">group</span><span class="op">)</span>, </span>
+<span>    data <span class="op">=</span> <span class="va">df</span>, fill <span class="op">=</span> <span class="va">fill</span>, colour <span class="op">=</span> <span class="va">colour</span>, <span class="va">...</span>, </span>
+<span>    inherit.aes <span class="op">=</span> <span class="cn">FALSE</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="argumentos-adicionales" class="level3" data-number="18.3.3"><h3 data-number="18.3.3" class="anchored" data-anchor-id="argumentos-adicionales">
+<span class="header-section-number">18.3.3</span> Argumentos adicionales</h3>
+<p>Si desea pasar argumentos adicionales a los componentes de su función, <code>...</code> no sirve: no hay forma de dirigir diferentes argumentos a diferentes componentes. En su lugar, deberá pensar en cómo desea que funcione su función, equilibrando los beneficios de tener una función que lo haga todo con el costo de tener una función compleja que sea más difícil de entender. </p>
+<p>Para comenzar, aquí hay un enfoque que utiliza <code><a href="https://rdrr.io/r/utils/modifyList.html">modifyList()</a></code> y <code><a href="https://rdrr.io/r/base/do.call.html">do.call()</a></code>: </p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geom_mean</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span>, <span class="va">bar.params</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">errorbar.params</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>  <span class="va">bar.params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/modifyList.html">modifyList</a></span><span class="op">(</span><span class="va">params</span>, <span class="va">bar.params</span><span class="op">)</span></span>
+<span>  <span class="va">errorbar.params</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/modifyList.html">modifyList</a></span><span class="op">(</span><span class="va">params</span>, <span class="va">errorbar.params</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">bar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="st">"stat_summary"</span>, <span class="fu"><a href="https://rdrr.io/r/utils/modifyList.html">modifyList</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="st">"mean"</span>, geom <span class="op">=</span> <span class="st">"bar"</span>, fill <span class="op">=</span> <span class="st">"grey70"</span><span class="op">)</span>,</span>
+<span>    <span class="va">bar.params</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="va">errorbar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="st">"stat_summary"</span>, <span class="fu"><a href="https://rdrr.io/r/utils/modifyList.html">modifyList</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>fun.data <span class="op">=</span> <span class="st">"mean_cl_normal"</span>, geom <span class="op">=</span> <span class="st">"errorbar"</span>, width <span class="op">=</span> <span class="fl">0.4</span><span class="op">)</span>,</span>
+<span>    <span class="va">errorbar.params</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">bar</span>, <span class="va">errorbar</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">class</span>, <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_mean</span><span class="op">(</span></span>
+<span>    colour <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
+<span>    errorbar.params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.5</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">class</span>, <span class="va">cty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_mean</span><span class="op">(</span></span>
+<span>    bar.params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span>,</span>
+<span>    errorbar.params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Si necesita un comportamiento más complejo, podría ser más fácil crear una geom o estadística personalizada. Puede obtener más información sobre esto en la viñeta extensible de ggplot2 incluida con el paquete. Léelo corriendo <code>vignette("extending-ggplot2")</code>.</p>
+</section><section id="ejercicios-1" class="level3" data-number="18.3.4"><h3 data-number="18.3.4" class="anchored" data-anchor-id="ejercicios-1">
+<span class="header-section-number">18.3.4</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Para aprovechar al máximo el espacio, muchos ejemplos de este libro ocultan las etiquetas y la leyenda de los ejes. Acabamos de copiar y pegar el mismo código en varios lugares, pero tendría más sentido crear una función reutilizable. ¿Cómo sería esa función?</p></li>
+<li><p>Extienda la función <code>borders()</code> para agregar también <code>coord_quickmap()</code> al gráfico.</p></li>
+<li><p>Revise su propio código. ¿Qué combinaciones de geoms o escalas usas todo el tiempo? ¿Cómo podrías extraer el patrón en una función reutilizable?</p></li>
+</ol></section></section><section id="sec-functions" class="level2" data-number="18.4"><h2 data-number="18.4" class="anchored" data-anchor-id="sec-functions">
+<span class="header-section-number">18.4</span> Funciones de trazado</h2>
+<p>La creación de pequeños componentes reutilizables está más en línea con el espíritu de ggplot2: puedes recombinarlos de manera flexible para crear cualquier trama que desees. Pero a veces estás creando la misma trama una y otra vez y no necesitas esa flexibilidad. En lugar de crear componentes, es posible que desee escribir una función que tome datos y parámetros y devuelva un gráfico completo. </p>
+<p>Por ejemplo, podrías resumir el código completo necesario para hacer un gráfico circular:</p>
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">piechart</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">mapping</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span>, <span class="va">mapping</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_bar</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">coord_polar</span><span class="op">(</span>theta <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">xlab</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">ylab</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">piechart</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, fill <span class="op">=</span> <span class="va">class</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="programming_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Esto es mucho menos flexible que el enfoque basado en componentes, pero igualmente es mucho más conciso. Tenga en cuenta que tuvimos cuidado de devolver el objeto de la trama, en lugar de imprimirlo. Eso hace posible agregar otros componentes de ggplot2.</p>
+<p>Puede adoptar un enfoque similar para dibujar gráficos de coordenadas paralelas (PCP). Los PCP requieren una transformación de los datos, por lo que recomendamos escribir dos funciones: una que haga la transformación y otra que genere el gráfico. Mantener estas dos piezas separadas hace la vida mucho más fácil si luego deseas reutilizar la misma transformación para una visualización diferente. </p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">pcp_data</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">is_numeric</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">vapply</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">is.numeric</span>, <span class="fu"><a href="https://rdrr.io/r/base/logical.html">logical</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># Cambiar la escala de columnas numéricas</span></span>
+<span>  <span class="va">rescale01</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">rng</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>    <span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="va">rng</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">rng</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="va">rng</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">df</span><span class="op">[</span><span class="va">is_numeric</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">df</span><span class="op">[</span><span class="va">is_numeric</span><span class="op">]</span>, <span class="va">rescale01</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Agregar identificador de fila</span></span>
+<span>  <span class="va">df</span><span class="op">$</span><span class="va">.row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Trate los números como variables de valor (como medidas)</span></span>
+<span>  <span class="co"># gather_ es la versión estadandar de evaluación de gather</span></span>
+<span>  <span class="co"># y es más fácil de utilizar para programar</span></span>
+<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/deprecated-se.html">gather_</a></span><span class="op">(</span><span class="va">df</span>, <span class="st">"variable"</span>, <span class="st">"value"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">[</span><span class="va">is_numeric</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">pcp</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">pcp_data</span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">variable</span>, <span class="va">value</span>, group <span class="op">=</span> <span class="va">.row</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_line</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">pcp</span><span class="op">(</span><span class="va">mpg</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: `gather_()` was deprecated in tidyr 1.2.0.</span></span>
+<span><span class="co">#&gt; ℹ Please use `gather()` instead.</span></span>
+<span><span class="fu">pcp</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span>colour <span class="op">=</span> <span class="va">drv</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: `gather_()` was deprecated in tidyr 1.2.0.</span></span>
+<span><span class="co">#&gt; ℹ Please use `gather()` instead.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/pcp_data-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="programming_files/figure-html/pcp_data-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<section id="refiriéndose-indirectamente-a-variables." class="level3" data-number="18.4.1"><h3 data-number="18.4.1" class="anchored" data-anchor-id="refiriéndose-indirectamente-a-variables.">
+<span class="header-section-number">18.4.1</span> Refiriéndose indirectamente a variables.</h3>
+<p>La función <code>piechart()</code> anterior es un poco poco atractiva porque requiere que el usuario conozca la especificación exacta <code>aes()</code> que genera un gráfico circular. Sería más conveniente si el usuario pudiera simplemente especificar el nombre de la variable a trazar. Para hacer eso necesitarás aprender un poco más sobre cómo funciona <code>aes()</code>.</p>
+<p><code>aes()</code> usa evaluación ordenada: en lugar de mirar los valores de sus argumentos, mira sus expresiones. Esto dificulta la programación porque cuando desea que se refiera a una variable proporcionada en un argumento, utiliza el nombre del argumento:</p>
+<div class="cell">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_function</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x_var</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x_var</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">my_function</span><span class="op">(</span><span class="va">abc</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Aesthetic mapping: </span></span>
+<span><span class="co">#&gt; * `x` -&gt; `x_var`</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto lo resolvemos utilizando la técnica estándar de programación con tidy-evaluación: abrazar. Abrazar le dice a gglot2 que mire “dentro” del argumento y use su valor, no su nombre literal:</p>
+<div class="cell">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_function</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x_var</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="op">{</span><span class="op">{</span> <span class="va">x_var</span> <span class="op">}</span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">my_function</span><span class="op">(</span><span class="va">abc</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Aesthetic mapping: </span></span>
+<span><span class="co">#&gt; * `x` -&gt; `abc`</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esto facilita la actualización de nuestra función de gráfico circular:</p>
+<div class="cell">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">piechart</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">var</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">data</span>, <span class="fu">aes</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, fill <span class="op">=</span> <span class="op">{</span><span class="op">{</span> <span class="va">var</span> <span class="op">}</span><span class="op">}</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_bar</span><span class="op">(</span>width <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">coord_polar</span><span class="op">(</span>theta <span class="op">=</span> <span class="st">"y"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">xlab</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">ylab</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">mpg</span> <span class="op">|&gt;</span> <span class="fu">piechart</span><span class="op">(</span><span class="va">class</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="programming_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="ejercicios-2" class="level3" data-number="18.4.2"><h3 data-number="18.4.2" class="anchored" data-anchor-id="ejercicios-2">
+<span class="header-section-number">18.4.2</span> Ejercicios</h3>
+<ol type="1">
+<li><p>Cree una función <code>distribution()</code> especialmente diseñada para visualizar distribuciones continuas. Permita que el usuario proporcione un conjunto de datos y el nombre de una variable para visualizar. Permítales elegir entre histogramas, polígonos de frecuencia y gráficos de densidad. ¿Qué otros argumentos le gustaría incluir?</p></li>
+<li><p>¿Qué argumentos adicionales debería tomar <code>pcp()</code>? ¿Cuáles son las desventajas de cómo se usa <code>...</code> en el código actual?</p></li>
+</ol></section></section><section id="programación-funcional" class="level2" data-number="18.5"><h2 data-number="18.5" class="anchored" data-anchor-id="programación-funcional">
+<span class="header-section-number">18.5</span> Programación funcional</h2>
+<p>Dado que los objetos ggplot2 son simplemente objetos R normales, puedes ponerlos en una lista. Esto significa que puede aplicar todas las excelentes herramientas de programación funcional de R. Por ejemplo, si quisieras agregar diferentes geoms al mismo gráfico base, podrías ponerlas en una lista y usar <code><a href="https://rdrr.io/r/base/lapply.html">lapply()</a></code>. </p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geoms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>group <span class="op">=</span> <span class="fu">cut_width</span><span class="op">(</span><span class="va">displ</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span>, <span class="fu">geom_smooth</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">geoms</span>, <span class="kw">function</span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="va">p</span> <span class="op">+</span> <span class="va">g</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[2]]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; [[3]]</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using method = 'loess' and formula = 'y ~ x'</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="programming_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="programming_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="programming_files/figure-html/unnamed-chunk-8-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Si no está familiarizado con la programación funcional, lea <a href="https://adv-r.hadley.nz/fp.html" class="uri">https://adv-r.hadley.nz/fp.html</a> y piense en cómo podría aplicar las técnicas a su código de trazado duplicado.</p>
+<section id="ejercicios-3" class="level3" data-number="18.5.1"><h3 data-number="18.5.1" class="anchored" data-anchor-id="ejercicios-3">
+<span class="header-section-number">18.5.1</span> Ejercicios</h3>
+<ol type="1">
+<li>
+<p>¿Cómo podrías agregar una capa <code>geom_point()</code> a cada elemento de la siguiente lista?</p>
+<div class="cell">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">diamonds</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">carat</span>, <span class="va">price</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">faithfuld</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">waiting</span>, <span class="va">eruptions</span>, size <span class="op">=</span> <span class="va">density</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</li>
+<li>
+<p>¿Qué hace la siguiente función? ¿Cuál es un mejor nombre para ello?</p>
+<div class="cell">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mystery</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/funprog.html">Reduce</a></span><span class="op">(</span><span class="va">`+`</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>, accumulate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">mystery</span><span class="op">(</span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>  <span class="fu">geom_smooth</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>  <span class="fu">xlab</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span>, </span>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</li>
+</ol>
+
+
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./extending.html" class="pagination-link" aria-label="Temas avanzados">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Temas avanzados</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./internals.html" class="pagination-link" aria-label="Internos de ggplot2">
+        <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Internos de ggplot2</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>ggplot2: Gráficos elegantes para análisis de datos (3e) fue escrito por Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

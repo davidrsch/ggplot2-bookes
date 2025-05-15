@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen">
+<title>20&nbsp; Extendiendo ggplot2 – ggplot2: Gráficos elegantes para análisis de datos (3e)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ext-springs.html" rel="next">
+<link href="./internals.html" rel="prev">
+<link href="./cover.jpg" rel="icon" type="image/jpeg">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6e4858b4921ffe5a9c7d897cee0e5447.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+</head>
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./extending.html">Temas avanzados</a></li><li class="breadcrumb-item"><a href="./extensions.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Extendiendo ggplot2</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">ggplot2: Gráficos elegantes para análisis de datos (3e)</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label=""><i class="bi bi-github"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+<li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/hadley/ggplot2-book/">
+            Original
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://github.com/davidrsch/ggplot2-bookes">
+            Traducción
+            </a>
+          </li>
+      </ul>
+</div>
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Alternar modo lector">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">¡Bienvenidos!</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-3e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la tercera edición</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./preface-2e.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio a la segunda edición.</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./start.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Empezando</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getting-started.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Primeros pasos</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./toolbox.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Layers</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./individual-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Geomas individuales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./collective-geoms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Geomas colectivas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./statistical-summaries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Resúmenes estadísticos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./maps.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mapas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Redes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./annotations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Anotaciones</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./arranging-plots.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Organizar gráficas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./scales.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Scales</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-position.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Escalas de posición y ejes.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-colour.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Escalas de colores y leyendas.</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-other.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Otra estéticas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./mastery.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">La Gramática</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./layers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Construya una gráfica capa por capa</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./scales-guides.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Escalas y guías</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./coord.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Sistemas coordinados</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./facet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Facetado</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./themes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Temas</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./extending.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Temas avanzados</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Programar con ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./internals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Internos de ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./extensions.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Extendiendo ggplot2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ext-springs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Un caso de estudio</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+<li>
+<a href="#nuevos-temas" id="toc-nuevos-temas" class="nav-link active" data-scroll-target="#nuevos-temas"><span class="header-section-number">20.1</span> Nuevos temas</a>
+  <ul class="collapse">
+<li><a href="#modificando-temas" id="toc-modificando-temas" class="nav-link" data-scroll-target="#modificando-temas"><span class="header-section-number">20.1.1</span> Modificando temas</a></li>
+  <li><a href="#temas-completos" id="toc-temas-completos" class="nav-link" data-scroll-target="#temas-completos"><span class="header-section-number">20.1.2</span> Temas completos</a></li>
+  <li><a href="#sec-defining-theme-elements" id="toc-sec-defining-theme-elements" class="nav-link" data-scroll-target="#sec-defining-theme-elements"><span class="header-section-number">20.1.3</span> Definición de elementos del tema</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-new-stats" id="toc-sec-new-stats" class="nav-link" data-scroll-target="#sec-new-stats"><span class="header-section-number">20.2</span> Nuevas estadísticas</a>
+  <ul class="collapse">
+<li><a href="#creando-estad%C3%ADsticas" id="toc-creando-estadísticas" class="nav-link" data-scroll-target="#creando-estad%C3%ADsticas"><span class="header-section-number">20.2.1</span> Creando estadísticas</a></li>
+  <li><a href="#sec-modifying-stat-params" id="toc-sec-modifying-stat-params" class="nav-link" data-scroll-target="#sec-modifying-stat-params"><span class="header-section-number">20.2.2</span> Modificar parámetros y datos</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-new-geoms" id="toc-sec-new-geoms" class="nav-link" data-scroll-target="#sec-new-geoms"><span class="header-section-number">20.3</span> Nuevos geoms</a>
+  <ul class="collapse">
+<li><a href="#sec-modifying-geom-defaults" id="toc-sec-modifying-geom-defaults" class="nav-link" data-scroll-target="#sec-modifying-geom-defaults"><span class="header-section-number">20.3.1</span> Modificar los valores predeterminados de la geom</a></li>
+  <li><a href="#sec-modifying-geom-data" id="toc-sec-modifying-geom-data" class="nav-link" data-scroll-target="#sec-modifying-geom-data"><span class="header-section-number">20.3.2</span> Modificando datos de geom</a></li>
+  <li><a href="#sec-combining-multiple-geoms" id="toc-sec-combining-multiple-geoms" class="nav-link" data-scroll-target="#sec-combining-multiple-geoms"><span class="header-section-number">20.3.3</span> Combinando múltiples geoms</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-new-coords" id="toc-sec-new-coords" class="nav-link" data-scroll-target="#sec-new-coords"><span class="header-section-number">20.4</span> Nuevas coordenadas</a></li>
+  <li><a href="#sec-new-scales" id="toc-sec-new-scales" class="nav-link" data-scroll-target="#sec-new-scales"><span class="header-section-number">20.5</span> Nuevas escalas</a></li>
+  <li><a href="#nuevas-posiciones" id="toc-nuevas-posiciones" class="nav-link" data-scroll-target="#nuevas-posiciones"><span class="header-section-number">20.6</span> Nuevas posiciones</a></li>
+  <li><a href="#nuevas-facetas" id="toc-nuevas-facetas" class="nav-link" data-scroll-target="#nuevas-facetas"><span class="header-section-number">20.7</span> Nuevas facetas</a></li>
+  </ul></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./extending.html">Temas avanzados</a></li><li class="breadcrumb-item"><a href="./extensions.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Extendiendo ggplot2</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-extensions" class="quarto-section-identifier"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Extendiendo ggplot2</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header><div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>You are reading the work-in-progress third edition of the ggplot2 book. This chapter should be readable but is currently undergoing final polishing.</p>
+</div>
+</div>
+</div>
+<p>El paquete ggplot2 ha sido diseñado de una manera que hace que sea relativamente fácil ampliar la funcionalidad con nuevos tipos de componentes gramaticales comunes. El sistema de extensiones le permite distribuir estas extensiones como paquetes si así lo desea, pero la facilidad con la que se pueden crear extensiones significa que también es viable escribir extensiones únicas para resolver un desafío de trazado particular. Este capítulo analiza diferentes formas en que se puede ampliar ggplot2 y destaca cuestiones específicas a tener en cuenta. Presentaremos pequeños ejemplos a lo largo del capítulo, pero para ver un ejemplo trabajado de principio a fin, consulte <a href="ext-springs.html" class="quarto-xref"><span>Capítulo 21</span></a>.</p>
+<section id="nuevos-temas" class="level2" data-number="20.1"><h2 data-number="20.1" class="anchored" data-anchor-id="nuevos-temas">
+<span class="header-section-number">20.1</span> Nuevos temas</h2>
+<section id="modificando-temas" class="level3" data-number="20.1.1"><h3 data-number="20.1.1" class="anchored" data-anchor-id="modificando-temas">
+<span class="header-section-number">20.1.1</span> Modificando temas</h3>
+<p>Los temas son probablemente la forma más sencilla de extensiones, ya que solo requieren que escribas el código que normalmente escribirías al crear gráficos con ggplot2. Si bien es posible crear un nuevo tema desde cero, normalmente es más fácil y menos propenso a errores modificar un tema existente. Este enfoque se adopta a menudo en la fuente ggplot2. Por ejemplo, aquí está el código fuente de <code>theme_minimal()</code>:</p>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">theme_minimal</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">base_size</span> <span class="op">=</span> <span class="fl">11</span>, </span>
+<span>                          <span class="va">base_family</span> <span class="op">=</span> <span class="st">""</span>, </span>
+<span>                          <span class="va">base_line_size</span> <span class="op">=</span> <span class="va">base_size</span><span class="op">/</span><span class="fl">22</span>, </span>
+<span>                          <span class="va">base_rect_size</span> <span class="op">=</span> <span class="va">base_size</span><span class="op">/</span><span class="fl">22</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu">theme_bw</span><span class="op">(</span></span>
+<span>      base_size <span class="op">=</span> <span class="va">base_size</span>, </span>
+<span>      base_family <span class="op">=</span> <span class="va">base_family</span>, </span>
+<span>      base_line_size <span class="op">=</span> <span class="va">base_line_size</span>, </span>
+<span>      base_rect_size <span class="op">=</span> <span class="va">base_rect_size</span></span>
+<span>    <span class="op">)</span> <span class="op">%+replace%</span> </span>
+<span>    <span class="fu">theme</span><span class="op">(</span></span>
+<span>      axis.ticks <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>      legend.background <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>      legend.key <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>      panel.background <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>      panel.border <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>      strip.background <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>      plot.background <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>, </span>
+<span>      complete <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Como puede ver, el código no se ve muy diferente al código que normalmente escribe cuando diseña un gráfico (<span class="quarto-unresolved-ref">?sec-polish</span>). La función <code>theme_minimal()</code> usa <code>theme_bw()</code> como tema base y luego reemplaza ciertas partes con su propio estilo usando el operador <code>%+replace%</code>. Al escribir temas nuevos, es una buena idea proporcionar algunos parámetros al usuario para definir aspectos generales del tema. Un aspecto importante es el tamaño del texto y las líneas, pero otros aspectos podrían ser, p.e. colores clave y de acento del tema. Por ejemplo, podríamos crear una variante de <code>theme_minimal()</code> que permita al usuario especificar el color de fondo de la trama:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">theme_background</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">background</span> <span class="op">=</span> <span class="st">"white"</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">theme_minimal</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">%+replace%</span></span>
+<span>    <span class="fu">theme</span><span class="op">(</span></span>
+<span>      plot.background <span class="op">=</span> <span class="fu">element_rect</span><span class="op">(</span></span>
+<span>        fill <span class="op">=</span> <span class="va">background</span>,</span>
+<span>        colour <span class="op">=</span> <span class="va">background</span></span>
+<span>      <span class="op">)</span>,</span>
+<span>      complete <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme_minimal</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme_background</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme_background</span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">14</span>, background <span class="op">=</span> <span class="st">"grey70"</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-3-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+</section><section id="temas-completos" class="level3" data-number="20.1.2"><h3 data-number="20.1.2" class="anchored" data-anchor-id="temas-completos">
+<span class="header-section-number">20.1.2</span> Temas completos</h3>
+<p>Un punto importante a tener en cuenta es el uso de <code>complete = TRUE</code> en el código para <code>theme_minimal()</code> y <code>theme_background()</code>. Siempre es una buena práctica hacer esto al definir sus propios temas en un paquete de extensión ggplot2: esto asegurará que su tema se comporte de la misma manera que el tema predeterminado y, como consecuencia, será menos probable que sorprenda a los usuarios. Para ver por qué esto es necesario, compare estos dos temas:</p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Bueno </span></span>
+<span><span class="va">theme_predictable</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">%+replace%</span> </span>
+<span>    <span class="fu">theme</span><span class="op">(</span></span>
+<span>      axis.line.x <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span>,</span>
+<span>      axis.line.y <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span>,</span>
+<span>      complete <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># malo</span></span>
+<span><span class="va">theme_surprising</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">%+replace%</span> </span>
+<span>    <span class="fu">theme</span><span class="op">(</span></span>
+<span>      axis.line.x <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span>,</span>
+<span>      axis.line.y <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ambos temas están destinados a hacer lo mismo: cambiar los valores predeterminados a <code>theme_classic()</code> para que el eje x se dibuje con una línea azul y el eje y se dibuje con una línea naranja. A primera vista, parece que ambas versiones se comportan según las expectativas del usuario:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme_predictable</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme_surprising</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>Sin embargo, supongamos que el usuario de su tema quiere eliminar las líneas del eje:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme</span><span class="op">(</span>axis.line <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme_predictable</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme</span><span class="op">(</span>axis.line <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">theme_surprising</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme</span><span class="op">(</span>axis.line <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="3">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid" width="900"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid" width="900"></p>
+</div>
+</div>
+</div>
+<p>El comportamiento de <code>theme_predictable()</code> es el mismo que <code>theme_classic()</code> y las líneas del eje se eliminan, pero para <code>theme_surprising()</code> esto no sucede. La razón de esto es que ggplot2 trata los temas completos como una colección de valores “de respaldo”: cuando el usuario agrega <code>theme(axis.line = element_blank())</code> a un tema completo, no hay necesidad de confiar en el valor de respaldo para <code>axis.line.x</code> o <code>axis.line.y</code>, porque se heredan de <code>axis.line</code> en el comando de usuario. Esto es una amabilidad para sus usuarios, ya que les permite sobrescribir todo lo que hereda de <code>axis.line</code> usando un comando como <code>theme_predictable() + theme(axis.line = ...)</code>. Por el contrario, <code>theme_surprising()</code> no especifica un tema completo. Cuando el usuario llama a <code>theme_surprising()</code>, los valores alternativos se toman de <code>theme_classic()</code>, pero lo más importante es que ggplot2 trata el comando <code>theme()</code> que establece <code>axis.line.x</code> y <code>axis.line.y</code> exactamente como si el usuario lo hubiera escrito. En consecuencia, la especificación de la trama es equivalente a esto:</p>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">+</span> </span>
+<span>  <span class="fu">theme_classic</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span></span>
+<span>      axis.line.x <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span>,</span>
+<span>      axis.line.y <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span>,</span>
+<span>      axis.line <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="extensions_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En este código, se aplica la regla de herencia específica primero y, como tal, la configuración <code>axis.line</code> no anula la regla más específica <code>axis.line.x</code>.</p>
+</section><section id="sec-defining-theme-elements" class="level3" data-number="20.1.3"><h3 data-number="20.1.3" class="anchored" data-anchor-id="sec-defining-theme-elements">
+<span class="header-section-number">20.1.3</span> Definición de elementos del tema</h3>
+<p>En <span class="quarto-unresolved-ref">?sec-polising</span> vimos que la estructura de un tema ggplot2 está definida por el árbol de elementos. El árbol de elementos especifica qué tipo tiene cada elemento del tema y de dónde hereda su valor (puede usar la función <code>get_element_tree()</code> para devolver este árbol como una lista). El sistema de extensión para ggplot2 hace posible definir nuevos elementos de tema registrándolos como parte del árbol de elementos usando la función <code>register_theme_elements()</code>. Digamos que estás escribiendo un nuevo paquete llamado “ggxyz” que incluye una anotación de panel como parte del sistema de coordenadas y quieres que esta anotación de panel sea un elemento del tema:</p>
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">register_theme_elements</span><span class="op">(</span></span>
+<span>  ggxyz.panel.annotation <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span></span>
+<span>    color <span class="op">=</span> <span class="st">"blue"</span>, </span>
+<span>    hjust <span class="op">=</span> <span class="fl">0.95</span>, </span>
+<span>    vjust <span class="op">=</span> <span class="fl">0.05</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  element_tree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>    ggxyz.panel.annotation <span class="op">=</span> <span class="fu">el_def</span><span class="op">(</span></span>
+<span>      class <span class="op">=</span> <span class="st">"element_text"</span>, </span>
+<span>      inherit <span class="op">=</span> <span class="st">"text"</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Hay dos puntos a tener en cuenta aquí al definir nuevos elementos temáticos en un paquete:</p>
+<ul>
+<li><p>Es importante llamar a <code>register_theme_elements()</code> desde la función <code>.onLoad()</code> de tu paquete, para que los nuevos elementos del tema estén disponibles para cualquiera que use funciones de tu paquete, independientemente de si el paquete se ha adjuntado.</p></li>
+<li><p>Siempre es una buena idea incluir el nombre de su paquete como prefijo para cualquier elemento nuevo del tema. De esa manera, si alguien más escribe un paquete de anotaciones de panel <code>ggabc</code>, no habrá conflicto potencial entre los elementos del tema <code>ggxyz.panel.annotation</code> y <code>ggabc.panel.annotation</code>.</p></li>
+</ul>
+<p>Una vez que se haya actualizado el árbol de elementos, el paquete puede definir un nuevo sistema de coordenadas que utilice el nuevo elemento temático. Una forma sencilla de hacer esto es definir una función que cree una nueva instancia del objeto ggproto <code>CoordCartesian</code>. Hablaremos más sobre esto en <a href="#sec-new-coords" class="quarto-xref"><span>Sección 20.4</span></a>, pero por ahora basta con tener en cuenta que este código funcionará:</p>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">coord_annotate</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">label</span> <span class="op">=</span> <span class="st">"panel annotation"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">ggproto</span><span class="op">(</span><span class="cn">NULL</span>, <span class="va">CoordCartesian</span>,</span>
+<span>          limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span>,</span>
+<span>          expand <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          default <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>          clip <span class="op">=</span> <span class="st">"on"</span>,</span>
+<span>          render_fg <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">panel_params</span>, <span class="va">theme</span><span class="op">)</span> <span class="op">{</span></span>
+<span>            <span class="fu">element_render</span><span class="op">(</span></span>
+<span>              theme <span class="op">=</span> <span class="va">theme</span>, </span>
+<span>              element <span class="op">=</span> <span class="st">"ggxyz.panel.annotation"</span>, </span>
+<span>              label <span class="op">=</span> <span class="va">label</span></span>
+<span>            <span class="op">)</span></span>
+<span>          <span class="op">}</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Entonces ahora esto funciona:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">base</span> <span class="op">+</span> <span class="fu">coord_annotate</span><span class="op">(</span><span class="st">"annotation in blue"</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">coord_annotate</span><span class="op">(</span><span class="st">"annotation in blue"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">theme_dark</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+
+</div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Habiendo modificado el árbol de elementos, vale la pena mencionar que la función <code>reset_theme_settings()</code> restaura el árbol de elementos predeterminado, descarta todas las definiciones de elementos nuevos y (a menos que esté desactivada) restablece el tema actualmente activo al valor predeterminado.</p>
+</section></section><section id="sec-new-stats" class="level2" data-number="20.2"><h2 data-number="20.2" class="anchored" data-anchor-id="sec-new-stats">
+<span class="header-section-number">20.2</span> Nuevas estadísticas</h2>
+<p>Puede parecer sorprendente, pero crear nuevas estadísticas es una de las formas más útiles de ampliar las capacidades de ggplot2. Cuando los usuarios agregan nuevas capas a un gráfico, con mayor frecuencia usan una función geom, por lo que es tentador como desarrollador pensar que su extensión ggplot2 debería encapsularse como una nueva geom. Hasta cierto punto, esto es cierto, ya que sus usuarios probablemente querrán usar una función de geom, pero en realidad la variedad entre diferentes geoms se debe principalmente a la variedad de diferentes estadísticas. Uno de los beneficios de trabajar con estadísticas es que se trata únicamente de transformaciones de datos. La mayoría de los usuarios y desarrolladores de R se sienten muy cómodos con la transformación de datos, lo que facilita la tarea de definir una nueva estadística. Siempre que el comportamiento deseado pueda encapsularse en una estadística, no hay necesidad de manipular ninguna llamada a la grilla.</p>
+<section id="creando-estadísticas" class="level3" data-number="20.2.1"><h3 data-number="20.2.1" class="anchored" data-anchor-id="creando-estadísticas">
+<span class="header-section-number">20.2.1</span> Creando estadísticas</h3>
+<p>Como se analiza en <a href="internals.html" class="quarto-xref"><span>Capítulo 19</span></a>, el comportamiento principal de una estadística se captura mediante una sucesión escalonada de llamadas a <code>compute_layer()</code>, <code>compute_panel()</code> y <code>compute_group()</code>, todos los cuales son métodos asociados con el Objeto ggproto que define la estadística. De forma predeterminada, las dos funciones principales no hacen mucho, simplemente dividen los datos y luego los pasan a la siguiente función:</p>
+<ul>
+<li>
+<code>compute_layer()</code> divide los datos establecidos por la columna <code>PANEL</code>, llama a <code>compute_panel()</code> y vuelve a ensamblar los resultados.</li>
+<li>
+<code>compute_panel()</code> divide los datos del panel por la columna <code>group</code>, llama a <code>compute_group()</code> y vuelve a ensamblar los resultados.</li>
+</ul>
+<p>Debido a esto, el único método que normalmente necesitas especificar como desarrollador es la función <code>compute_group()</code>, cuyo trabajo es tomar los datos de un único grupo y transformarlos apropiadamente. Esto será suficiente para crear una estadística funcional, aunque es posible que no produzca el mejor rendimiento. Como consecuencia, a veces los desarrolladores encuentran valioso descargar parte del trabajo a <code>compute_panel()</code> siempre que sea posible: hacerlo permite vectorizar los cálculos y evitar un costoso paso de división-combinación (veremos un ejemplo de esto más adelante en <span class="citation" data-cites="seg-primavera-estadística">(<a href="#ref-seg-primavera-estad%C3%ADstica" role="doc-biblioref"><strong>seg-primavera-estadística?</strong></a>)</span>). Sin embargo, como regla general es mejor comenzar modificando <code>compute_group()</code> únicamente y ver si el rendimiento es el adecuado.</p>
+<p>Para ilustrar esto, comenzaremos creando una estadística que calcule el casco convexo de un conjunto de puntos, usando la función <code><a href="https://rdrr.io/r/grDevices/chull.html">chull()</a></code> incluida en <code>grDevices</code>. Como es de esperar, la mayor parte del trabajo lo realiza un nuevo objeto ggproto que crearemos:</p>
+<div class="cell">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">StatChull</span> <span class="op">&lt;-</span> <span class="fu">ggproto</span><span class="op">(</span><span class="st">"StatChull"</span>, <span class="va">Stat</span>,</span>
+<span>  compute_group <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">scales</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/grDevices/chull.html">chull</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">x</span>, <span class="va">data</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>  required_aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Como se describe en <a href="internals.html#sec-ggproto" class="quarto-xref"><span>Sección 19.4</span></a>, los dos primeros argumentos de <code>ggproto()</code> se usan para indicar que este objeto define una nueva clase (convenientemente llamada <code>"StatChull"</code>) que hereda campos y métodos del objeto <code>Stat</code>. Luego especificamos solo aquellos campos y métodos que deben modificarse con respecto a los valores predeterminados proporcionados por <code>Stat</code>, en este caso <code>compute_group()</code> y <code>required_aes</code>. Nuestra función <code>compute_group()</code> toma dos entradas, <code>data</code> y <code>scales</code>—porque esto es lo que ggplot2 espera—pero el cálculo real depende sólo de los <code>data</code>. Tenga en cuenta que debido a que el cálculo necesariamente requiere que ambas estéticas de posición estén presentes, también hemos especificado el campo <code>required_aes</code> para asegurarnos de que ggplot2 sepa que estas estéticas son requeridas.</p>
+<p>Al crear este objeto ggproto tenemos una estadística funcional, pero aún no le hemos dado al usuario una forma de acceder a ella. Para solucionar esto escribimos una función de capa, <code>stat_chull()</code>. Todas las funciones de capa tienen la misma forma: usted especifica los valores predeterminados en los argumentos de la función y luego llama a <code>layer()</code>, enviando <code>...</code> al argumento <code>params</code>. Los argumentos en <code>...</code> serán argumentos para la geom (si estás creando un contenedor de estadísticas), argumentos para la estadística (si estás creando un contenedor de geom) o la estética que se establecerá. <code>layer()</code> se encarga de separar los diferentes parámetros y asegurarse de que estén almacenados en el lugar correcto. Entonces nuestra función <code>stat_chull()</code> se ve así</p>
+<div class="cell">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">stat_chull</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mapping</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">data</span> <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                       <span class="va">geom</span> <span class="op">=</span> <span class="st">"polygon"</span>, <span class="va">position</span> <span class="op">=</span> <span class="st">"identity"</span>, </span>
+<span>                       <span class="va">na.rm</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">show.legend</span> <span class="op">=</span> <span class="cn">NA</span>, </span>
+<span>                       <span class="va">inherit.aes</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">layer</span><span class="op">(</span></span>
+<span>    stat <span class="op">=</span> <span class="va">StatChull</span>, </span>
+<span>    data <span class="op">=</span> <span class="va">data</span>, </span>
+<span>    mapping <span class="op">=</span> <span class="va">mapping</span>, </span>
+<span>    geom <span class="op">=</span> <span class="va">geom</span>, </span>
+<span>    position <span class="op">=</span> <span class="va">position</span>, </span>
+<span>    show.legend <span class="op">=</span> <span class="va">show.legend</span>, </span>
+<span>    inherit.aes <span class="op">=</span> <span class="va">inherit.aes</span>, </span>
+<span>    params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="va">na.rm</span>, <span class="va">...</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>y nuestra estadística ahora se puede utilizar en gráficos:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">stat_chull</span><span class="op">(</span>fill <span class="op">=</span> <span class="cn">NA</span>, colour <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span>, colour <span class="op">=</span> <span class="va">drv</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">stat_chull</span><span class="op">(</span>fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-14-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Al crear nuevas estadísticas, suele ser una buena idea proporcionar un constructor <code>geom_*()</code> adjunto, así como el constructor <code>stat_*()</code>, porque la mayoría de los usuarios están acostumbrados a agregar capas de trazado con geoms en lugar de estadísticas. Mostraremos cómo se vería una función <code>geom_chull()</code> en <a href="#sec-new-geoms" class="quarto-xref"><span>Sección 20.3</span></a>.</p>
+<p>Tenga en cuenta que no siempre es posible definir el constructor <code>geom_*()</code> de forma sensata. Esto puede suceder cuando no hay una geom predeterminada obvia para la nueva estadística, o si la estadística pretende ofrecer una ligera modificación a un par de geom/stat existente. En tales casos, puede ser aconsejable proporcionar sólo una función <code>stat_*()</code>.</p>
+</section><section id="sec-modifying-stat-params" class="level3" data-number="20.2.2"><h3 data-number="20.2.2" class="anchored" data-anchor-id="sec-modifying-stat-params">
+<span class="header-section-number">20.2.2</span> Modificar parámetros y datos</h3>
+<p>Al definir nuevas estadísticas, a menudo es necesario especificar las funciones <code>setup_params()</code> y/o <code>setup_data()</code>. Estos se llaman antes de las funciones <code>compute_*()</code> y permiten que la estadística reaccione y se modifique en respuesta a los parámetros y datos (especialmente los datos, ya que no están disponibles cuando se construye la estadística):</p>
+<ul>
+<li>Primero se llama a la función <code>setup_params()</code>. Toma dos argumentos correspondientes a la capa <code>data</code> y una lista de parámetros (<code>params</code>) especificados durante la construcción, y devuelve una lista modificada de parámetros que se utilizarán en cálculos posteriores. Debido a que los parámetros son utilizados por las funciones <code>compute_*()</code>, los elementos de la lista deben corresponder a los nombres de los argumentos en las funciones <code>compute_*()</code> para que estén disponibles.</li>
+<li>A continuación se llama a la función <code>setup_data()</code>. También toma <code>data</code> y <code>params</code> como entrada, aunque los parámetros que recibe son los parámetros modificados devueltos desde <code>setup_params()</code>, y devuelve los datos de la capa modificada. Es importante que no importa qué modificaciones ocurran en <code>setup_data()</code> las columnas <code>PANEL</code> y <code>group</code> permanezcan intactas.</li>
+</ul>
+<p>En el siguiente ejemplo, mostramos cómo utilizar el método <code>setup_params()</code> para definir una nueva estadística. Más adelante se incluye un ejemplo de modificación del método <code>setup_data()</code>, en <a href="#sec-modifying-geom-data" class="quarto-xref"><span>Sección 20.3.2</span></a>.</p>
+<p>Supongamos que queremos crear <code>StatDensityCommon</code>, una estadística que calcula una estimación de densidad de una variable después de estimar un ancho de banda predeterminado para aplicar a todos los grupos de los datos. Esto se puede hacer de muchas maneras diferentes, pero para simplificar, imaginemos que tenemos una función <code>common_bandwidth()</code> que estima el ancho de banda por separado para cada grupo usando la función <code><a href="https://rdrr.io/r/stats/bandwidth.html">bw.nrd0()</a></code> y luego devuelve el promedio:</p>
+<div class="cell">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">common_bandwidth</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">split_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html">split</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">x</span>, <span class="va">data</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
+<span>  <span class="va">bandwidth</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">vapply</a></span><span class="op">(</span><span class="va">split_data</span>, <span class="va">bw.nrd0</span>, <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">bandwidth</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Lo que queremos de <code>StatDensityCommon</code> es usar la función <code>common_bandwith()</code> para establecer un ancho de banda común antes de que los datos se separen por grupo y se pasen a la función <code>compute_group()</code>. Aquí es donde el método <code>setup_params()</code> resulta útil:</p>
+<div class="cell">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">StatDensityCommon</span> <span class="op">&lt;-</span> <span class="fu">ggproto</span><span class="op">(</span><span class="st">"StatDensityCommon"</span>, <span class="va">Stat</span>,</span>
+<span>  required_aes <span class="op">=</span> <span class="st">"x"</span>,</span>
+<span>  </span>
+<span>  setup_params <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">params</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">bandwith</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">params</span><span class="op">$</span><span class="va">bandwidth</span> <span class="op">&lt;-</span> <span class="fu">common_bandwidth</span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"Picking bandwidth of "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">signif</a></span><span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">bandwidth</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">params</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span>    </span>
+<span>  compute_group <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">scales</span>, <span class="va">bandwidth</span> <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/density.html">density</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">x</span>, bw <span class="op">=</span> <span class="va">bandwidth</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">x</span>, y <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>  </span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Luego definimos una función <code>stat_*()</code> de la forma habitual:</p>
+<div class="cell">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">stat_density_common</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mapping</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">data</span> <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                                <span class="va">geom</span> <span class="op">=</span> <span class="st">"line"</span>, <span class="va">position</span> <span class="op">=</span> <span class="st">"identity"</span>, </span>
+<span>                                <span class="va">na.rm</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">show.legend</span> <span class="op">=</span> <span class="cn">NA</span>, </span>
+<span>                                <span class="va">inherit.aes</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">bandwidth</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">layer</span><span class="op">(</span></span>
+<span>    stat <span class="op">=</span> <span class="va">StatDensityCommon</span>, </span>
+<span>    data <span class="op">=</span> <span class="va">data</span>, </span>
+<span>    mapping <span class="op">=</span> <span class="va">mapping</span>, </span>
+<span>    geom <span class="op">=</span> <span class="va">geom</span>, </span>
+<span>    position <span class="op">=</span> <span class="va">position</span>, </span>
+<span>    show.legend <span class="op">=</span> <span class="va">show.legend</span>, </span>
+<span>    inherit.aes <span class="op">=</span> <span class="va">inherit.aes</span>, </span>
+<span>    params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>      bandwidth <span class="op">=</span> <span class="va">bandwidth</span>, </span>
+<span>      na.rm <span class="op">=</span> <span class="va">na.rm</span>,</span>
+<span>      <span class="va">...</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora podemos aplicar nuestra nueva estadística</p>
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, colour <span class="op">=</span> <span class="va">drv</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">stat_density_common</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Picking bandwidth of 0.345</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="extensions_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</section></section><section id="sec-new-geoms" class="level2" data-number="20.3"><h2 data-number="20.3" class="anchored" data-anchor-id="sec-new-geoms">
+<span class="header-section-number">20.3</span> Nuevos geoms</h2>
+<p>Si bien se pueden lograr muchas cosas creando nuevas estadísticas, hay situaciones en las que es necesario crear una nueva geom. Algunos de estos son</p>
+<ul>
+<li>No tiene sentido devolver datos de la estadística en una forma que sea comprensible para cualquier geom actual.</li>
+<li>La capa necesita combinar la salida de múltiples geoms.</li>
+<li>La geom necesita devolver grobs que actualmente no están disponibles en las geoms existentes.</li>
+</ul>
+<p>Crear nuevas geoms puede resultar un poco más desalentador que crear nuevas estadísticas, ya que el resultado final es una colección de grobs en lugar de un marco de datos modificado y esto es algo fuera de la zona de confort de muchos desarrolladores. Aún así, aparte del último punto anterior, es posible arreglárselas sin tener que pensar demasiado en la cuadrícula y los grobs.</p>
+<section id="sec-modifying-geom-defaults" class="level3" data-number="20.3.1"><h3 data-number="20.3.1" class="anchored" data-anchor-id="sec-modifying-geom-defaults">
+<span class="header-section-number">20.3.1</span> Modificar los valores predeterminados de la geom</h3>
+<p>En muchas situaciones, su nueva geom puede ser simplemente una geom existente que espera entradas ligeramente diferentes o tiene valores de parámetros predeterminados diferentes. El ejemplo <code>stat_chull()</code> de la sección anterior es un buen ejemplo de esto. Tenga en cuenta que al crear gráficos usando <code>stat_chull()</code> teníamos que especificar manualmente los parámetros <code>fill</code> y <code>color</code> si no estaban asignados a la estética. La razón de esto es que <code>GeomPolygon</code> crea un polígono relleno sin bordes de forma predeterminada, y esto no se adapta bien a las necesidades de nuestra geom de casco convexo. Para hacernos la vida un poco más fácil, podemos crear una subclase de <code>GeomPolygon</code> que modifique los valores predeterminados para que produzca un polígono hueco de forma predeterminada. Podemos hacer esto de forma sencilla anulando el valor <code>default_aes</code>:</p>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">GeomPolygonHollow</span> <span class="op">&lt;-</span> <span class="fu">ggproto</span><span class="op">(</span><span class="st">"GeomPolygonHollow"</span>, <span class="va">GeomPolygon</span>,</span>
+<span>  default_aes <span class="op">=</span> <span class="fu">aes</span><span class="op">(</span></span>
+<span>    colour <span class="op">=</span> <span class="st">"black"</span>, </span>
+<span>    fill <span class="op">=</span> <span class="cn">NA</span>, </span>
+<span>    linewidth <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>    linetype <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="cn">NA</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora podemos definir nuestra función constructora <code>geom_chull()</code> usando <code>GeomPolygonHollow</code> como geom predeterminado:</p>
+<div class="cell">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geom_chull</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mapping</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">data</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">stat</span> <span class="op">=</span> <span class="st">"chull"</span>,</span>
+<span>                       <span class="va">position</span> <span class="op">=</span> <span class="st">"identity"</span>, <span class="va">na.rm</span> <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>                       <span class="va">show.legend</span> <span class="op">=</span> <span class="cn">NA</span>, <span class="va">inherit.aes</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">layer</span><span class="op">(</span></span>
+<span>    geom <span class="op">=</span> <span class="va">GeomPolygonHollow</span>, </span>
+<span>    data <span class="op">=</span> <span class="va">data</span>, </span>
+<span>    mapping <span class="op">=</span> <span class="va">mapping</span>, </span>
+<span>    stat <span class="op">=</span> <span class="va">stat</span>, </span>
+<span>    position <span class="op">=</span> <span class="va">position</span>, </span>
+<span>    show.legend <span class="op">=</span> <span class="va">show.legend</span>, </span>
+<span>    inherit.aes <span class="op">=</span> <span class="va">inherit.aes</span>,</span>
+<span>    params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="va">na.rm</span>, <span class="va">...</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span> </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En aras de la coherencia, también definiríamos <code>stat_chull()</code> para usarlo como valor predeterminado. En cualquier caso, ahora tenemos una nueva función <code>geom_chull()</code> que funciona bastante bien sin que el usuario necesite configurar parámetros:</p>
+<div class="cell">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_chull</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="extensions_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</section><section id="sec-modifying-geom-data" class="level3" data-number="20.3.2"><h3 data-number="20.3.2" class="anchored" data-anchor-id="sec-modifying-geom-data">
+<span class="header-section-number">20.3.2</span> Modificando datos de geom</h3>
+<p>En otros casos, es posible que desee definir una geom que sea visualmente equivalente a una geom existente, pero que acepte datos en un formato diferente. Un ejemplo de esto en el código fuente de ggplot2 es <code>geom_spoke()</code>, una variación de <code>geom_segment()</code> que acepta datos en coordenadas polares. Para que esto funcione, el objeto ggproto <code>GeomSpoke</code> tiene una subclase de <code>GeomSegment</code> y utiliza el método <code>setup_data()</code> para tomar datos de coordenadas polares del usuario y luego transformarlos al formato que espera <code>GeomSegment</code>. Para ilustrar esta técnica, crearemos <code>geom_spike()</code>, una geom que vuelve a implementar la funcionalidad de <code>geom_spoke()</code>. Esto requiere que sobrescribamos el campo <code>required_aes</code> así como el método <code>setup_data()</code>:</p>
+<div class="cell">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">GeomSpike</span> <span class="op">&lt;-</span> <span class="fu">ggproto</span><span class="op">(</span><span class="st">"GeomSpike"</span>, <span class="va">GeomSegment</span>,</span>
+<span>  </span>
+<span>  <span class="co"># Especificar la estética requerida                   </span></span>
+<span>  required_aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"angle"</span>, <span class="st">"radius"</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  <span class="co"># Transforme los datos antes de realizar cualquier dibujo</span></span>
+<span>  setup_data <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">params</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span><span class="op">(</span><span class="va">data</span>,</span>
+<span>      xend <span class="op">=</span> <span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html">cos</a></span><span class="op">(</span><span class="va">angle</span><span class="op">)</span> <span class="op">*</span> <span class="va">radius</span>,</span>
+<span>      yend <span class="op">=</span> <span class="va">y</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html">sin</a></span><span class="op">(</span><span class="va">angle</span><span class="op">)</span> <span class="op">*</span> <span class="va">radius</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora escribimos la función <code>geom_spike()</code> frente al usuario:</p>
+<div class="cell">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geom_spike</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mapping</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">data</span> <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                       <span class="va">stat</span> <span class="op">=</span> <span class="st">"identity"</span>, <span class="va">position</span> <span class="op">=</span> <span class="st">"identity"</span>, </span>
+<span>                       <span class="va">...</span>, <span class="va">na.rm</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">show.legend</span> <span class="op">=</span> <span class="cn">NA</span>, </span>
+<span>                       <span class="va">inherit.aes</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">layer</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">data</span>, </span>
+<span>    mapping <span class="op">=</span> <span class="va">mapping</span>, </span>
+<span>    geom <span class="op">=</span> <span class="va">GeomSpike</span>, </span>
+<span>    stat <span class="op">=</span> <span class="va">stat</span>, </span>
+<span>    position <span class="op">=</span> <span class="va">position</span>, </span>
+<span>    show.legend <span class="op">=</span> <span class="va">show.legend</span>, </span>
+<span>    inherit.aes <span class="op">=</span> <span class="va">inherit.aes</span>, </span>
+<span>    params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="va">na.rm</span>, <span class="va">...</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora podemos usar <code>geom_spike()</code> en los gráficos:</p>
+<div class="cell">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>,</span>
+<span>  y <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  angle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">0</span>, to <span class="op">=</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
+<span>  radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">0</span>, to <span class="op">=</span> <span class="fl">2</span>, length.out <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_spike</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>angle <span class="op">=</span> <span class="va">angle</span>, radius <span class="op">=</span> <span class="va">radius</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">coord_equal</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="extensions_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="2400"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Al igual que con las estadísticas, las geoms tienen un método <code>setup_params()</code> además del método <code>setup_data()</code>, que se puede utilizar para modificar los parámetros antes de realizar cualquier dibujo (consulte <a href="#sec-modifying-stat-params" class="quarto-xref"><span>Sección 20.2.2</span></a> para ver un ejemplo). Sin embargo, una cosa a tener en cuenta en el contexto geom es que se llama a <code>setup_data()</code> antes de realizar cualquier ajuste de posición.</p>
+</section><section id="sec-combining-multiple-geoms" class="level3" data-number="20.3.3"><h3 data-number="20.3.3" class="anchored" data-anchor-id="sec-combining-multiple-geoms">
+<span class="header-section-number">20.3.3</span> Combinando múltiples geoms</h3>
+<p>Una técnica útil para definir nuevas geoms es combinar la funcionalidad de diferentes geoms. Por ejemplo, la función <code>geom_smooth()</code> para dibujar líneas de regresión no paramétricas usa la funcionalidad de <code>geom_line()</code> para dibujar la línea de regresión y <code>geom_ribbon()</code> para dibujar las bandas de error sombreadas. Para hacer esto dentro de su nueva geom, es útil considerar el proceso de dibujo. De la misma manera que una estadística funciona mediante una sucesión escalonada de llamadas a <code>compute_layer()</code>, luego a <code>compute_panel()</code> y finalmente a <code>compute_group()</code>, una geom se construye mediante llamadas a <code>draw_layer()</code>, <code>draw_panel ()</code>, y <code>draw_group()</code>.</p>
+<p>Si desea combinar la funcionalidad de varias geoms, generalmente puede lograrlo preparando los datos para cada una de las geoms dentro de la llamada <code>draw_*()</code> y enviándolos a las diferentes geoms, recopilando la salida usando <code><a href="https://rdrr.io/r/grid/grid.grob.html">grid:: gList()</a></code> cuando se necesita una lista de grobs o <code><a href="https://rdrr.io/r/grid/grid.grob.html">grid::gTree()</a></code> si se requiere un único grob con varios hijos. Como ejemplo relativamente mínimo, considere el objeto ggproto <code>GeomBarbell</code> que crea geoms que constan de dos puntos conectados por una barra:</p>
+<div class="cell">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">GeomBarbell</span> <span class="op">&lt;-</span> <span class="fu">ggproto</span><span class="op">(</span><span class="st">"GeomBarbell"</span>, <span class="va">Geom</span>,</span>
+<span>  </span>
+<span>  required_aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"y"</span>, <span class="st">"xend"</span>, <span class="st">"yend"</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  default_aes <span class="op">=</span> <span class="fu">aes</span><span class="op">(</span></span>
+<span>    colour <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>    linewidth <span class="op">=</span> <span class="fl">.5</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>    linetype <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>    shape <span class="op">=</span> <span class="fl">19</span>,</span>
+<span>    fill <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    alpha <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    stroke <span class="op">=</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  </span>
+<span>  draw_panel <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">panel_params</span>, <span class="va">coord</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    </span>
+<span>    <span class="co"># Datos transformados para los puntos</span></span>
+<span>    <span class="va">point1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span> </span>
+<span>    <span class="va">point2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/transform.html">transform</a></span><span class="op">(</span><span class="va">data</span>, x <span class="op">=</span> <span class="va">xend</span>, y <span class="op">=</span> <span class="va">yend</span><span class="op">)</span>    </span>
+<span>    </span>
+<span>    <span class="co"># Devolver los tres componentes</span></span>
+<span>    <span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.grob.html">gList</a></span><span class="op">(</span></span>
+<span>      <span class="va">GeomSegment</span><span class="op">$</span><span class="fu">draw_panel</span><span class="op">(</span><span class="va">data</span>, <span class="va">panel_params</span>, <span class="va">coord</span>, <span class="va">...</span><span class="op">)</span>,</span>
+<span>      <span class="va">GeomPoint</span><span class="op">$</span><span class="fu">draw_panel</span><span class="op">(</span><span class="va">point1</span>, <span class="va">panel_params</span>, <span class="va">coord</span>, <span class="va">...</span><span class="op">)</span>,</span>
+<span>      <span class="va">GeomPoint</span><span class="op">$</span><span class="fu">draw_panel</span><span class="op">(</span><span class="va">point2</span>, <span class="va">panel_params</span>, <span class="va">coord</span>, <span class="va">...</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span> </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En este ejemplo, el método <code>draw_panel()</code> devuelve una lista de tres grobs, uno generado a partir de <code>GeomSegment</code> y dos de <code>GeomPoint</code>. Como es habitual, si queremos que la geom esté expuesta al usuario, agregamos una función contenedora:</p>
+<div class="cell">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">geom_barbell</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">mapping</span> <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">data</span> <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                         <span class="va">stat</span> <span class="op">=</span> <span class="st">"identity"</span>, <span class="va">position</span> <span class="op">=</span> <span class="st">"identity"</span>, </span>
+<span>                         <span class="va">...</span>, <span class="va">na.rm</span> <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">show.legend</span> <span class="op">=</span> <span class="cn">NA</span>, </span>
+<span>                         <span class="va">inherit.aes</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">layer</span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">data</span>, </span>
+<span>    mapping <span class="op">=</span> <span class="va">mapping</span>, </span>
+<span>    stat <span class="op">=</span> <span class="va">stat</span>, </span>
+<span>    geom <span class="op">=</span> <span class="va">GeomBarbell</span>, </span>
+<span>    position <span class="op">=</span> <span class="va">position</span>, </span>
+<span>    show.legend <span class="op">=</span> <span class="va">show.legend</span>, </span>
+<span>    inherit.aes <span class="op">=</span> <span class="va">inherit.aes</span>, </span>
+<span>    params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="va">na.rm</span>, <span class="va">...</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora podemos utilizar la geom compuesta:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, xend <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">9</span>, y <span class="op">=</span> <span class="fl">0</span>, yend <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, xend <span class="op">=</span> <span class="va">xend</span>, yend <span class="op">=</span> <span class="va">yend</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">geom_barbell</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">base</span> <span class="op">+</span> <span class="fu">geom_barbell</span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">4</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span>  </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-24-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Si no puede aprovechar ninguna implementación de geom existente para crear los grobs, tendrá que implementar el método <code>draw_*()</code> completo desde cero, lo que requiere un poco más de comprensión del paquete grid. Para obtener más información sobre la cuadrícula y un ejemplo que usa esto para construir una geom a partir de primitivas de cuadrícula, consulte <a href="ext-springs.html" class="quarto-xref"><span>Capítulo 21</span></a>.</p>
+</section></section><section id="sec-new-coords" class="level2" data-number="20.4"><h2 data-number="20.4" class="anchored" data-anchor-id="sec-new-coords">
+<span class="header-section-number">20.4</span> Nuevas coordenadas</h2>
+<p>La función principal de la coord es reescalar la estética de la posición en el rango [0, 1], transformándola potencialmente en el proceso. Definir nuevas coordenadas es relativamente raro: las coordenadas descritas en <a href="coord.html" class="quarto-xref"><span>Capítulo 15</span></a> son adecuadas para la mayoría de los casos no cartográficos, y con la introducción de <code>coord_sf()</code> discutida en <a href="maps.html" class="quarto-xref"><span>Capítulo 6</span></a>, ggplot2 es capaz de capturar la mayoría de las proyecciones cartográficas. De la caja.</p>
+<p>La situación más común en la que los desarrolladores pueden necesitar conocer los aspectos internos de los sistemas de coordenadas es al definir nuevas geoms. No es raro que uno de los métodos <code>draw_*()</code> en una geom llame al método <code><a href="https://rdrr.io/r/base/transform.html">transform()</a></code> de la coord. Por ejemplo, el método <code><a href="https://rdrr.io/r/base/transform.html">transform()</a></code> para <code>CoordCartesian</code> se usa para cambiar la escala de los datos de posición pero no los transforma de ninguna otra manera, y es posible que el geom necesite aplicar este cambio de escala para dibujar el grob correctamente. Un ejemplo de este uso aparece en <a href="ext-springs.html" class="quarto-xref"><span>Capítulo 21</span></a>.</p>
+<p>Además de transformar los datos de posición, el coordinador tiene la responsabilidad de representar los ejes, las etiquetas de los ejes, el primer plano y el fondo del panel. Además, la coord puede interceptar y modificar los datos de la capa y el diseño de las facetas. Gran parte de esta funcionalidad está disponible para que los desarrolladores la aprovechen si es absolutamente necesaria (se muestra un ejemplo en <a href="#sec-defining-theme-elements" class="quarto-xref"><span>Sección 20.1.3</span></a>), pero en la mayoría de los casos es mejor dejar esta funcionalidad como está.</p>
+</section><section id="sec-new-scales" class="level2" data-number="20.5"><h2 data-number="20.5" class="anchored" data-anchor-id="sec-new-scales">
+<span class="header-section-number">20.5</span> Nuevas escalas</h2>
+<p>Hay tres formas en las que uno podría querer extender ggplot2 con nuevas escalas. El caso más simple es cuando desea proporcionar un envoltorio conveniente para una nueva paleta, generalmente para una estética de color o relleno. Como ejemplo poco práctico, supongamos que desea tomar muestras de colores aleatorios para llenar un violín o un diagrama de caja, utilizando una función de paleta como esta:</p>
+<div class="cell">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">random_colours</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/colors.html">colours</a></span><span class="op">(</span>distinct <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="va">n</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span> </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Luego podemos escribir una función constructora <code>scale_fill_random()</code> que pase la paleta a <code>discrete_scale()</code> y luego usarla en los gráficos:</p>
+<div class="cell">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">scale_fill_random</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span>, <span class="va">aesthetics</span> <span class="op">=</span> <span class="st">"fill"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">discrete_scale</span><span class="op">(</span></span>
+<span>    aesthetics <span class="op">=</span> <span class="va">aesthetics</span>, </span>
+<span>    scale_name <span class="op">=</span> <span class="st">"random"</span>, </span>
+<span>    palette <span class="op">=</span> <span class="va">random_colours</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">hwy</span>, <span class="va">class</span>, fill <span class="op">=</span> <span class="va">class</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_violin</span><span class="op">(</span>show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_random</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: The `scale_name` argument of `discrete_scale()` is deprecated as of ggplot2</span></span>
+<span><span class="co">#&gt; 3.5.0.</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="extensions_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Otro caso relativamente simple es cuando proporcionas una geom que requiere un nuevo tipo de estética que necesita ser ampliada. Digamos que creaste una nueva línea geom y en lugar de la estética de <code>size</code> decidiste usar una estética de <code>with</code>. Para poder escalar el <code>with</code> de la misma manera que esperas la escala del <code>size</code>, debes proporcionar una escala predeterminada para la estética. Las escalas predeterminadas se encuentran según su nombre y el tipo de datos proporcionados a la estética. Si asigna valores continuos a la estética de <code>with</code>, ggplot2 buscará una función <code>scale_width_continuous()</code> y la usará si no se ha agregado otra escala de ancho al gráfico. Si no se encuentra dicha función (y no se agregó explícitamente ninguna escala de ancho), la estética no se escalará.</p>
+<p>Una última posibilidad que vale la pena mencionar, pero fuera del alcance de este libro, es la posibilidad de crear un nuevo tipo de escala primaria. Históricamente, ggplot2 ha tenido dos tipos de escala principales, continua y discreta. Recientemente se unió el tipo de escala agrupada que permite agrupar datos continuos en contenedores discretos. Es posible desarrollar más escalas primarias siguiendo el ejemplo de <code>ScaleBinned</code>. Requiere subclasificar <code>Scale</code> o una de las escalas primarias proporcionadas, y crear nuevos métodos <code>train()</code> y <code>map()</code>, entre otros.</p>
+</section><section id="nuevas-posiciones" class="level2" data-number="20.6"><h2 data-number="20.6" class="anchored" data-anchor-id="nuevas-posiciones">
+<span class="header-section-number">20.6</span> Nuevas posiciones</h2>
+<p>La clase ggproto <code>Position</code> es algo más simple que otras clases ggproto, lo que refleja el hecho de que las funciones <code>position_*()</code> tienen un alcance muy limitado. La función del puesto es recibir y modificar los datos inmediatamente antes de pasarlos a cualquier función de dibujo. Estrictamente hablando, la posición puede modificar los datos de cualquier forma, pero existe una expectativa implícita de que sólo modifica la estética de la posición. Una posición posee métodos <code>compute_layer()</code> y <code>compute_panel()</code> que se comportan de manera análoga a los métodos equivalentes para una estadística, pero no posee un método <code>compute_group()</code>. También contiene los métodos <code>setup_params()</code> y <code>setup_data()</code> que son similares a los métodos <code>setup_*()</code> para otras clases de ggproto, con una excepción notable: el método <code>setup_params()</code> solo recibe los datos como entrada, y no una lista de parámetros. La razón de esto es que las funciones <code>position_*()</code> nunca se usan solas en ggplot2: más bien, siempre se llaman dentro del comando principal <code>geom_*()</code> o <code>stat_*()</code> que especifica la capa y los parámetros del comando principal no se pasan a la llamada de función <code>position_*()</code>.</p>
+<p>Para dar un ejemplo simple, implementaremos una versión ligeramente simplificada de la función <code>position_jitternormal()</code> del paquete ggforce, que se comporta de la misma manera que <code>position_jitter()</code> excepto que las perturbaciones se muestrean a partir de una distribución normal en lugar de que una distribución uniforme. Para mantener la exposición simple, asumiremos que tenemos definida la siguiente función de conveniencia:</p>
+<div class="cell">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">normal_transformer</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">sd</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, sd <span class="op">=</span> <span class="va">sd</span><span class="op">)</span><span class="op">}</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Cuando se llama, <code>normal_transformer()</code> devuelve una función que perturba el vector de entrada agregando ruido aleatorio con media cero y desviación estándar <code>sd</code>. El primer paso al crear nuestra nueva posición es crear una subclase del objeto <code>Position</code>:</p>
+<div class="cell">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">PositionJitterNormal</span> <span class="op">&lt;-</span> <span class="fu">ggproto</span><span class="op">(</span><span class="st">'PositionJitterNormal'</span>, <span class="va">Position</span>,</span>
+<span>           </span>
+<span>  <span class="co"># Necesitamos una estética de posición xey                              </span></span>
+<span>  required_aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'x'</span>, <span class="st">'y'</span><span class="op">)</span>,</span>
+<span>  </span>
+<span>  <span class="co"># Al usar el argumento "self" podemos acceder a los parámetros que el </span></span>
+<span>  <span class="co"># usuario ha pasado a la posición y agregarlos como parámetros de capa.</span></span>
+<span>  setup_params <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">self</span>, <span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>      sd_x <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">sd_x</span>, </span>
+<span>      sd_y <span class="op">=</span> <span class="va">self</span><span class="op">$</span><span class="va">sd_y</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span>,</span>
+<span></span>
+<span>  <span class="co"># Al calcular la capa, podemos leer los parámetros de desviación estándar </span></span>
+<span>  <span class="co"># de la lista de parámetros y usarlos para transformar la estética de la </span></span>
+<span>  <span class="co"># posición.</span></span>
+<span>  compute_layer <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">params</span>, <span class="va">panel</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    </span>
+<span>    <span class="co"># construir transformadores para las escalas de posición x e y </span></span>
+<span>    <span class="va">x_transformer</span> <span class="op">&lt;-</span> <span class="fu">normal_transformer</span><span class="op">(</span><span class="va">x</span>, <span class="va">params</span><span class="op">$</span><span class="va">sd_x</span><span class="op">)</span></span>
+<span>    <span class="va">y_transformer</span> <span class="op">&lt;-</span> <span class="fu">normal_transformer</span><span class="op">(</span><span class="va">y</span>, <span class="va">params</span><span class="op">$</span><span class="va">sd_y</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># devolver los datos transformados</span></span>
+<span>    <span class="fu">transform_position</span><span class="op">(</span></span>
+<span>      df <span class="op">=</span> <span class="va">data</span>,</span>
+<span>      trans_x <span class="op">=</span> <span class="va">x_transformer</span>,  </span>
+<span>      trans_y <span class="op">=</span> <span class="va">y_transformer</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>El método <code>compute_layer()</code> hace uso de <code>transform_position()</code>, una función conveniente proporcionada por ggplot2 cuya función es aplicar las funciones proporcionadas por el usuario a toda la estética asociada con la escala de posición relevante (por ejemplo, no solo x e y, pero también xend y yend).</p>
+<p>En una implementación realista, el constructor <code>position_jitternormal()</code> aplicaría alguna validación de entrada para asegurarse de que el usuario no haya especificado desviaciones estándar negativas, pero en este contexto lo mantendremos simple:</p>
+<div class="cell">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">position_jitternormal</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">sd_x</span> <span class="op">=</span> <span class="fl">.15</span>, <span class="va">sd_y</span> <span class="op">=</span> <span class="fl">.15</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">ggproto</span><span class="op">(</span><span class="cn">NULL</span>, <span class="va">PositionJitterNormal</span>, sd_x <span class="op">=</span> <span class="va">sd_x</span>, sd_y <span class="op">=</span> <span class="va">sd_y</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora podemos utilizar nuestra nueva función de posición al crear gráficos. Para ver la diferencia entre <code>position_jitter()</code> y la función <code>position_jitternormal()</code> que acabamos de definir, compare los siguientes gráficos:</p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1500</span>, <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">1500</span>, <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_jitter</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">df</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu">geom_point</span><span class="op">(</span>position <span class="op">=</span> <span class="fu">position_jitternormal</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="1200"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="extensions_files/figure-html/unnamed-chunk-30-2.png" class="img-fluid" width="1200"></p>
+</div>
+</div>
+</div>
+<p>Una consideración práctica a tener en cuenta al diseñar nuevas posiciones es que los usuarios rara vez llaman directamente al constructor de posiciones. Es más probable que el comando que especifica la capa incluya una expresión como <code>position = "dodge"</code> en lugar de <code>position = position_dodge()</code>, y es incluso menos probable que anule los valores predeterminados, como ocurriría si el usuario especificara <code>position = position_dodge (width = 0,9)</code>. Como consecuencia, es importante pensar detenidamente y, si es posible, hacer que los valores predeterminados funcionen en la mayoría de los casos. Esto puede ser bastante complicado: las posiciones tienen muy poco control sobre la forma y el formato de los datos de la capa, pero el usuario esperará que se comporten de manera predecible en todas las situaciones. Un ejemplo es el caso de esquivar, donde a los usuarios les gustaría esquivar un diagrama de caja y una nube de puntos, y esperarían que la nube de puntos apareciera en la misma área que su diagrama de caja respectivo. Esta es una expectativa perfectamente razonable a nivel de usuario, pero puede resultar complicada para el desarrollador. Un diagrama de caja tiene un ancho explícito que se puede usar para controlar la esquiva, mientras que no ocurre lo mismo con los puntos, pero el usuario esperará que se muevan de la misma manera. Estas consideraciones a menudo significan que las implementaciones de posiciones terminan siendo mucho más complejas que su solución más simple para atender una amplia gama de casos extremos.</p>
+</section><section id="nuevas-facetas" class="level2" data-number="20.7"><h2 data-number="20.7" class="anchored" data-anchor-id="nuevas-facetas">
+<span class="header-section-number">20.7</span> Nuevas facetas</h2>
+<p>Las facetas son uno de los conceptos más poderosos de ggplot2, y extenderlas es una de las formas más poderosas de modificar el funcionamiento de ggplot2. Este poder tiene un coste: las facetas se encargan de recibir todos los paneles, unirles los ejes y las tiras y luego disponerlos de la manera esperada. Crear un sistema de facetado completamente nuevo requiere un conocimiento profundo de grid y gtable, y puede ser un desafío desalentador. Afortunadamente, no siempre es necesario crear la faceta desde cero. Por ejemplo, si su nueva faceta producirá paneles que se encuentran en una cuadrícula, a menudo puede subclasificar <code>FacetWrap</code> o <code>FacetGrid</code> y modificar uno o dos métodos. En particular, es posible que desees definir nuevos métodos <code>compute_layout()</code> y/O <code>map_data()</code>:</p>
+<ul>
+<li><p>El método <code>compute_layout()</code> recibe el conjunto de datos original y crea una especificación de diseño, un marco de datos con una fila por panel que indica dónde cae cada panel en la cuadrícula, junto con información sobre qué límites de eje deben estar libres y cuáles deben estar libres. fijado.</p></li>
+<li><p>El método <code>map_data()</code> recibe esta especificación de diseño y los datos originales como entrada, y le adjunta una columna <code>PANEL</code>, que se utiliza para asignar cada fila en el marco de datos a uno de los paneles en el diseño.</p></li>
+</ul>
+<p>Para ilustrar cómo se pueden crear nuevas facetas subclasificando una faceta existente, crearemos un sistema de facetas relativamente simple que “scatter” los paneles, colocándolos en ubicaciones aleatorias en una cuadrícula. Para hacer esto, crearemos un nuevo objeto ggproto llamado <code>FacetScatter</code> que es una subclase de <code>FacetWrap</code> y escribiremos un nuevo método <code>compute_layout()</code> que coloca cada panel en una celda elegida al azar de la cuadrícula de paneles:</p>
+<div class="cell">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">FacetScatter</span> <span class="op">&lt;-</span> <span class="fu">ggproto</span><span class="op">(</span><span class="st">"FacetScatter"</span>, <span class="va">FacetWrap</span>,</span>
+<span>  </span>
+<span>  <span class="co"># Esto no es importante para el ejemplo: todo lo que</span></span>
+<span>  <span class="co"># estamos haciendo es forzar a todos los paneles a usar</span></span>
+<span>  <span class="co"># una escala fija para que el resto del ejemplo se pueda</span></span>
+<span>  <span class="co"># mantener simple.</span></span>
+<span>  setup_params <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">params</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">params</span> <span class="op">&lt;-</span> <span class="va">FacetWrap</span><span class="op">$</span><span class="fu">setup_params</span><span class="op">(</span><span class="va">data</span>, <span class="va">params</span><span class="op">)</span></span>
+<span>    <span class="va">params</span><span class="op">$</span><span class="va">free</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">FALSE</span>, y <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">params</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>,                      </span>
+<span>  </span>
+<span>  <span class="co"># El método compute_layout() hace el trabajo.</span></span>
+<span>  compute_layout <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">params</span><span class="op">)</span> <span class="op">{</span></span>
+<span>                  </span>
+<span>    <span class="co"># cree un marco de datos con una columna por variable </span></span>
+<span>    <span class="co"># de faceta y una fila para cada combinación posible </span></span>
+<span>    <span class="co"># de valores (es decir, una fila por panel)</span></span>
+<span>    <span class="va">panels</span> <span class="op">&lt;-</span> <span class="fu">combine_vars</span><span class="op">(</span></span>
+<span>      data <span class="op">=</span> <span class="va">data</span>,</span>
+<span>      env <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">plot_env</span>, </span>
+<span>      vars <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">facets</span>, </span>
+<span>      drop <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>    <span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># Cree un marco de datos con columnas para ROW y COL,</span></span>
+<span>    <span class="co"># con una fila para cada celda posible en la cuadrícula</span></span>
+<span>    <span class="co"># del panel</span></span>
+<span>    <span class="va">locations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>ROW <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">params</span><span class="op">$</span><span class="va">nrow</span>, COL <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">params</span><span class="op">$</span><span class="va">ncol</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># Muestrear aleatoriamente un subconjunto de las</span></span>
+<span>    <span class="co"># ubicaciones</span></span>
+<span>    <span class="va">shuffle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">locations</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">panels</span><span class="op">)</span><span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># Asigne a cada panel una ubicación                     </span></span>
+<span>    <span class="va">layout</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>      PANEL <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">panels</span><span class="op">)</span>,       <span class="co"># identificador de panel</span></span>
+<span>      ROW <span class="op">=</span> <span class="va">locations</span><span class="op">$</span><span class="va">ROW</span><span class="op">[</span><span class="va">shuffle</span><span class="op">]</span>, <span class="co"># número de fila para los paneles</span></span>
+<span>      COL <span class="op">=</span> <span class="va">locations</span><span class="op">$</span><span class="va">COL</span><span class="op">[</span><span class="va">shuffle</span><span class="op">]</span>, <span class="co"># número de columna para los paneles</span></span>
+<span>      SCALE_X <span class="op">=</span> <span class="fl">1L</span>,                 <span class="co"># todas las escalas del eje x son fijas</span></span>
+<span>      SCALE_Y <span class="op">=</span> <span class="fl">1L</span>                  <span class="co"># todas las escalas del eje y son fijas</span></span>
+<span>    <span class="op">)</span></span>
+<span>    </span>
+<span>    <span class="co"># Vincule la información de diseño con la identificación del panel y </span></span>
+<span>    <span class="co"># devuelva la especificación resultante.</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">layout</span>, <span class="va">panels</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span>                      </span>
+<span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Para darle una idea de cómo se ve este resultado, esta es la especificación de diseño que se crea al construir el gráfico que se muestra al final de esta sección:</p>
+<div class="cell">
+<pre><code>#&gt;    PANEL ROW COL SCALE_X SCALE_Y manufacturer
+#&gt; 1      1   4   1       1       1         audi
+#&gt; 2      2   5   5       1       1    chevrolet
+#&gt; 3      3   5   1       1       1        dodge
+#&gt; 4      4   5   3       1       1         ford
+#&gt; 5      5   1   5       1       1        honda
+#&gt; 6      6   4   4       1       1      hyundai
+#&gt; 7      7   3   5       1       1         jeep
+#&gt; 8      8   2   2       1       1   land rover
+#&gt; 9      9   5   2       1       1      lincoln
+#&gt; 10    10   4   5       1       1      mercury
+#&gt; 11    11   2   4       1       1       nissan
+#&gt; 12    12   5   4       1       1      pontiac
+#&gt; 13    13   3   2       1       1       subaru
+#&gt; 14    14   5   6       1       1       toyota
+#&gt; 15    15   4   6       1       1   volkswagen</code></pre>
+</div>
+<p>A continuación, escribiremos la función constructora <code>facet_scatter()</code> para exponer esta funcionalidad al usuario. Para las facetas, esto es tan simple como crear una nueva instancia del objeto ggproto relevante (<code>FacetScatter</code> en este caso) que pasa parámetros especificados por el usuario a la faceta:</p>
+<div class="cell">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">facet_scatter</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">facets</span>, <span class="va">nrow</span>, <span class="va">ncol</span>, </span>
+<span>                          <span class="va">strip.position</span> <span class="op">=</span> <span class="st">"top"</span>, </span>
+<span>                          <span class="va">labeller</span> <span class="op">=</span> <span class="st">"label_value"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  </span>
+<span>  <span class="fu">ggproto</span><span class="op">(</span><span class="cn">NULL</span>, <span class="va">FacetScatter</span>, </span>
+<span>    params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span></span>
+<span>      facets <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/exprs_auto_name.html">quos_auto_name</a></span><span class="op">(</span><span class="va">facets</span><span class="op">)</span>,</span>
+<span>      strip.position <span class="op">=</span> <span class="va">strip.position</span>,</span>
+<span>      labeller <span class="op">=</span> <span class="va">labeller</span>, </span>
+<span>      ncol <span class="op">=</span> <span class="va">ncol</span>, </span>
+<span>      nrow <span class="op">=</span> <span class="va">nrow</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Hay un par de cosas a tener en cuenta sobre esta función constructora. Primero, para mantener el ejemplo simple, <code>facet_scatter()</code> contiene menos argumentos que <code>facet_wrap()</code>, y hemos creado argumentos obligatorios para <code>nrow</code> y <code>ncol</code>: el usuario necesita especificar el tamaño de la cuadrícula sobre la cual los paneles deben estar dispersos. En segundo lugar, la función <code>facet_scatter()</code> requiere que especifiques las facetas usando <code>vars()</code>. No funcionará si el usuario intenta proporcionar una fórmula. De manera relacionada, tenga en cuenta el uso de <code><a href="https://rlang.r-lib.org/reference/exprs_auto_name.html">rlang::quos_auto_name()</a></code>: la función <code>vars()</code> devuelve una lista de expresiones sin nombre (técnicamente, quosures), pero el código posterior requiere una lista con nombre. Mientras espere que el usuario use <code>vars()</code>, este es todo el preprocesamiento que necesita, pero si desea admitir otros formatos de entrada, deberá ser un poco más sofisticado (puede ver cómo hacerlo). mirando el código fuente de ggplot2).</p>
+<p>En cualquier caso, ya tenemos un lado de trabajo:</p>
+<div class="cell">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">mpg</span>, <span class="fu">aes</span><span class="op">(</span><span class="va">displ</span>, <span class="va">hwy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">geom_point</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu">facet_scatter</span><span class="op">(</span><span class="fu">vars</span><span class="op">(</span><span class="va">manufacturer</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">5</span>, ncol <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="extensions_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+<!-- ## New guides -->
+<!-- >Should probably not mention anything until they have been ported to `ggproto` -->
+
+
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./internals.html" class="pagination-link" aria-label="Internos de ggplot2">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Internos de ggplot2</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./ext-springs.html" class="pagination-link" aria-label="Un caso de estudio">
+        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Un caso de estudio</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>ggplot2: Gráficos elegantes para análisis de datos (3e) fue escrito por Hadley Wickham, Danielle Navarro, y Thomas Lin Pedersen.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Este libro fue creado usando <a href="https://quarto.org/">Quarto</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+</body></html>
